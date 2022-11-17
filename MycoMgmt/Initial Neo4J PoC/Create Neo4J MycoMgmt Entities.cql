@@ -1,4 +1,4 @@
-MERGE
+CREATE
     (
         :Vendor
         {
@@ -176,22 +176,83 @@ MERGE
             Id:2,
             Name:'Fruiting Chamber'
         }
+    ),
+    (
+        :Account
+        {
+            Id: 1,
+            Name: 'RG Ltd.'
+        }
+    ),
+    (
+        :User
+        {
+            Name: 'Ryan'
+        }
+    ),
+    (
+        :User
+        {
+            Name: 'Calum'
+        }
+    ),
+    (
+        :IAMRole
+        {
+            Name: 'Administrator'
+        }
+    ),
+    (
+        :IAMRole
+        {
+            Name: 'Writer'
+        }
+    ),
+    (
+        :IAMRole
+        {
+            Name: 'Reader'
+        }
+    ),
+    (
+        :Permission
+        {
+            Type: 'Delete'
+        }
+    ),
+    (
+        :Permission
+        {
+            Type: 'Update'
+        }
+    ),
+    (
+        :Permission
+        {
+            Type: 'Create'
+        }
+    ),
+    (
+        :Permission
+        {
+            Type: 'Read'
+        }
     );
 
 // 1st Level
 MATCH (c:Culture {Id:1}), (v:Vendor {Id:1}) MERGE (c)-[r:PURCHASED_FROM { PurchasedOn: '2022-10-01T23:10:00' }]->(v); 
 
 // 2nd Level
-MATCH (c:Culture), (p:Culture) WHERE c.Id IN [2,3,4] AND p.Id = 1 MERGE (c)<-[r:HAS_CHILD { MERGEdOn: '2022-10-02T13:00:00' }]-(p);
+MATCH (c:Culture), (p:Culture) WHERE c.Id IN [2,3,4] AND p.Id = 1 MERGE (c)<-[r:HAS_CHILD { CreatedOn: '2022-10-02T13:00:00' }]-(p);
 
 // 3rd Level
-MATCH (s:Spawn), (c:Culture) WHERE s.Id IN [1,2] AND c.Id = 2 MERGE (s)<-[:HAS_CHILD { MERGEdOn: '2022-10-03T11:00:00' }]-(c);
+MATCH (s:Spawn), (c:Culture) WHERE s.Id IN [1,2] AND c.Id = 2 MERGE (s)<-[:HAS_CHILD { CreatedOn: '2022-10-03T11:00:00' }]-(c);
 
 // 4th  
-MATCH (b:Bulk), (s:Spawn:Success) MERGE (b)<-[:HAS_CHILD { MERGEdOn: '2022-10-03T11:00:00' }]-(s);
+MATCH (b:Bulk), (s:Spawn:Success) MERGE (b)<-[:HAS_CHILD { CreatedOn: '2022-10-03T11:00:00' }]-(s);
 
 // 5th Level
-MATCH (f:Fruit), (b:Bulk) WHERE b.Id = 1 AND f.Id IN [1,2,3] MERGE (f)<-[:HAS_CHILD { MERGEdOn: '2022-10-03T11:00:00' }]-(b);
+MATCH (f:Fruit), (b:Bulk) WHERE b.Id = 1 AND f.Id IN [1,2,3] MERGE (f)<-[:HAS_CHILD { CreatedOn: '2022-10-03T11:00:00' }]-(b);
 
 
 
@@ -206,22 +267,22 @@ MATCH (a:Agar), (l:Location) WHERE a.Id IN [2,3,4] AND l.Id = 1 MERGE (a)-[r:STO
 MATCH (b:Bulk), (l:Location) WHERE l.Id = 2 MERGE (b)-[r:STORED_IN]->(l);
 
 // Entity > Recipe
-MATCH (s:Spawn), (r:Recipe) WHERE s.Id IN [1,2] AND r.Id = 1 MERGE (s)-[:MERGED_USING]->(r);
-MATCH (b:Bulk),  (r:Recipe) WHERE b.Id = 1 AND r.Name = 'Coco Coir Bulk' MERGE (b)-[:MERGED_USING]->(r);
-MATCH (b:Bulk),  (r:Recipe) WHERE b.Id = 2 AND r.Name = 'CVG Bulk' MERGE (b)-[:MERGED_USING]->(r);
+MATCH (s:Spawn), (r:Recipe) WHERE s.Id IN [1,2] AND r.Id = 1 MERGE (s)-[:CREATED_USING]->(r);
+MATCH (b:Bulk),  (r:Recipe) WHERE b.Id = 1 AND r.Name = 'Coco Coir Bulk' MERGE (b)-[:CREATED_USING]->(r);
+MATCH (b:Bulk),  (r:Recipe) WHERE b.Id = 2 AND r.Name = 'CVG Bulk' MERGE (b)-[:CREATED_USING]->(r);
 
 // Recipe > Ingredient
-MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Popcorn','Gypsum']      AND r.Id = 1 MERGE (r)-[:MERGED_USING]->(i);
-MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Food Colouring','Agar'] AND r.Id = 4 MERGE (r)-[:MERGED_USING]->(i);
-MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Coco-Coir'] AND r.Name = 'Coco Coir Bulk' MERGE (r)-[:MERGED_USING]->(i);
-MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Coco-Coir','Vermiculite','Gypsum'] AND r.Name = 'CVG Bulk' MERGE (r)-[:MERGED_USING]->(i);
+MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Popcorn','Gypsum']      AND r.Id = 1 MERGE (r)-[:CREATED_USING]->(i);
+MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Food Colouring','Agar'] AND r.Id = 4 MERGE (r)-[:CREATED_USING]->(i);
+MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Coco-Coir'] AND r.Name = 'Coco Coir Bulk' MERGE (r)-[:CREATED_USING]->(i);
+MATCH (i:Ingredient), (r:Recipe) WHERE i.Name IN ['Coco-Coir','Vermiculite','Gypsum'] AND r.Name = 'CVG Bulk' MERGE (r)-[:CREATED_USING]->(i);
 
 // Map Innoculation Date
 MATCH
     (p:Purchase),
     (d:Day {day: 28})<-[:HAS_DAY]-(:Month {month:7})<-[:HAS_MONTH]-(:Year {year:2022})
 WHERE
-    ID(p) = 2
+    p.Id = 1
 MERGE (p)-[r:WAS_PURCHASED_ON]->(d)
 RETURN *;
 
@@ -249,30 +310,51 @@ MATCH
 MERGE (a)-[r:WAS_INNOCULATED_ON]->(d)
 RETURN *;
 
+// Create Account > User
+MATCH (a:Account), (u:User) MERGE (a)-[:HAS]->(u);
+
+// Create User > Role
+MATCH (u:User {Name:'Ryan'}), (r:IAMRole) WHERE r.Name = 'Administrator' MERGE (u)-[:HAS]->(r);
+MATCH (u:User {Name:'Calum'}), (r:IAMRole) WHERE r.Name IN ['Writer','Reader'] MERGE (u)-[:HAS]->(r);
+
+
+// Create Role > Permission
+MATCH (i:IAMRole {Name:'Administrator'}), (p:Permission) WHERE p.Type IN ['Delete','Update','Create','Read'] MERGE (i)-[:HAS]->(p);
+MATCH (i:IAMRole {Name:'Writer'}),        (p:Permission) WHERE p.Type IN ['Update','Create'] MERGE (i)-[:HAS]->(p);
+MATCH (i:IAMRole {Name:'Reader'}),        (p:Permission) WHERE p.Type IN ['Read'] MERGE (i)-[:HAS]->(p);
+
+
+MATCH (u:User {Name:'Ryan'}), (c:Culture {Name:'AG-GT-01'}) MERGE (u)-[:CREATED]->(c);
+MATCH (u:User {Name:'Ryan'}), (c:Culture {Name:'AG-GT-01'}) MERGE (u)-[:MODIFIED]->(c);
+MATCH (c:Culture {Name:'AG-GT-01'}),(d:Day {day: 29})<-[:HAS_DAY]-(:Month {month:7})<-[:HAS_MONTH]-(:Year {year:2022}) MERGE (c)-[:CREATED_ON]->(d);
+MATCH (c:Culture {Name:'AG-GT-01'}),(d:Day {day: 29})<-[:HAS_DAY]-(:Month {month:7})<-[:HAS_MONTH]-(:Year {year:2022}) MERGE (c)-[:MODIFIED_ON]->(d);
 
 
 
 
-// MERGE DateTime Tree / Index
+
+
+
+// Create DateTime Tree / Index
 WITH range(2021, 2024) AS years, range(1,12) as months
 FOREACH(year IN years |
-MERGE (y:Year {year: year})
-FOREACH(month IN months |
-MERGE (m:Month {month: month})
-MERGE (y)-[:HAS_MONTH]->(m)
-FOREACH(day IN (CASE
-WHEN month IN [1,3,5,7,8,10,12] THEN range(1,31)
-WHEN month = 2 THEN
-CASE
-WHEN year % 4 <> 0 THEN range(1,28)
-WHEN year % 100 <> 0 THEN range(1,29)
-WHEN year % 400 = 0 THEN range(1,29)
-ELSE range(1,28)
-END
-ELSE range(1,30)
-END) |
-MERGE (d:Day {day: day})
-MERGE (m)-[:HAS_DAY]->(d))))
+    CREATE (y:Year {year: year})
+    FOREACH(month IN months |
+        CREATE (m:Month {month: month})
+        CREATE (y)-[:HAS_MONTH]->(m)
+        FOREACH(day IN (CASE
+                            WHEN month IN [1,3,5,7,8,10,12] THEN range(1,31)
+                            WHEN month = 2 THEN CASE
+                                                    WHEN year % 4 <> 0 THEN range(1,28)
+                                                    WHEN year % 100 <> 0 THEN range(1,29)
+                                                    WHEN year % 400 = 0 THEN range(1,29)
+                                                    ELSE range(1,28)
+                                                END
+                                            ELSE 
+                                                range(1,30)
+                        END) |
+            CREATE (d:Day {day: day})
+            CREATE (m)-[:HAS_DAY]->(d))))
 
 WITH *
 
@@ -281,6 +363,6 @@ WITH year,month,day
 ORDER BY year.year, month.month, day.day
 WITH collect(day) as days
 FOREACH(i in RANGE(0, size(days)-2) |
-FOREACH(day1 in [days[i]] |
-FOREACH(day2 in [days[i+1]] |
-MERGE (day1)-[:NEXT]->(day2))))
+    FOREACH(day1 in [days[i]] |
+        FOREACH(day2 in [days[i+1]] |
+            CREATE (day1)-[:NEXT]->(day2))))
