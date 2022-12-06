@@ -73,12 +73,12 @@ namespace MycoMgmt.Populator
 
         public static string IsSuccessful(this Culture culture)
         {
-            if (!culture.Finished) return null;
+            if (!culture.Finished) return string.Empty;
 
             return culture.Successful switch
             {
-                true => "Successful",
-                false => "Failed"
+                true => ":Successful",
+                false => ":Failed"
             };
         }
 
