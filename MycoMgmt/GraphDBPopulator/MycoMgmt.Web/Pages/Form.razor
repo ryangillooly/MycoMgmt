@@ -1,0 +1,163 @@
+﻿@page "/culture/new"
+@using MycoMgmt.Populator.Models
+@using Neo4j.Driver
+@using MycoMgmt.API.Helpers
+@using Microsoft.AspNetCore.Components
+@using MycoMgmt.API
+@using MycoMgmt.Populator
+
+<EditForm Model="@culture" OnValidSubmit="@onvalidsubmitcode" xmlns="http://www.w3.org/1999/html">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <h2><b>Culture</b></h2>
+    <br/>
+    <div class="form-group">
+        <label>Name:</label>
+        <br/>
+        <InputText @bind-Value="(culture.Name)" />
+    </div>
+    
+    <div class="form-group">
+        <label>Type:</label>
+        <br/>
+         <select class="form-control" @bind="culture.Type">
+            <option value="@(CultureTypes.Agar)"> @CultureTypes.Agar </option>
+            <option value="@(CultureTypes.LiquidCulture)"> @CultureTypes.LiquidCulture </option>
+            <option value="@(CultureTypes.SporePrint)"> @CultureTypes.SporePrint </option>
+            <option value="@(CultureTypes.Agar)"> @CultureTypes.SporeSyringe </option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Strain:</label>
+        <br/>
+         <select class="form-control" @bind="culture.Strain">
+             <option value="@(Strain.Mazapatec)"> @Strain.Mazapatec </option>
+             <option value="@(Strain.BPlus)"> @Strain.BPlus </option>
+             <option value="@(Strain.GoldenTeacher)"> @Strain.GoldenTeacher </option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Recipe:</label>
+        <br/>
+        <select class="form-control" @bind="culture.Recipe">
+            <option value="null">  </option>
+            <option value="Blue Transparent Agar"> Blue Transparent Agar </option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label>Location:</label>
+        <br/>
+       
+     <select class="form-control" @bind="culture.Location">
+         <option value="@(Locations.Fridge)"> @(Locations.Fridge) </option>
+         <option value="@(Locations.GrowTent)"> @(Locations.GrowTent) </option>
+         <option value="@(Locations.IncubationChamber)"> @(Locations.IncubationChamber) </option>
+         <option value="@(Locations.WineCooler)"> @(Locations.WineCooler) </option>
+         <option value="@(Locations.LongTermStorage)"> @(Locations.LongTermStorage) </option>
+    </select>
+    </div>
+    
+
+    
+    <div class="form-group">
+        <label>Successful:</label>
+        <br/>
+        <InputCheckbox @bind-Value="(culture.Successful)" />
+    </div>
+    
+    <div class="form-group">
+        <label>Finished:</label>
+        <br/>
+        <InputCheckbox @bind-Value="(culture.Finished)" />
+    </div>
+    
+    <button type="submit" class="btn-dark">Submit</button>
+</EditForm>
+    
+
+@code 
+{
+    static IDriver driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("test", "test"));
+    public IAsyncSession session = driver.AsyncSession(o => o.WithDatabase("test"));
+    
+    public class Created
+    {
+        public DateTime On { get; set; }
+        public Users By { get; set; }
+    }
+    
+    public class Modified
+    {
+        public DateTime On { get; set; }
+        public Users By { get; set; }
+    }
+    
+    public static class Extensions
+    {
+        public static IList<IRecord> WriteToDatabase(IAsyncSession session, string query) =>
+            session.ExecuteWriteAsync(async tx => {
+                var r = await tx.RunAsync(query);
+                return await r.ToListAsync();
+            }).Result;
+
+        public static IList<IRecord> ReadFromDatabase(IAsyncSession session, string query) =>
+            session.ReadTransactionAsync(async tx => {
+                var r = await tx.RunAsync(query);
+                return await r.ToListAsync();
+            }).Result;
+
+        public static string IsSuccessful(Culture culture)
+        {
+            return culture.Finished switch
+            {
+                true when culture.Successful => "Successful",
+                true when !culture.Successful => "Failed",
+                _ => ""
+            };
+        }
+    }
+    private Culture culture { get; set; } = new Culture();
+
+    private void onvalidsubmitcode()
+    {
+        var obj = new
+        {
+            cultureName  = culture.Name,
+            cultureType  = ":" + culture.Type,
+            isSuccessful = culture.IsSuccessful() is null ? null : ":" + culture.IsSuccessful(),
+            isPurchase   = culture.IsPurchase()
+        };
+        
+        session.CreateCulture(obj.cultureName, obj.isSuccessful, obj.cultureType, obj.isSuccessful);
+        session.CreateLocation(culture.Location.ToString());
+
+        /*
+         if (string.IsNullOrEmpty(culture.Parent))
+        {
+            session.CreateRelationship();
+        }
+        */
+        
+        var query = $@" MATCH 
+                             (c:Culture{obj.isSuccessful}{obj.cultureType}{obj.isPurchase} {{ Name: '{obj.cultureName}' }}),
+                             (l:Location {{ Name: '{culture.Location}'}})
+                        MERGE
+                            (c)-[:STORED_IN]->(l)";
+        
+        session.WriteToDatabase(query);
+
+        /*
+        session.WriteToDatabase(
+         $@"MATCH 
+                (c:Culture{culture.IsSuccessful()}{':' + culture.Type}{culture.IsPurchase()} {{ Name: '{culture.Name}' }}),
+                (p:)
+            MERGE
+                (c)-[:HAS_PARENT]->(p)"
+        );
+        */
+    }
+}

@@ -1,0 +1,9 @@
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\bin\Debug\netcoreapp3.1\MycoMgmt.Models.deps.json
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\bin\Debug\netcoreapp3.1\MycoMgmt.Models.dll
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\bin\Debug\netcoreapp3.1\MycoMgmt.Models.pdb
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.csprojAssemblyReference.cache
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.AssemblyInfoInputs.cache
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.AssemblyInfo.cs
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.csproj.CoreCompileInputs.cache
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.dll
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Models\obj\Debug\netcoreapp3.1\MycoMgmt.Models.pdb

@@ -286,7 +286,7 @@ WHERE
 MERGE (p)-[r:WAS_PURCHASED_ON]->(d)
 RETURN *;
 
-MATCH
+MATCH\
     (a:Agar),
     (d:Day {day: 29})<-[:HAS_DAY]-(:Month {month:7})<-[:HAS_MONTH]-(:Year {year:2022})
 MERGE (a)-[r:WAS_INNOCULATED_ON]->(d)
@@ -366,3 +366,324 @@ FOREACH(i in RANGE(0, size(days)-2) |
     FOREACH(day1 in [days[i]] |
         FOREACH(day2 in [days[i+1]] |
             CREATE (day1)-[:NEXT]->(day2))))
+
+
+
+            /*
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using MycoMgmt.Populator.Models;
+using MycoMgmt.Populator;
+using Neo4j.Driver;
+
+namespace MycoMgmt.Populator
+{
+    public class Neo4JPopulator
+    {
+        public readonly IDriver _driver; 
+        
+
+        
+        public static void Main(string[] args)
+        {
+            using var _client = new Neo4J("neo4j://localhost:7687", "test", "test");
+            
+            _client.PrintGreeting("Hello!");
+            
+            /*
+             var rolePermissions = new Dictionary<Roles, List<Permissions>>()
+            {
+                {
+                    Roles.Administrator,
+                    new List<Permissions>
+                        { Permissions.Delete, Permissions.Create, Permissions.Update, Permissions.Read }
+                },
+                { Roles.Reader, new List<Permissions> { Permissions.Read } },
+                { Roles.Writer, new List<Permissions> { Permissions.Create, Permissions.Update, Permissions.Read } },
+            };
+
+            var vendor = new Vendor
+            {
+                Name = "Myco Punks",
+                URL = new Uri("https://mycopunks.com")
+            };
+
+            var agarRecipe = new Recipe
+            {
+                Name = "BlueTransparentAgar",
+                Type = RecipeTypes.Agar,
+                Description = "Maddddd agar",
+                Steps = new List<string>
+                {
+                    "Grab some agar mix",
+                    "Mix this with sugar water",
+                    "Boil for 1 hour",
+                    "Pressure Cook at 45PSI",
+                    "4 Hours, all good"
+                }
+            };
+
+            var spawnRecipe = new Recipe
+            {
+                Name = "PopcornRecipe",
+                Type = RecipeTypes.Spawn,
+                Description = "Maddddd spawn",
+                Steps = new List<string>
+                {
+                    "Grab some agar mix",
+                    "Mix this with sugar water",
+                    "Boil for 1 hour",
+                    "Pressure Cook at 45PSI",
+                    "4 Hours, all good"
+                }
+            };
+
+            var account = new Account
+            {
+                Name = "RG Ltd.",
+                Users = new List<Users> { Users.Aiden, Users.Callum }
+            };
+
+            var users = new Dictionary<Users, Roles>()
+            {
+                { Users.Aiden, Roles.Reader },
+                { Users.Calum, Roles.Reader },
+                { Users.Callum, Roles.Writer },
+                { Users.Ryan, Roles.Administrator }
+            };
+
+            var cultures = new List<Culture>
+            {
+                new Culture
+                {
+                    Name = "SS-GT-01",
+                    Strain = Strains.GoldenTeacher,
+                    Location = Locations.IncubationChamber,
+                    Parent = account.Id,
+                    Vendor = vendor,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-7), Users.Ryan } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Callum } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Purchase,
+                        EntityTypes.SporeSyringe
+                    }
+                },
+                new Culture
+                {
+                    Name = "SP-BP-01",
+                    Strain = Strains.BPlus,
+                    Location = Locations.IncubationChamber,
+                    Parent = account.Id,
+                    Vendor = vendor,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Purchase,
+                        EntityTypes.SporePrint
+                    }
+                }
+            };
+
+            var cultures2 = new List<Culture>
+            {
+                new Culture
+                {
+                    Name = "AG-GT-01-01",
+                    Strain = Strains.GoldenTeacher,
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures[0].Id,
+                    Recipe = "BlueTransparentAgar",
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Agar
+                    }
+                },
+                new Culture
+                {
+                    Name = "AG-GT-01-02",
+                    Strain = Strains.GoldenTeacher,
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures[0].Id,
+                    Recipe = "BlueTransparentAgar",
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Agar
+                    }
+                },
+                new Culture
+                {
+                    Name = "AG-GT-01-03",
+                    Strain = Strains.GoldenTeacher,
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures[0].Id,
+                    Recipe = "BlueTransparentAgar",
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Agar
+                    }
+                },
+                new Culture
+                {
+                    Name = "AG-BP-01-01",
+                    Strain = Strains.BPlus,
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures[1].Id,
+                    Recipe = "BlueTransparentAgar",
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Agar
+                    }
+                },
+                new Culture
+                {
+                    Name = "AG-BP-01-02",
+                    Strain = Strains.BPlus,
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures[1].Id,
+                    Recipe = "BlueTransparentAgar",
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-6), Users.Ryan } },
+                    Tags = new List<EntityTypes>
+                    {
+                        EntityTypes.Culture,
+                        EntityTypes.Agar
+                    }
+                }
+            };
+
+            var spawn = new List<Spawn>
+            {
+                new Spawn
+                {
+                    Name = "SP-GT-01-01",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[0].Id,
+                    Successful = true,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn, EntityTypes.Success }
+                },
+                new Spawn
+                {
+                    Name = "SP-GT-01-02",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[0].Id,
+                    Successful = true,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn, EntityTypes.Success }
+                },
+                new Spawn
+                {
+                    Name = "SP-GT-01-03",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[0].Id,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn }
+                },
+                new Spawn
+                {
+                    Name = "SP-GT-01-04",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[0].Id,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn }
+                },
+                new Spawn
+                {
+                    Name = "SP-BP-01-01",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[1].Id,
+                    Successful = true,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn, EntityTypes.Success }
+                },
+                new Spawn
+                {
+                    Name = "SP-BP-01-02",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[1].Id,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn }
+                },
+                new Spawn
+                {
+                    Name = "SP-BP-01-03",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[1].Id,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-5), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-4), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn }
+                },
+                new Spawn
+                {
+                    Name = "SP-BP-02-01",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[4].Id,
+                    Successful = true,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-4), Users.Callum } },
+                    Modified = new Dictionary<DateTime, Users> { { DateTime.Now.AddHours(-3), Users.Ryan } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn, EntityTypes.Success }
+                },
+                new Spawn
+                {
+                    Name = "SP-BP-02-02",
+                    Type = SpawnTypes.PopCorn,
+                    Notes = "PC for 45 mins",
+                    Recipe = "PopcornRecipe",
+                    Location = Locations.IncubationChamber,
+                    Parent = cultures2[4].Id,
+                    Successful = true,
+                    Created = new Dictionary<DateTime, Users> { { DateTime.Now.AddDays(-4), Users.Callum } },
+                    Tags = new List<EntityTypes> { EntityTypes.Spawn, EntityTypes.Success }
+                }
+            };
+         */   
+        }
+    }
+}
+*/
+
+
+
+

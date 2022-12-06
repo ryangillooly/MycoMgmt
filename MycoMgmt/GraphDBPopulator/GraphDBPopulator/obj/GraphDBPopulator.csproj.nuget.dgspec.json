@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\GraphDBPopulator\\GraphDBPopulator.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\GraphDBPopulator\\GraphDBPopulator.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\GraphDBPopulator\\GraphDBPopulator.csproj",
+        "projectName": "GraphDBPopulator",
+        "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\GraphDBPopulator\\GraphDBPopulator.csproj",
+        "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\GraphDBPopulator\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
+            "Neo4j.Driver.Extensions": {
+              "target": "Package",
+              "version": "[1.0.14, )"
+            },
+            "Neo4j.Driver.Simple": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
+            "Neo4j.Tools.Write": {
+              "target": "Package",
+              "version": "[1.0.4, )"
+            },
+            "Neo4jClient": {
+              "target": "Package",
+              "version": "[5.1.2, )"
+            },
+            "Neo4jClient.Extension": {
+              "target": "Package",
+              "version": "[1.0.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\3.1.425\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
