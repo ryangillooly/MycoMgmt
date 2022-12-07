@@ -9,6 +9,7 @@ namespace MycoMgmt.API.Helpers
     {
         public static void CreateCulture(this IAsyncSession session, string id, string name, string isSuccessful, string type, string isPurchase) =>
             session.WriteToDatabase($@"MERGE (:Culture{isSuccessful}{type}{isPurchase} {{ UUID: '{id}', Name: '{name}' }});");
+        // Need to deal with the UUID aspect, as this is forcing us to create new Cultures in the DB, as when you Merge, the existing culture is different, via the UUID
         
         public static void CreateLocation(this IAsyncSession session, string id, string name) =>
             session.WriteToDatabase($@"MERGE (:Location {{ UUID: '{id}', Name: '{name}'}})");

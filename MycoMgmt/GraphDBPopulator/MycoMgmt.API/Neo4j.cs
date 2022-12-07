@@ -177,7 +177,7 @@ using Newtonsoft.Json;
               session.WriteToDatabase($"MERGE (:Ingredient {{ Name: 'Vermiculite' }})");
               session.WriteToDatabase($"MERGE (:Ingredient {{ Name: 'Coco-Coir' }})");
               session.WriteToDatabase(
-                  $"MERGE (:Strain {{ Name: 'GoldenTeacher', Effects:github ['Visuals','Calming','Oneness']}})");
+                  $"MERGE (:Strain {{ Name: 'GoldenTeacher', Effects:['Visuals','Calming','Oneness']}})");
               session.WriteToDatabase($"MERGE (:Strain {{ Name: 'BPlus', Effects: ['Visuals','Calming','Oneness']}})");
               session.WriteToDatabase(
                   $"MERGE (:Strain {{ Name: 'Mazapatec', Effects: ['Visuals','Calming','Oneness']}})");

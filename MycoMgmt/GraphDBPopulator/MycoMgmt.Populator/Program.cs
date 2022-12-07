@@ -4,6 +4,7 @@ using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MycoMgmt.API.Helpers;
+using MycoMgmt.API.Models;
 using MycoMgmt.Populator.Models;
 using Neo4j.Driver;
 using Neo4j.Driver.Extensions;
@@ -83,8 +84,7 @@ namespace MycoMgmt.Populator
         }
 
         public static string IsPurchase(this Culture culture) => culture.Vendor is null ? null : ":Purchase";
-
-
+        
         public static void CreateLocation(this IAsyncSession session, Location location)
         {
             session.WriteToDatabase($@"MERGE (:Location {{ Name: '{ location.Name }', AgentConfigured: '{ location.AgentConfigured }' }})");

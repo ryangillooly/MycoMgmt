@@ -4,6 +4,7 @@
 @using MycoMgmt.API.Helpers
 @using Microsoft.AspNetCore.Components
 @using MycoMgmt.API
+@using MycoMgmt.API.Models
 @using MycoMgmt.Populator
 
 <EditForm Model="@culture" OnValidSubmit="@onvalidsubmitcode" xmlns="http://www.w3.org/1999/html">
@@ -79,13 +80,15 @@
 
 @code 
 {
-    static IDriver driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("test", "test"));
-    public IAsyncSession session = driver.AsyncSession(o => o.WithDatabase("test"));
+    static IDriver driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("rg", "rg"));
+    public IAsyncSession session = driver.AsyncSession(o => o.WithDatabase("mycomgmt"));
     
     private Culture culture { get; set; } = new Culture();
 
     private void onvalidsubmitcode()
     {
+        var test = session.ReadFromDatabase("MATCH (c:Culture { Name: 'GT-01' }) RETURN c");
+    
         var isSuccessful = culture.IsSuccessful();
         var isPurchase = culture.IsPurchase();
         var type = ":" + culture.Type;
@@ -105,19 +108,11 @@
 
         
         // Map Culture > Location Stored
-        var query = $@" MATCH 
-                             (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }}),
-                             (l:Location {{ Name: '{location}'}})
-                        MERGE
-                            (c)-[:STORED_IN]->(l)";
+        var query = $@" MERGE (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }})-[:STORED_IN]->(l:Location {{ Name: '{location}'}})";
         
         session.WriteToDatabase(query);
         
-        var linkStrain = $@" MATCH 
-                                 (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }}),
-                                 (s:Strain {{ Name: '{strain}' }})
-                             MERGE
-                                 (c)-[:IS_STRAIN]->(s)";
+        var linkStrain = $@" MERGE (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }})-[:IS_STRAIN]->(s:Strain {{ Name: '{strain}' }})";
         
         session.WriteToDatabase(linkStrain);
 

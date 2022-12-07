@@ -14,27 +14,19 @@
       "Ensure.That/10.1.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.1/Ensure.That.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.1/Ensure.That.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.1/Ensure.That.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.1/Ensure.That.dll": {}
         }
       },
       "Microsoft.Bcl.AsyncInterfaces/5.0.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {}
         }
       },
       "Microsoft.CSharp/4.7.0": {
@@ -78,14 +70,10 @@
       "Microsoft.OpenApi/1.2.3": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Microsoft.OpenApi.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netstandard2.0/Microsoft.OpenApi.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.OpenApi.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netstandard2.0/Microsoft.OpenApi.dll": {}
         }
       },
       "Microsoft.VisualBasic/10.3.0": {
@@ -104,14 +92,10 @@
           "System.ValueTuple": "4.5.0"
         },
         "compile": {
-          "lib/netstandard2.0/Neo4j.Driver.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Neo4j.Driver.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Neo4j.Driver.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Neo4j.Driver.dll": {}
         }
       },
       "Neo4j.Driver.Extensions/1.0.14": {
@@ -134,14 +118,10 @@
           "System.ValueTuple": "4.5.0"
         },
         "compile": {
-          "lib/netstandard2.0/Neo4j.Driver.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Neo4j.Driver.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Neo4j.Driver.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Neo4j.Driver.dll": {}
         }
       },
       "Neo4jClient/5.1.2": {
@@ -168,14 +148,10 @@
           "Neo4jClient.Extension.Attributes": "1.0.1"
         },
         "compile": {
-          "lib/net45/Neo4jClient.Extension.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClient.Extension.dll": {}
         },
         "runtime": {
-          "lib/net45/Neo4jClient.Extension.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClient.Extension.dll": {}
         }
       },
       "Neo4jClient.Extension.Attributes/1.0.1": {
@@ -184,14 +160,10 @@
           "Neo4jClient": "1.1.0.1"
         },
         "compile": {
-          "lib/net45/Neo4jClient.Extension.Attributes.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClient.Extension.Attributes.dll": {}
         },
         "runtime": {
-          "lib/net45/Neo4jClient.Extension.Attributes.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClient.Extension.Attributes.dll": {}
         }
       },
       "Neo4jRepository/2.2.16": {
@@ -201,27 +173,19 @@
           "Neo4jClient": "1.0.0.547"
         },
         "compile": {
-          "lib/net45/Neo4jClientRepository.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClientRepository.dll": {}
         },
         "runtime": {
-          "lib/net45/Neo4jClientRepository.dll": {
-            "related": ".pdb"
-          }
+          "lib/net45/Neo4jClientRepository.dll": {}
         }
       },
       "Newtonsoft.Json/13.0.1": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
       "Swashbuckle.AspNetCore/6.4.0": {
@@ -242,14 +206,10 @@
           "Microsoft.OpenApi": "1.2.3"
         },
         "compile": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Swagger.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Swagger.dll": {}
         },
         "runtime": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Swagger.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Swagger.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -261,27 +221,19 @@
           "Swashbuckle.AspNetCore.Swagger": "6.4.0"
         },
         "compile": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerGen.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerGen.dll": {}
         },
         "runtime": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerGen.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerGen.dll": {}
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI/6.4.0": {
         "type": "package",
         "compile": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerUI.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerUI.dll": {}
         },
         "runtime": {
-          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerUI.dll": {
-            "related": ".pdb;.xml"
-          }
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.SwaggerUI.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -295,22 +247,16 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/_._": {}
         }
       },
       "System.ComponentModel.Annotations/5.0.0": {
         "type": "package",
         "compile": {
-          "ref/netstandard2.1/System.ComponentModel.Annotations.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard2.1/System.ComponentModel.Annotations.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.1/System.ComponentModel.Annotations.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.1/System.ComponentModel.Annotations.dll": {}
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -321,9 +267,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/_._": {}
         }
       },
       "System.Dynamic.Runtime/4.3.0": {
@@ -345,9 +289,7 @@
           "System.Threading": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/System.Dynamic.Runtime.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/System.Dynamic.Runtime.dll": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Dynamic.Runtime.dll": {}
@@ -361,9 +303,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/_._": {}
         }
       },
       "System.IO/4.3.0": {
@@ -376,9 +316,7 @@
           "System.Threading.Tasks": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.5/System.IO.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.5/System.IO.dll": {}
         }
       },
       "System.Linq/4.3.0": {
@@ -391,9 +329,7 @@
           "System.Runtime.Extensions": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.6/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.6/_._": {}
         },
         "runtime": {
           "lib/netstandard1.6/System.Linq.dll": {}
@@ -421,9 +357,7 @@
           "System.Threading": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.6/System.Linq.Expressions.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.6/System.Linq.Expressions.dll": {}
         },
         "runtime": {
           "lib/netstandard1.6/System.Linq.Expressions.dll": {}
@@ -439,9 +373,7 @@
           "System.Threading": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/System.ObjectModel.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/System.ObjectModel.dll": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.ObjectModel.dll": {}
@@ -457,9 +389,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.5/System.Reflection.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.5/System.Reflection.dll": {}
         }
       },
       "System.Reflection.Emit/4.3.0": {
@@ -472,9 +402,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.1/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.1/_._": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Reflection.Emit.dll": {}
@@ -488,9 +416,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.0/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.0/_._": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Reflection.Emit.ILGeneration.dll": {}
@@ -505,9 +431,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.0/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.0/_._": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Reflection.Emit.Lightweight.dll": {}
@@ -522,9 +446,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.0/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.0/_._": {}
         }
       },
       "System.Reflection.Primitives/4.3.0": {
@@ -535,9 +457,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.0/System.Reflection.Primitives.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.0/System.Reflection.Primitives.dll": {}
         }
       },
       "System.Reflection.TypeExtensions/4.3.0": {
@@ -547,9 +467,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.5/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.5/_._": {}
         },
         "runtime": {
           "lib/netstandard1.5/System.Reflection.TypeExtensions.dll": {}
@@ -565,9 +483,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.0/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.0/_._": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -577,9 +493,7 @@
           "Microsoft.NETCore.Targets": "1.1.0"
         },
         "compile": {
-          "ref/netstandard1.5/System.Runtime.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.5/System.Runtime.dll": {}
         }
       },
       "System.Runtime.Extensions/4.3.0": {
@@ -590,9 +504,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.5/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.5/_._": {}
         }
       },
       "System.Text.Encoding/4.3.0": {
@@ -603,9 +515,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/System.Text.Encoding.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/System.Text.Encoding.dll": {}
         }
       },
       "System.Threading/4.3.0": {
@@ -615,9 +525,7 @@
           "System.Threading.Tasks": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/_._": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Threading.dll": {}
@@ -631,9 +539,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/System.Threading.Tasks.dll": {
-            "related": ".xml"
-          }
+          "ref/netstandard1.3/System.Threading.Tasks.dll": {}
         }
       },
       "System.ValueTuple/4.5.0": {
@@ -2862,19 +2768,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ryang\\.nuget\\packages\\": {}
+    "/Users/ryan.gillooly/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
+      "projectUniqueName": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
       "projectName": "MycoMgmt.API",
-      "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
-      "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\obj\\",
+      "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
+      "packagesPath": "/Users/ryan.gillooly/.nuget/packages/",
+      "outputPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/ryan.gillooly/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -2884,6 +2790,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -2895,6 +2802,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "Neo4j.Driver": {
             "target": "Package",
@@ -2939,7 +2847,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -2951,7 +2860,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\3.1.425\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -2960,7 +2869,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'CacheController2 2.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "message": "Package 'CacheController2 2.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
       "libraryId": "CacheController2",
       "targetGraphs": [
         ".NETCoreApp,Version=v3.1"
@@ -2970,7 +2879,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Neo4jClient.Extension 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "message": "Package 'Neo4jClient.Extension 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
       "libraryId": "Neo4jClient.Extension",
       "targetGraphs": [
         ".NETCoreApp,Version=v3.1"
@@ -2980,7 +2889,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Neo4jClient.Extension.Attributes 1.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "message": "Package 'Neo4jClient.Extension.Attributes 1.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
       "libraryId": "Neo4jClient.Extension.Attributes",
       "targetGraphs": [
         ".NETCoreApp,Version=v3.1"
@@ -2990,7 +2899,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Neo4jRepository 2.2.16' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "message": "Package 'Neo4jRepository 2.2.16' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
       "libraryId": "Neo4jRepository",
       "targetGraphs": [
         ".NETCoreApp,Version=v3.1"
