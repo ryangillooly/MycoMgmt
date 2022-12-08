@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/MycoMgmt.Web.csproj": {}
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Web\\MycoMgmt.Web.csproj": {}
   },
   "projects": {
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
+        "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
         "projectName": "MycoMgmt.API",
-        "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
-        "packagesPath": "/Users/ryan.gillooly/.nuget/packages/",
-        "outputPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/obj/",
+        "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
+        "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/ryan.gillooly/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -94,21 +94,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/MycoMgmt.Populator.csproj": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\MycoMgmt.Populator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/MycoMgmt.Populator.csproj",
+        "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\MycoMgmt.Populator.csproj",
         "projectName": "MycoMgmt.Populator",
-        "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/MycoMgmt.Populator.csproj",
-        "packagesPath": "/Users/ryan.gillooly/.nuget/packages/",
-        "outputPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/obj/",
+        "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\MycoMgmt.Populator.csproj",
+        "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/ryan.gillooly/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -120,8 +120,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj": {
-                "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj"
+              "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj": {
+                "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj"
               }
             }
           }
@@ -173,21 +173,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/MycoMgmt.Web.csproj": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Web\\MycoMgmt.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/MycoMgmt.Web.csproj",
+        "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Web\\MycoMgmt.Web.csproj",
         "projectName": "MycoMgmt.Web",
-        "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/MycoMgmt.Web.csproj",
-        "packagesPath": "/Users/ryan.gillooly/.nuget/packages/",
-        "outputPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/obj/",
+        "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Web\\MycoMgmt.Web.csproj",
+        "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/ryan.gillooly/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -199,8 +199,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/MycoMgmt.Populator.csproj": {
-                "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Populator/MycoMgmt.Populator.csproj"
+              "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\MycoMgmt.Populator.csproj": {
+                "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.Populator\\MycoMgmt.Populator.csproj"
               }
             }
           }
@@ -233,7 +233,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -441,7 +441,7 @@
         "runtime": {
           "lib/net45/Neo4jClient.Extension.dll": {
             "assemblyVersion": "1.0.1.0",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.0.1.0"
           }
         },
         "compile": {
@@ -455,7 +455,7 @@
         "runtime": {
           "lib/net45/Neo4jClient.Extension.Attributes.dll": {
             "assemblyVersion": "1.0.1.0",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.0.1.0"
           }
         },
         "compile": {

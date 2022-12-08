@@ -71,45 +71,6 @@ namespace MycoMgmt.Populator
     public static class Extensions
     {
         
-
-        public static string IsSuccessful(this Culture culture)
-        {
-            if (!culture.Finished) return string.Empty;
-
-            return culture.Successful switch
-            {
-                true => ":Successful",
-                false => ":Failed"
-            };
-        }
-
-        public static string IsPurchase(this Culture culture) => culture.Vendor is null ? null : ":Purchase";
-        
-        public static void CreateLocation(this IAsyncSession session, Location location)
-        {
-            session.WriteToDatabase($@"MERGE (:Location {{ Name: '{ location.Name }', AgentConfigured: '{ location.AgentConfigured }' }})");
-        }
-       /* public static void CreateCulture(this IAsyncSession session, Culture culture)
-        {
-        
-
-            session.WriteToDatabase($@"MERGE (:Culture{culture.IsSuccessful()}{":" + culture.Type}{culture.IsPurchase()} {{ Name: '{culture.Name}' }});");
-            session.WriteToDatabase($@"
-                MATCH 
-                    (c:Culture{culture.IsSuccessful()}{":" + culture.Type}{culture.IsPurchase()} {{ Name: '{ culture.Name }' }}),
-                    (l:Location {{ Name: '{ culture.Location }'}})
-                MERGE
-                    (c)-[:STORED_IN]->(l)
-            ");
-
-            session.WriteToDatabase($@"
-                MATCH 
-                    (c:Culture{culture.IsSuccessful()}{":" + culture.Type}{culture.IsPurchase()} {{ Name: '{ culture.Name }' }}),
-                    (p:)
-                MERGE
-                    (c)-[:HAS_PARENt]->(p)
-            ");
-        }*/
         
         public static void CreateNeoTimeTree(this IAsyncSession session)
         {

@@ -12,113 +12,106 @@ namespace MycoMgmt.Web.Pages
     using System.Linq;
     using System.Threading.Tasks;
 #nullable restore
-#line 1 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 1 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 2 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 3 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 4 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 5 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 6 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 7 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 8 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using MycoMgmt.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/_Imports.razor"
+#line 9 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\_Imports.razor"
 using MycoMgmt.Web.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
-using MycoMgmt.Populator.Models;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 3 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 2 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
 using Neo4j.Driver;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 3 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
 using MycoMgmt.API.Helpers;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 4 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
 using Microsoft.AspNetCore.Components;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 5 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
 using MycoMgmt.API;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 7 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
 using MycoMgmt.API.Models;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 8 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
-using MycoMgmt.Populator;
 
 #line default
 #line hidden
@@ -132,56 +125,25 @@ using MycoMgmt.Populator;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 82 "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.Web/Pages/NewCulture.razor"
+#line 87 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
  
-    static IDriver driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("rg", "rg"));
-    public IAsyncSession session = driver.AsyncSession(o => o.WithDatabase("mycomgmt"));
+    static readonly IDriver Driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("rg", "rg"));
+    private readonly IAsyncSession _session = Driver.AsyncSession(o => o.WithDatabase("mycomgmt"));
     
-    private Culture culture { get; set; } = new Culture();
-
-    private void onvalidsubmitcode()
+    private Culture Culture { get; set; } = new Culture();
+    private string ParentName { get; set; } = null;
+    
+    private void Onvalidsubmitcode()
     {
-        var test = session.ReadFromDatabase("MATCH (c:Culture { Name: 'GT-01' }) RETURN c");
-    
-        var isSuccessful = culture.IsSuccessful();
-        var isPurchase = culture.IsPurchase();
-        var type = ":" + culture.Type;
-        var name = culture.Name;
-        var id = culture.Id;
-        var location = culture.Location.ToString();
-        var strain = culture.Strain.ToString();
+        _session.CreateCulture(Culture);
         
-        session.CreateCulture(id ,name, isSuccessful, type, isPurchase);
-        session.CreateLocation(id, location);
-
         
-        // if (string.IsNullOrEmpty(culture.Parent))
-       // {
-         //   session.CreateParentRelationship(culture.Id, );
-        //}
-
+        if (!string.IsNullOrEmpty(ParentName))
+        {
+            _session.CreateParentRelationship($"(c:Culture {{ Name: '{Culture.Name}' }})", $"(n {{ Name: '{ParentName}' }})");
+        }
         
-        // Map Culture > Location Stored
-        var query = $@" MERGE (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }})-[:STORED_IN]->(l:Location {{ Name: '{location}'}})";
-        
-        session.WriteToDatabase(query);
-        
-        var linkStrain = $@" MERGE (c:Culture{isSuccessful}{type}{isPurchase} {{ Name: '{name}' }})-[:IS_STRAIN]->(s:Strain {{ Name: '{strain}' }})";
-        
-        session.WriteToDatabase(linkStrain);
-
-        /*
-        session.WriteToDatabase(
-         $@"MATCH 
-                (c:Culture{culture.IsSuccessful()}{':' + culture.Type}{culture.IsPurchase()} {{ Name: '{culture.Name}' }}),
-                (p:)
-            MERGE
-                (c)-[:HAS_PARENT]->(p)"
-        );
-        */
     }
-
-   
 
 #line default
 #line hidden

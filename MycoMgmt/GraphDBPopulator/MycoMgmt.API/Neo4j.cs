@@ -90,6 +90,7 @@ using Newtonsoft.Json;
                   $@"MERGE (:Location {{ Name: '{location.Name}', AgentConfigured: '{location.AgentConfigured}' }})");
           }
 
+          /*
           public static void CreateCulture(this IAsyncSession session, Culture culture)
           {
 
@@ -112,7 +113,7 @@ using Newtonsoft.Json;
                     (c)-[:HAS_PARENt]->(p)
             ");
           }
-
+*/
           public static void CreateNeoTimeTree(this IAsyncSession session)
           {
               session.WriteToDatabase(

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj": {}
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj": {}
   },
   "projects": {
-    "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj": {
+    "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
+        "projectUniqueName": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
         "projectName": "MycoMgmt.API",
-        "projectPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/MycoMgmt.API.csproj",
-        "packagesPath": "/Users/ryan.gillooly/.nuget/packages/",
-        "outputPath": "/Users/ryan.gillooly/Documents/GitHub/MycoMgmt/MycoMgmt/GraphDBPopulator/MycoMgmt.API/obj/",
+        "projectPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\MycoMgmt.API.csproj",
+        "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryang\\Documents\\GitHub\\MycoMgmt\\MycoMgmt\\GraphDBPopulator\\MycoMgmt.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/ryan.gillooly/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -94,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }
