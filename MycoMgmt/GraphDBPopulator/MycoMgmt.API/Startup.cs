@@ -29,7 +29,7 @@ namespace MycoMgmt.API
             var settings = new Neo4JSettings();
             Configuration.GetSection("Neo4JSettings").Bind(settings);
             
-            services.AddSingleton(GraphDatabase.Driver(settings.Neo4jConnection, AuthTokens.Basic(settings.Neo4jUser, settings.Neo4jPassword)));
+            services.AddSingleton<IDriver>(GraphDatabase.Driver(settings.Neo4jConnection, AuthTokens.Basic(settings.Neo4jUser, settings.Neo4jPassword)));
             services.AddScoped<INeo4JDataAccess, Neo4JDataAccess>();
             services.AddTransient<IRecipeRepository, RecipeRepository>();
         }
