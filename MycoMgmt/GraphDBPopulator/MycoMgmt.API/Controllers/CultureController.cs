@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MycoMgmt.API.Models;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -13,12 +14,12 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class CultureController : Controller
     {
-        private readonly ICultureRepository _repo;
+        private readonly ICultureRepository _cultureRepository;
         private readonly IDriver _driver;
         
         public CultureController(ICultureRepository repo, IDriver driver)
         {
-            this._repo = repo;
+            this._cultureRepository = repo;
             this._driver = driver;
         }
 
@@ -36,17 +37,16 @@ namespace MycoMgmt.API.Controllers
             bool? successful,
             bool finished,
             string created,
-            string? modified,
             string? user
         )
-        {           
+        {
+
             Enum.TryParse(strain, out Strain strains);
             Enum.TryParse(type, out CultureTypes cultureType);
             Enum.TryParse(location, out Locations locations);
-            
+
             var culture = new Culture()
             {
-                Id     = Guid.NewGuid().ToString(),
                 Name   = name,
                 Type   = cultureType,
                 Strain = strains,
@@ -55,19 +55,26 @@ namespace MycoMgmt.API.Controllers
                 Parent = parent ,
                 Child = child,
                 Vendor = vendor,
-                Successful = (bool)successful,
+                Successful = successful,
                 Finished = finished,
-                Created = new Created { ByUserId = user, On = DateTime.Parse(created) },
-                Modified = new Modified { ByUserId = user, On = DateTime.Parse(modified) }
+                CreatedOn = DateTime.Parse(created),
+                CreatedBy = user
             };
 
-            await _repo.AddCulture(culture);
+            await _cultureRepository.AddCulture(culture);
         }
 
+        [HttpGet("{id}")]
+        public async Task<string> GetCultureById(string id)
+        {
+            var node = await _cultureRepository.SearchCultureById(id);
+            return JsonConvert.SerializeObject(node);
+        }
+        
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {
-            var recipeCount = await _repo.GetCultureCount();
+            var recipeCount = await _cultureRepository.GetCultureCount();
             Console.WriteLine($"RecipeCount - { recipeCount.ToString() }");
             return recipeCount;
         }

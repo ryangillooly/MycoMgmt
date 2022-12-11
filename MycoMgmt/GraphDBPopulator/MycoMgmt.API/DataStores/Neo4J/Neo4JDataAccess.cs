@@ -11,9 +11,7 @@ namespace MycoMgmt.API.DataStores
     public class Neo4JDataAccess : INeo4JDataAccess
     {
         private IAsyncSession _session;
-
         private ILogger<Neo4JDataAccess> _logger;
-
         private string _database;
 
         /// <summary>
@@ -78,15 +76,13 @@ namespace MycoMgmt.API.DataStores
         {
             try
             {
-                parameters = parameters == null ? new Dictionary<string, object>() : parameters;
+                parameters = parameters ?? new Dictionary<string, object>();
 
-                var result = await _session.ExecuteWriteAsync(async tx =>
+                var result = await _session.WriteTransactionAsync(async tx =>
                 {
-                    T scalar = default(T);
-
                     var res = await tx.RunAsync(query, parameters);
 
-                    scalar = (await res.SingleAsync())[0].As<T>();
+                    var scalar = (await res.SingleAsync())[0].As<T>();
 
                     return scalar;
                 });

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using MycoMgmt.API.DataStores;
 using MycoMgmt.API.Models;
 using Neo4j.Driver;
 
@@ -7,7 +9,7 @@ namespace MycoMgmt.API.Helpers
 {
     public static class NeoExtensions
     {
-       // public static void CreateCulture(this IAsyncSession session, string id, string name, string isSuccessful, string type, string isPurchase) =>
+        // public static void CreateCulture(this IAsyncSession session, string id, string name, string isSuccessful, string type, string isPurchase) =>
          //   session.WriteToDatabase($@"MERGE (:Culture{isSuccessful}{type}{isPurchase} {{ UUID: '{id}', Name: '{name}' }});");
         // Need to deal with the UUID aspect, as this is forcing us to create new Cultures in the DB, as when you Merge, the existing culture is different, via the UUID
 
@@ -17,7 +19,6 @@ namespace MycoMgmt.API.Helpers
             var isPurchase = culture.IsPurchase();
             var type = ":" + culture.Type;
             var name = culture.Name;
-            var id = culture.Id;
             var location = culture.Location.ToString();
             var strain = culture.Strain.ToString();
         
@@ -70,7 +71,7 @@ namespace MycoMgmt.API.Helpers
         
         public static string IsSuccessful(this Culture culture)
         {
-            if (!culture.Finished) return string.Empty;
+            if ((bool)!culture.Finished) return string.Empty;
 
             return culture.Successful switch
             {

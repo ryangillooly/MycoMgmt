@@ -72,23 +72,13 @@ using Newtonsoft.Json;
       public static class Extensions
       {
 
-          private static string IsSuccessful(this Culture culture)
-          {
-              return culture.Finished switch
-              {
-                  true when culture.Successful => "Successful",
-                  true when !culture.Successful => "Failed",
-                  _ => ""
-              };
-          }
-
-          private static string IsPurchase(this Culture culture) => culture.Vendor is null ? "" : ":Purchase";
-
+       /*
           public static void CreateLocation(this IAsyncSession session, Location location)
           {
               session.WriteToDatabase(
                   $@"MERGE (:Location {{ Name: '{location.Name}', AgentConfigured: '{location.AgentConfigured}' }})");
           }
+          */
 
           /*
           public static void CreateCulture(this IAsyncSession session, Culture culture)

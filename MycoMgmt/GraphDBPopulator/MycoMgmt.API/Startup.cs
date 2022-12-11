@@ -23,6 +23,7 @@ namespace MycoMgmt.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddControllers();
             services.Configure<Neo4JSettings>(Configuration.GetSection("Neo4JSettings"));
 
@@ -31,7 +32,7 @@ namespace MycoMgmt.API
             
             services.AddSingleton<IDriver>(GraphDatabase.Driver(settings.Neo4jConnection, AuthTokens.Basic(settings.Neo4jUser, settings.Neo4jPassword)));
             services.AddScoped<INeo4JDataAccess, Neo4JDataAccess>();
-            services.AddTransient<IRecipeRepository, RecipeRepository>();
+            services.AddTransient<ICultureRepository, CultureRepository>();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +43,7 @@ namespace MycoMgmt.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
             
             if (env.IsDevelopment())

@@ -2,3 +2,7 @@
 *.dll
 *.exe
 *.cache
+MycoMgmt/GraphDBPopulator/MycoMgmt.API/.DS_Store
+MycoMgmt/GraphDBPopulator/MycoMgmt.API/bin/Debug/netcoreapp3.1/MycoMgmt.API.deps.json
+MycoMgmt/GraphDBPopulator/MycoMgmt.API/bin/Debug/netcoreapp3.1/MycoMgmt.API.pdb
+MycoMgmt/GraphDBPopulator/MycoMgmt.API/bin/Debug/netcoreapp3.1/MycoMgmt.API.runtimeconfig.dev.json

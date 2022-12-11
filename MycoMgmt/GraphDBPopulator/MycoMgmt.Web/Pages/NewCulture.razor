@@ -1,11 +1,10 @@
 ﻿@page "/culture/new"
 @using Neo4j.Driver
 @using MycoMgmt.API.Helpers
-@using Microsoft.AspNetCore.Components
-@using Microsoft.Extensions.DependencyInjection
-@using Microsoft.AspNetCore.Mvc.Razor.TagHelpers
-@using System.Web
 @using MycoMgmt.API.Models
+@using Microsoft.AspNetCore.Components
+@using System.Security.Policy
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@Culture" OnValidSubmit="@Onvalidsubmitcode" xmlns="http://www.w3.org/1999/html">
     <DataAnnotationsValidator />
@@ -60,7 +59,7 @@
         <br/>
        
         <select class="form-control" @bind="Culture.Location">
-            <option value="@(Locations.Fridge)"> @(Locations.Fridge) </option>
+            <option value="@(Locations.Fridge)"> @Locations.Fridge </option>
             <option value="@(Locations.GrowTent)"> @(Locations.GrowTent) </option>
             <option value="@(Locations.IncubationChamber)"> @(Locations.IncubationChamber) </option>
             <option value="@(Locations.WineCooler)"> @(Locations.WineCooler) </option>
@@ -80,9 +79,17 @@
         <InputCheckbox @bind-Value="(Culture.Finished)" />
     </div>
     
-    <button type="submit" class="btn-dark">Submit</button>
+    <button type="submit" @onclick="@GoToCulturePage" class="btn-dark">Submit</button>
 </EditForm>
     
+@code {
+    // Define the RedirectToAnotherUrl method to handle the button click event
+    public void GoToCulturePage()
+    {
+    // Use the NavigationManager to navigate to the new URL
+        NavigationManager.NavigateTo($"https://localhost:8001/culture/{Culture.Name}");
+    }
+}
 
 @code 
 {
@@ -95,7 +102,6 @@
     private void Onvalidsubmitcode()
     {
         _session.CreateCulture(Culture);
-        
         
         if (!string.IsNullOrEmpty(ParentName))
         {

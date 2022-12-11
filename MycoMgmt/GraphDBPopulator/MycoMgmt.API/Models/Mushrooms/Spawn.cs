@@ -5,11 +5,10 @@ using MycoMgmt.API.Models;
 
 namespace MycoMgmt.API.Models
 {
-    public class Spawn
+    public class Spawn : ModelBase
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Spawn };
-        public string Name { get; set; }
         public SpawnTypes Type { get; set; }
         public string Notes { get; set; }
         public string Recipe { get; set; }
@@ -18,7 +17,5 @@ namespace MycoMgmt.API.Models
         public Guid Child { get; set; }
         public bool Successful { get; set; } = false;
         public bool Finished { get; set; } = false;
-        public Created Created { get; set; }
-        public Modified Modified { get; set; }
     }
 }

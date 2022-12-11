@@ -5,13 +5,9 @@ using MycoMgmt.API.Models;
 
 namespace MycoMgmt.API.Models
 {
-    public class Vendor
+    public class Vendor : ModelBase
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Vendor };
-        public string Name { get; set; }
         public Uri URL { get; set; }
-        public Created Created { get; set; }
-        public Modified Modified { get; set; }
     }
 }
