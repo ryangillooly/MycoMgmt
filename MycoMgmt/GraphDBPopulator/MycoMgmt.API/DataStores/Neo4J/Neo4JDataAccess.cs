@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.DataStores
 {
@@ -61,6 +62,10 @@ namespace MycoMgmt.API.DataStores
                 });
 
                 return result;
+            }
+            catch (InvalidOperationException ex)
+            {
+               throw;
             }
             catch (Exception ex)
             {

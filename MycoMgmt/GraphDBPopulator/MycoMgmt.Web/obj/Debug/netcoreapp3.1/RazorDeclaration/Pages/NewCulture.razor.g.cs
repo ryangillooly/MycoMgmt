@@ -90,42 +90,48 @@ using MycoMgmt.API.Helpers;
 #nullable disable
 #nullable restore
 #line 4 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
-using Microsoft.AspNetCore.Components;
+using MycoMgmt.API.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 5 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
-using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
+using Microsoft.AspNetCore.Components;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 6 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
-using MycoMgmt.API;
+using System.Security.Policy;
 
 #line default
 #line hidden
 #nullable disable
-#nullable restore
-#line 7 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
-using MycoMgmt.API.Models;
-
-#line default
-#line hidden
-#nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/culture/new")]
-    public partial class NewCulture : Microsoft.AspNetCore.Components.ComponentBase
+    [global::Microsoft.AspNetCore.Components.RouteAttribute("/culture/new")]
+    public partial class NewCulture : global::Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
-        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
         }
         #pragma warning restore 1998
 #nullable restore
-#line 87 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
+#line 85 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
+       
+    // Define the RedirectToAnotherUrl method to handle the button click event
+    public void GoToCulturePage()
+    {
+    // Use the NavigationManager to navigate to the new URL
+        NavigationManager.NavigateTo($"https://localhost:8001/culture/{Culture.Name}");
+    }
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 95 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Pages\NewCulture.razor"
  
     static readonly IDriver Driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("rg", "rg"));
     private readonly IAsyncSession _session = Driver.AsyncSession(o => o.WithDatabase("mycomgmt"));
@@ -137,7 +143,6 @@ using MycoMgmt.API.Models;
     {
         _session.CreateCulture(Culture);
         
-        
         if (!string.IsNullOrEmpty(ParentName))
         {
             _session.CreateParentRelationship($"(c:Culture {{ Name: '{Culture.Name}' }})", $"(n {{ Name: '{ParentName}' }})");
@@ -148,6 +153,7 @@ using MycoMgmt.API.Models;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
     }
 }
 #pragma warning restore 1591

@@ -160,3 +160,5 @@ C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\obj\Debug\netcoreapp3.1\MycoMgmt.Web.csproj.CopyComplete
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\obj\Debug\netcoreapp3.1\MycoMgmt.Web.genruntimeconfig.cache
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\obj\Debug\netcoreapp3.1\MycoMgmt.Web.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ViewCulture.razor.g.cs
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\obj\Debug\netcoreapp3.1\Razor\Pages\ViewCulture.razor.g.cs

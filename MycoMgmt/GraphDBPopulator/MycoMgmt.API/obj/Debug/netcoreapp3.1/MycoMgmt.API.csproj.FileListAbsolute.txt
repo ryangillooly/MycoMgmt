@@ -69,3 +69,8 @@ C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\MycoMgmt.API.dll
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\MycoMgmt.API.pdb
 C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\MycoMgmt.API.genruntimeconfig.cache
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\staticwebassets\MycoMgmt.API.StaticWebAssets.Pack.cache
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.MycoMgmt.API.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.build.MycoMgmt.API.props
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildMultiTargeting.MycoMgmt.API.props
+C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.API\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildTransitive.MycoMgmt.API.props

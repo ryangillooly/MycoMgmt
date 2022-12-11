@@ -7,6 +7,7 @@ using MycoMgmt.API.DataStores;
 using MycoMgmt.API.Models;
 using MycoMgmt.Populator.Models;
 using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Repositories
 {
@@ -32,12 +33,28 @@ namespace MycoMgmt.API.Repositories
             return persons;
         }
 
-        public async Task<INode> SearchCultureById(string id)
+        public async Task<string> SearchCultureById(string id)
         {
             var query = $"MATCH (c:Culture) WHERE ID(c) = { id } RETURN c";
-            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(query);
 
-            return result;
+            try
+            {
+                var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(query);
+                return JsonConvert.SerializeObject(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message != "The result is empty.") 
+                    throw;
+                
+                return JsonConvert.SerializeObject(new { Message = $"No results were found for Culture Id { id }" });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return null;
         }
         
         public async Task<INode> AddCulture(Culture culture)

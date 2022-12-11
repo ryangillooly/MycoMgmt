@@ -72,10 +72,10 @@ using MycoMgmt.Web.Shared;
 #line default
 #line hidden
 #nullable disable
-    public partial class NavMenu : Microsoft.AspNetCore.Components.ComponentBase
+    public partial class NavMenu : global::Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
-        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "class", "top-row pl-4 navbar navbar-dark");
@@ -83,7 +83,7 @@ using MycoMgmt.Web.Shared;
             __builder.AddMarkupContent(3, "<a class=\"navbar-brand\" href>MycoMgmt.Web</a>\r\n    ");
             __builder.OpenElement(4, "button");
             __builder.AddAttribute(5, "class", "navbar-toggler");
-            __builder.AddAttribute(6, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
+            __builder.AddAttribute(6, "onclick", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
 #nullable restore
 #line 3 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Shared\NavMenu.razor"
                                              ToggleNavMenu
@@ -107,7 +107,7 @@ using MycoMgmt.Web.Shared;
 #line hidden
 #nullable disable
             );
-            __builder.AddAttribute(12, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
+            __builder.AddAttribute(12, "onclick", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
 #nullable restore
 #line 8 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Shared\NavMenu.razor"
                                         ToggleNavMenu
@@ -123,10 +123,10 @@ using MycoMgmt.Web.Shared;
             __builder.OpenElement(17, "li");
             __builder.AddAttribute(18, "class", "nav-item px-3");
             __builder.AddMarkupContent(19, "\r\n            ");
-            __builder.OpenComponent<Microsoft.AspNetCore.Components.Routing.NavLink>(20);
+            __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Routing.NavLink>(20);
             __builder.AddAttribute(21, "class", "nav-link");
             __builder.AddAttribute(22, "href", "");
-            __builder.AddAttribute(23, "Match", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Microsoft.AspNetCore.Components.Routing.NavLinkMatch>(
+            __builder.AddAttribute(23, "Match", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.Routing.NavLinkMatch>(
 #nullable restore
 #line 11 "C:\Users\ryang\Documents\GitHub\MycoMgmt\MycoMgmt\GraphDBPopulator\MycoMgmt.Web\Shared\NavMenu.razor"
                                                      NavLinkMatch.All
@@ -135,7 +135,7 @@ using MycoMgmt.Web.Shared;
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(24, "ChildContent", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+            __builder.AddAttribute(24, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddMarkupContent(25, "\r\n                <span class=\"oi oi-home\" aria-hidden=\"true\"></span> Home\r\n            ");
             }
             ));
@@ -146,10 +146,10 @@ using MycoMgmt.Web.Shared;
             __builder.OpenElement(28, "li");
             __builder.AddAttribute(29, "class", "nav-item px-3");
             __builder.AddMarkupContent(30, "\r\n            ");
-            __builder.OpenComponent<Microsoft.AspNetCore.Components.Routing.NavLink>(31);
+            __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Routing.NavLink>(31);
             __builder.AddAttribute(32, "class", "nav-link");
             __builder.AddAttribute(33, "href", "counter");
-            __builder.AddAttribute(34, "ChildContent", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+            __builder.AddAttribute(34, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddMarkupContent(35, "\r\n                <span class=\"oi oi-plus\" aria-hidden=\"true\"></span> Counter\r\n            ");
             }
             ));
@@ -160,10 +160,10 @@ using MycoMgmt.Web.Shared;
             __builder.OpenElement(38, "li");
             __builder.AddAttribute(39, "class", "nav-item px-3");
             __builder.AddMarkupContent(40, "\r\n            ");
-            __builder.OpenComponent<Microsoft.AspNetCore.Components.Routing.NavLink>(41);
+            __builder.OpenComponent<global::Microsoft.AspNetCore.Components.Routing.NavLink>(41);
             __builder.AddAttribute(42, "class", "nav-link");
             __builder.AddAttribute(43, "href", "fetchdata");
-            __builder.AddAttribute(44, "ChildContent", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+            __builder.AddAttribute(44, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
                 __builder2.AddMarkupContent(45, "\r\n                <span class=\"oi oi-list-rich\" aria-hidden=\"true\"></span> Fetch data\r\n            ");
             }
             ));

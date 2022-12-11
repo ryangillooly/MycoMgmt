@@ -75,12 +75,12 @@ using MycoMgmt.Web.Shared;
     public partial class MainLayout : LayoutComponentBase
     {
         #pragma warning disable 1998
-        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "class", "sidebar");
             __builder.AddMarkupContent(2, "\r\n    ");
-            __builder.OpenComponent<MycoMgmt.Web.Shared.NavMenu>(3);
+            __builder.OpenComponent<global::MycoMgmt.Web.Shared.NavMenu>(3);
             __builder.CloseComponent();
             __builder.AddMarkupContent(4, "\r\n");
             __builder.CloseElement();
