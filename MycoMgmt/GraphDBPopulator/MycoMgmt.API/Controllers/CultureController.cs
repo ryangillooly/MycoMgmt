@@ -24,7 +24,7 @@ namespace MycoMgmt.API.Controllers
         }
 
         [HttpPost("new")]
-        public async void NewCulture
+        public async Task<string> NewCulture
         (
             string? name, 
             string? type, 
@@ -61,7 +61,9 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy = user
             };
 
-            await _cultureRepository.AddCulture(culture);
+            var result = await _cultureRepository.AddCulture(culture);
+
+            return result;
         }
 
         [HttpGet("{id}")]

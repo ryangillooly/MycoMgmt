@@ -41,7 +41,7 @@ namespace MycoMgmt.API.Repositories
         /// <summary>
         /// Adds a new person
         /// </summary>
-        public async Task<bool> AddRecipe(Recipe recipe)
+        public async Task<string> AddRecipe(Recipe recipe)
         {
             if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
             {
@@ -59,7 +59,7 @@ namespace MycoMgmt.API.Repositories
                                 ) 
                             ";
 
-                 return await _neo4JDataAccess.ExecuteWriteTransactionAsync<bool>(query);
+                 return await _neo4JDataAccess.ExecuteWriteTransactionAsync<string>(query);
             }
             else
             {

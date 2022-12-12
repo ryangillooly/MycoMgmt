@@ -12,6 +12,6 @@ namespace MycoMgmt.API.DataStores
 
         Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null);
 
-        Task<T> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null);
+        Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object> parameters = null);
     }
 }

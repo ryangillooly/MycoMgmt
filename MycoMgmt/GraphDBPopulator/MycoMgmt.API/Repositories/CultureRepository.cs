@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores;
@@ -52,34 +53,72 @@ namespace MycoMgmt.API.Repositories
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
+                throw;
+            }
+        }
+        
+        public async Task<string> AddCulture(Culture culture)
+        {
+            if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
+                throw new System.ArgumentNullException(nameof(culture), "Culture must not be null");
+
+            try
+            {
+                var query = $@"
+                            MERGE 
+                            (
+                                c:Culture
+                                {{
+                                    Name:  '{culture.Name}',
+                                    Type:  '{culture.Type}'
+                                }}        
+                            ) 
+                            RETURN c;
+                        ";
+                
+                var strain = $@"
+                                    MATCH 
+                                        (c:Culture {{ Name: '{culture.Name}' }}), 
+                                        (s:Strain {{ Name: '{culture.Strain}' }})
+                                    MERGE
+                                        (c)-[r:HAS_STRAIN]->(s)
+                                    RETURN r";
+                
+               var location = $@"
+                                    MATCH 
+                                        (c:Culture  {{ Name: '{culture.Name}' }}), 
+                                        (l:Location {{ Name: '{culture.Location}' }})
+                                    MERGE
+                                        (c)-[r:STORED_IN]->(l)
+                                    RETURN r
+                                  ";
+
+                var result           = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
+                var strainRelResults = await _neo4JDataAccess.ExecuteWriteTransactionAsync<IRelationship>(strain);
+                var locationResults  = await _neo4JDataAccess.ExecuteWriteTransactionAsync<IRelationship>(location);
+                
+                var obj = new
+                {
+                    culture     = result,
+                    strainRel   = strainRelResults,
+                    locationRel = locationResults
+                };
+                
+                return JsonConvert.SerializeObject(obj);
+            }
+            catch (ClientException ex)
+            {
+                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                    throw;
+                
+                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name { culture.Name }" });
+            }
+            catch (Exception ex)
+            {
+                throw new System.ArgumentException(ex.Message);
             }
 
             return null;
-        }
-        
-        public async Task<INode> AddCulture(Culture culture)
-        {
-            if (culture != null && !string.IsNullOrWhiteSpace(culture.Name))
-            {
-                var query = $@"
-                                MERGE 
-                                (
-                                    c:Culture
-                                    {{
-                                        Name:  '{ culture.Name }',
-                                        Type:  '{ culture.Type }'
-                                    }}        
-                                ) 
-                                RETURN c
-                            ";
-
-                 var result = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
-                 return result;
-            }
-            else
-            {
-                throw new System.ArgumentNullException(nameof(culture), "Culture must not be null");
-            }
         }
         
         public async Task<long> GetCultureCount()

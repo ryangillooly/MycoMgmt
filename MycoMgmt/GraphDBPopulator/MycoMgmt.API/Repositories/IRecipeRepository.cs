@@ -8,7 +8,7 @@ namespace MycoMgmt.API.Repositories
     public interface IRecipeRepository
     {
         [HttpPost]
-        public Task<bool> AddRecipe(Recipe recipe);
+        public Task<string> AddRecipe(Recipe recipe);
         public Task<List<Dictionary<string, object>>> SearchRecipeByName(string searchString);
         public Task<long> GetRecipeCount();
     }

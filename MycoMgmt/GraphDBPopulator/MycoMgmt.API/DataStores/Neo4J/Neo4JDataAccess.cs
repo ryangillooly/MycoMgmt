@@ -77,7 +77,8 @@ namespace MycoMgmt.API.DataStores
         /// <summary>
         /// Execute write transaction
         /// </summary>
-        public async Task<T> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null)
+        public async Task<string> ExecuteWriteTransactionAsync<T>(string query,
+            IDictionary<string, object> parameters = null)
         {
             try
             {
@@ -92,7 +93,14 @@ namespace MycoMgmt.API.DataStores
                     return scalar;
                 });
 
-                return result;
+                return JsonConvert.SerializeObject(result);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                if (ex.Message != "The result is empty.") 
+                    throw;
+            
+                return JsonConvert.SerializeObject(new { Message = $"No results were found for Culture" });
             }
             catch (Exception ex)
             {
