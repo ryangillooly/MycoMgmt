@@ -7,6 +7,7 @@ using MycoMgmt.API.DataStores.Neo4J;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
+// ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories
 {
     public class CultureRepository : ICultureRepository

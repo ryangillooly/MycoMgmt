@@ -68,9 +68,9 @@ namespace MycoMgmt.API.Controllers
         }
 
         [HttpGet("{id:long}")]
-        public async Task<string> GetCultureById(string id)
+        public async Task<string> GetCultureById(long id)
         {
-            var node = await _cultureRepository.GetCultureById(id);
+            var node = await _cultureRepository.GetCultureById(id.ToString());
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
         
