@@ -64,47 +64,52 @@ namespace MycoMgmt.API.Repositories
 
             try
             {
-                var query = $@"
-                            MERGE 
-                            (
-                                c:Culture
-                                {{
-                                    Name:  '{culture.Name}',
-                                    Type:  '{culture.Type}'
-                                }}        
-                            ) 
-                            RETURN c;
-                        ";
-                
-                var strain = $@"
-                                    MATCH 
-                                        (c:Culture {{ Name: '{culture.Name}' }}), 
-                                        (s:Strain {{ Name: '{culture.Strain}' }})
-                                    MERGE
-                                        (c)-[r:HAS_STRAIN]->(s)
-                                    RETURN r";
-                
-               var location = $@"
-                                    MATCH 
-                                        (c:Culture  {{ Name: '{culture.Name}' }}), 
-                                        (l:Location {{ Name: '{culture.Location}' }})
-                                    MERGE
-                                        (c)-[r:STORED_IN]->(l)
-                                    RETURN r
-                                  ";
-
-                var result           = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
-                var strainRelResults = await _neo4JDataAccess.ExecuteWriteTransactionAsync<IRelationship>(strain);
-                var locationResults  = await _neo4JDataAccess.ExecuteWriteTransactionAsync<IRelationship>(location);
-                
-                var obj = new
+                var queryList = new List<string>
                 {
-                    culture     = result,
-                    strainRel   = strainRelResults,
-                    locationRel = locationResults
-                };
-                
-                return JsonConvert.SerializeObject(obj);
+                    $@"
+                        MERGE 
+                        (
+                            c:Culture
+                            {{
+                                Name:  '{culture.Name}',
+                                Type:  '{culture.Type}'
+                            }}        
+                        ) 
+                        RETURN c;
+                        ",
+                        $@"
+                            MATCH 
+                                (c:Culture {{ Name: '{culture.Name}' }}), 
+                                (s:Strain {{ Name: '{culture.Strain}' }})
+                            MERGE
+                                (c)-[r:HAS_STRAIN]->(s)
+                            RETURN r",
+                        $@"
+                            MATCH 
+                                (c:Culture  {{ Name: '{culture.Name}' }}), 
+                                (l:Location {{ Name: '{culture.Location}' }})
+                            MERGE
+                                (c)-[r:STORED_IN]->(l)
+                            RETURN r
+                        "
+                    };
+
+                if (culture.Parent != null)
+                {
+                    queryList.Add(
+                        $@"
+                                MATCH 
+                                    (c:Culture {{ Name: '{culture.Name}' }}), 
+                                    (p:Culture {{ Name: '{culture.Parent}' }})
+                                MERGE
+                                    (c)-[r:HAS_PARENT]->(p)
+                                RETURN r
+                            ");
+                }
+
+                var result = await _neo4JDataAccess.RunTransaction(queryList);
+
+                return result;
             }
             catch (ClientException ex)
             {

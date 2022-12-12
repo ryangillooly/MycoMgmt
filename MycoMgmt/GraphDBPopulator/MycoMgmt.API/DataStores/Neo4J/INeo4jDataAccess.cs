@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Neo4j.Driver;
 
 namespace MycoMgmt.API.DataStores
 {
@@ -13,5 +14,7 @@ namespace MycoMgmt.API.DataStores
         Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null);
 
         Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object> parameters = null);
+
+        Task<string> RunTransaction(List<string> queryList);
     }
 }

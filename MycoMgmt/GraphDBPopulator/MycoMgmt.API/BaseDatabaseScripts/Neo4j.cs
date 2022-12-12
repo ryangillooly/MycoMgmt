@@ -268,6 +268,12 @@ using Newtonsoft.Json;
               session.WriteToDatabase(
                   $"MATCH (sp:Spawn:Successful {{ Name: 'SPN-BP-01-01' }}), (s:Strain {{ Name: 'B+' }}) MERGE (sp)-[:IS_STRAIN]->(s)");
 
+              
+              /*
+               * CREATE CONSTRAINTS
+               *
+               * CREATE CONSTRAINT UniqueName_Culture IF NOT EXISTS FOR (c:Culture) REQUIRE c.Name IS UNIQUE;
+               */
           }
 
           public static void CreateRolesAndPermissions(this IAsyncSession session)
