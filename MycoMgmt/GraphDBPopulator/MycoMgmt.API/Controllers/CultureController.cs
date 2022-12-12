@@ -63,7 +63,6 @@ namespace MycoMgmt.API.Controllers
             };
 
             var result = await _cultureRepository.AddCulture(culture);
-
             return result;
         }
 
@@ -81,14 +80,13 @@ namespace MycoMgmt.API.Controllers
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
         
-        [HttpGet("search/{name}")]
+        [HttpGet("search/name/{name}")]
         public async Task<string> SearchCulturesByName(string name)
         {
             var node = await _cultureRepository.SearchCulturesByName(name);
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
 
-        
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {

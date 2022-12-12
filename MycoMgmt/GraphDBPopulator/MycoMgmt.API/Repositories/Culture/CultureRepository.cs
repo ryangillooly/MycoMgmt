@@ -24,7 +24,6 @@ namespace MycoMgmt.API.Repositories
         public async Task<List<Dictionary<string, object>>> SearchCulturesByName(string name)
         {
             var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) CONTAINS toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-            
             var persons = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
             return persons;
@@ -33,7 +32,6 @@ namespace MycoMgmt.API.Repositories
         public async Task<List<Dictionary<string, object>>> GetCultureByName(string name)
         {
             var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) = toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-            
             var persons = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
             return persons;

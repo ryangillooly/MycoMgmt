@@ -15,35 +15,23 @@ namespace MycoMgmt.API.DataStores.Neo4J
         private readonly IAsyncSession _session;
         private readonly ILogger<Neo4JDataAccess> _logger;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Neo4JDataAccess"/> class.
-        /// </summary>
         public Neo4JDataAccess(IDriver driver, ILogger<Neo4JDataAccess> logger, IOptions<Neo4JSettings> appSettingsOptions)
         {
             _logger = logger;
             var database = appSettingsOptions.Value.Neo4jDatabase ?? "neo4j";
             _session = driver.AsyncSession(o => o.WithDatabase(database));
         }
-
-        /// <summary>
-        /// Execute read list as an asynchronous operation.
-        /// </summary>
+        
         public async Task<List<string>> ExecuteReadListAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
         {
             return await ExecuteReadTransactionAsync<string>(query, returnObjectKey, parameters);
         }
 
-        /// <summary>
-        /// Execute read dictionary as an asynchronous operation.
-        /// </summary>
         public async Task<List<Dictionary<string, object>>> ExecuteReadDictionaryAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
         {
             return await ExecuteReadTransactionAsync<Dictionary<string, object>>(query, returnObjectKey, parameters);
         }
-
-        /// <summary>
-        /// Execute read scalar as an asynchronous operation.
-        /// </summary>
+        
         public async Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null)
         {
             try
@@ -72,10 +60,7 @@ namespace MycoMgmt.API.DataStores.Neo4J
                 throw;
             }
         }
-
-        /// <summary>
-        /// Execute write transaction
-        /// </summary>
+        
         public async Task<string> ExecuteWriteTransactionAsync<T>(string query,
             IDictionary<string, object>? parameters = null)
         {
@@ -142,10 +127,7 @@ namespace MycoMgmt.API.DataStores.Neo4J
                 throw;
             }
         }
-
-        /// <summary>
-        /// Execute read transaction as an asynchronous operation.
-        /// </summary>
+        
         private async Task<List<T>> ExecuteReadTransactionAsync<T>(string query, string returnObjectKey, IDictionary<string, object>? parameters)
         {
             try
@@ -169,11 +151,7 @@ namespace MycoMgmt.API.DataStores.Neo4J
                 throw;
             }
         }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or
-        /// resetting unmanaged resources asynchronously.
-        /// </summary>
+        
         async ValueTask IAsyncDisposable.DisposeAsync()
         {
             await _session.CloseAsync();

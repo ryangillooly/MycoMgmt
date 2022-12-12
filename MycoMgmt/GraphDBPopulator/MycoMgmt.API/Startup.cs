@@ -34,6 +34,8 @@ namespace MycoMgmt.API
             services.AddSingleton<IDriver>(GraphDatabase.Driver(settings.Neo4jConnection, AuthTokens.Basic(settings.Neo4jUser, settings.Neo4jPassword)));
             services.AddScoped<INeo4JDataAccess, Neo4JDataAccess>();
             services.AddTransient<ICultureRepository, CultureRepository>();
+            services.AddTransient<ILocationsRepository, LocationsRepository>();
+            services.AddTransient<IStrainsRepository, StrainsRepository>();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
