@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores;
 using MycoMgmt.API.Models;
+using MycoMgmt.API.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using MycoMgmt.API;
-using MycoMgmt.API.Models;
-using MycoMgmt.Populator.Models;
+﻿using System.Collections.Generic;
 
-namespace MycoMgmt.API.Models
+namespace MycoMgmt.API.Models.Mushrooms
 {
     public class Culture : ModelBase
     {

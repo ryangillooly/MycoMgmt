@@ -1,20 +1,13 @@
-﻿
-  using System;
- 
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Text.Json;
 using System.Threading.Tasks;
-  using MycoMgmt.API.Helpers;
-  using MycoMgmt.API.Models;
-  using MycoMgmt.Populator.Models;
+using MycoMgmt.API.Helpers;
+using MycoMgmt.API.Models;
+using MycoMgmt.API.Models.Mushrooms;
 using Neo4j.Driver;
-using Neo4j.Driver.Extensions;
-using Neo4jClient.Extension.Cypher;
-using Neo4jClient.Extensions;
 using Newtonsoft.Json;
 
-  namespace MycoMgmt.API
+namespace MycoMgmt.API.BaseDatabaseScripts
   {
       public class Neo4j
       {

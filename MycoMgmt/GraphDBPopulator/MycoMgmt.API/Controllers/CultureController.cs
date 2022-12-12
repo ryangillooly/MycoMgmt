@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MycoMgmt.API.Models;
+using MycoMgmt.API.Models.Mushrooms;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -66,12 +67,27 @@ namespace MycoMgmt.API.Controllers
             return result;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<string> GetCultureById(string id)
         {
-            var node = await _cultureRepository.SearchCultureById(id);
+            var node = await _cultureRepository.GetCultureById(id);
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
+        
+        [HttpGet("{name}")]
+        public async Task<string> GetCultureByName(string name)
+        {
+            var node = await _cultureRepository.GetCultureByName(name);
+            return node is null ? null : JsonConvert.SerializeObject(node);
+        }
+        
+        [HttpGet("search/{name}")]
+        public async Task<string> SearchCulturesByName(string name)
+        {
+            var node = await _cultureRepository.SearchCulturesByName(name);
+            return node is null ? null : JsonConvert.SerializeObject(node);
+        }
+
         
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Neo4j.Driver;
 
-namespace MycoMgmt.API.DataStores
+namespace MycoMgmt.API.DataStores.Neo4J
 {
     public interface INeo4JDataAccess : IAsyncDisposable
     {

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MycoMgmt.API.DataStores;
-using MycoMgmt.API.Models;
-using MycoMgmt.Populator.Models;
+using MycoMgmt.API.DataStores.Neo4J;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -23,18 +20,25 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
 
-        public async Task<List<Dictionary<string, object>>> SearchCultureByName(string searchString)
+        public async Task<List<Dictionary<string, object>>> SearchCulturesByName(string name)
         {
-            const string query = @"MATCH (r:Recipe) WHERE toUpper(r.name) CONTAINS toUpper($searchString) RETURN r{ name: r.name, type: r.type } ORDER BY r.Name LIMIT 5";
+            var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) CONTAINS toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
+            
+            var persons = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
-            IDictionary<string, object> parameters = new Dictionary<string, object> { { "searchString", searchString } };
-
-            var persons = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "p", parameters);
+            return persons;
+        }
+        
+        public async Task<List<Dictionary<string, object>>> GetCultureByName(string name)
+        {
+            var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) = toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
+            
+            var persons = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
             return persons;
         }
 
-        public async Task<string> SearchCultureById(string id)
+        public async Task<string> GetCultureById(string id)
         {
             var query = $"MATCH (c:Culture) WHERE ID(c) = { id } RETURN c";
 
@@ -57,7 +61,7 @@ namespace MycoMgmt.API.Repositories
             }
         }
         
-        public async Task<string> AddCulture(Culture culture)
+        public async Task<string> AddCulture(Models.Mushrooms.Culture culture)
         {
             if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
                 throw new System.ArgumentNullException(nameof(culture), "Culture must not be null");

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using MycoMgmt.API;
-using MycoMgmt.API.Models;
+﻿using System.Collections.Generic;
 
-namespace MycoMgmt.API.Models
+namespace MycoMgmt.API.Models.Mushrooms
 {
     public class Bulk : ModelBase
     {

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Models;
-using Neo4j.Driver;
+using MycoMgmt.API.Models.Mushrooms;
 
 namespace MycoMgmt.API.Repositories
 {
@@ -10,8 +9,9 @@ namespace MycoMgmt.API.Repositories
     {
         [HttpPost]
         public Task<string> AddCulture(Culture culture);
-        public Task<List<Dictionary<string, object>>> SearchCultureByName(string searchString);
-        public Task<string> SearchCultureById(string id);
+        Task<List<Dictionary<string, object>>> SearchCulturesByName(string name);
+        Task<List<Dictionary<string, object>>> GetCultureByName(string name);
         public Task<long> GetCultureCount();
+        public Task<string> GetCultureById(string id);
     }
 }

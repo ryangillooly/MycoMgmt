@@ -1,21 +1,19 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic.CompilerServices;
 using Neo4j.Driver;
-using Neo4jClient.Extensions;
 using Newtonsoft.Json;
 
-namespace MycoMgmt.API.DataStores
+namespace MycoMgmt.API.DataStores.Neo4J
 {
     public class Neo4JDataAccess : INeo4JDataAccess
     {
-        private IAsyncSession _session;
-        private ILogger<Neo4JDataAccess> _logger;
-        private string _database;
+        private readonly IAsyncSession _session;
+        private readonly ILogger<Neo4JDataAccess> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Neo4JDataAccess"/> class.
@@ -23,8 +21,8 @@ namespace MycoMgmt.API.DataStores
         public Neo4JDataAccess(IDriver driver, ILogger<Neo4JDataAccess> logger, IOptions<Neo4JSettings> appSettingsOptions)
         {
             _logger = logger;
-            _database = appSettingsOptions.Value.Neo4jDatabase ?? "neo4j";
-            _session = driver.AsyncSession(o => o.WithDatabase(_database));
+            var database = appSettingsOptions.Value.Neo4jDatabase ?? "neo4j";
+            _session = driver.AsyncSession(o => o.WithDatabase(database));
         }
 
         /// <summary>
@@ -50,15 +48,13 @@ namespace MycoMgmt.API.DataStores
         {
             try
             {
-                parameters = parameters == null ? new Dictionary<string, object>() : parameters;
+                parameters = parameters ?? new Dictionary<string, object>();
 
                 var result = await _session.ExecuteReadAsync(async tx =>
                 {
-                    T scalar = default(T);
-
                     var res = await tx.RunAsync(query, parameters);
 
-                    scalar = (await res.SingleAsync())[0].As<T>();
+                    var scalar = (await res.SingleAsync())[0].As<T>();
 
                     return scalar;
                 });
@@ -67,6 +63,7 @@ namespace MycoMgmt.API.DataStores
             }
             catch (InvalidOperationException ex)
             {
+                Console.WriteLine(ex);
                throw;
             }
             catch (Exception ex)
@@ -80,7 +77,7 @@ namespace MycoMgmt.API.DataStores
         /// Execute write transaction
         /// </summary>
         public async Task<string> ExecuteWriteTransactionAsync<T>(string query,
-            IDictionary<string, object> parameters = null)
+            IDictionary<string, object>? parameters = null)
         {
             try
             {
@@ -97,7 +94,7 @@ namespace MycoMgmt.API.DataStores
 
                 return JsonConvert.SerializeObject(result);
             }
-            catch (System.InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 if (ex.Message != "The result is empty.") 
                     throw;
@@ -132,7 +129,7 @@ namespace MycoMgmt.API.DataStores
 
                 return JsonConvert.SerializeObject(result);
             }
-            catch (System.InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 if (ex.Message != "The result is empty.") 
                     throw;
@@ -153,17 +150,13 @@ namespace MycoMgmt.API.DataStores
         {
             try
             {                
-                parameters = parameters == null ? new Dictionary<string, object>() : parameters;
+                parameters = parameters ?? new Dictionary<string, object>();
 
                 var result = await _session.ExecuteReadAsync(async tx =>
                 {
-                    var data = new List<T>();
-
                     var res = await tx.RunAsync(query, parameters);
-
                     var records = await res.ToListAsync();
-
-                    data = records.Select(x => (T)x.Values[returnObjectKey]).ToList();
+                    var data = records.Select(x => (T) x.Values[returnObjectKey]).ToList();
 
                     return data;
                 });

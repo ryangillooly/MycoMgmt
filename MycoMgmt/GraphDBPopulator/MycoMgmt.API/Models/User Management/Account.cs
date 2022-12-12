@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using MycoMgmt.API;
-using MycoMgmt.API.Models;
 
-namespace MycoMgmt.Populator.Models
+namespace MycoMgmt.API.Models.User_Management
 {
     public class Account : ModelBase
     {

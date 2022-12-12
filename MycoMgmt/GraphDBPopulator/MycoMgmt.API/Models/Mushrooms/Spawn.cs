@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using MycoMgmt.API;
-using MycoMgmt.API.Models;
 
-namespace MycoMgmt.API.Models
+namespace MycoMgmt.API.Models.Mushrooms
 {
     public class Spawn : ModelBase
     {

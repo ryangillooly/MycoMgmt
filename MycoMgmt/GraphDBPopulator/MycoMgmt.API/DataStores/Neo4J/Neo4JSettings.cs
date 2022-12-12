@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MycoMgmt.API.DataStores
+namespace MycoMgmt.API.DataStores.Neo4J
 {
     public class Neo4JSettings
     {

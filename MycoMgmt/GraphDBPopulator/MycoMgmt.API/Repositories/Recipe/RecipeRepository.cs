@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MycoMgmt.API.DataStores;
-using MycoMgmt.API.Models;
-using MycoMgmt.Populator.Models;
+using MycoMgmt.API.DataStores.Neo4J;
 
-namespace MycoMgmt.API.Repositories
+namespace MycoMgmt.API.Repositories.Recipe
 {
     public class RecipeRepository : IRecipeRepository
     {
@@ -41,7 +37,7 @@ namespace MycoMgmt.API.Repositories
         /// <summary>
         /// Adds a new person
         /// </summary>
-        public async Task<string> AddRecipe(Recipe recipe)
+        public async Task<string> AddRecipe(Models.Recipe recipe)
         {
             if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
             {

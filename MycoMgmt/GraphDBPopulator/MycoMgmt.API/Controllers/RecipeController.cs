@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Models;
 using MycoMgmt.API.Repositories;
+using MycoMgmt.API.Repositories.Recipe;
 
 namespace MycoMgmt.API.Controllers
 {
