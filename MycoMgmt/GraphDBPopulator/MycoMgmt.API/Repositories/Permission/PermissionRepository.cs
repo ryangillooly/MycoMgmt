@@ -61,6 +61,37 @@ namespace MycoMgmt.API.Repositories
             }
         }
         
+        public async Task<string> RemovePermission(Permission permission)
+        {
+            if (permission == null || string.IsNullOrWhiteSpace(permission.Name))
+                throw new ArgumentNullException(nameof(permission), "Permission must not be null");
+
+            try
+            {
+                var queryList = new List<string>
+                {
+                    $@"
+                        MATCH (p:Permission {{ Name: '{permission.Name}' }}) 
+                        DETACH DELETE p
+                        RETURN p;
+                    "
+                };
+
+                var result = await _neo4JDataAccess.RunTransaction(queryList);
+
+                return result;
+            }
+            catch (ClientException ex)
+            {
+                return JsonConvert.SerializeObject(new { Message = $"Permission error.... {ex}" });
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+
+        
         public async Task<List<Dictionary<string, object>>> GetAllPermissions()
         {
             const string query = @"MATCH (p:Permission) RETURN p { Name: p.Name } ORDER BY p.Name";

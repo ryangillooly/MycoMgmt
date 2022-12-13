@@ -12,7 +12,7 @@ namespace MycoMgmt.API.Models.Mushrooms
         public string? Parent { get; set; }
         public string? Child { get; set; }
         public string? Vendor { get; set; }
-        public bool? Successful { get; set; }
+        public bool Successful { get; set; }
         public bool Finished { get; set; } = false;
     }
 }

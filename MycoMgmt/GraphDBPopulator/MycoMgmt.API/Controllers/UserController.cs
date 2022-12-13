@@ -30,6 +30,7 @@ namespace MycoMgmt.API.Controllers
         public async Task<string> NewUser
         (
             string name,
+            string account,
             string? roles,
             string? permissions,
             string createdOn,
@@ -40,9 +41,10 @@ namespace MycoMgmt.API.Controllers
         {
             var user = new User()
             {
-                Name       = name,
-                CreatedOn  = DateTime.Parse(createdOn),
-                CreatedBy  = createdBy
+                Name      = name,
+                Account   = account, 
+                CreatedOn = DateTime.Parse(createdOn),
+                CreatedBy = createdBy
             };
             
             if(permissions != null)

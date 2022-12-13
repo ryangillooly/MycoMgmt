@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.API.Models.Mushrooms;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -71,20 +72,16 @@ namespace MycoMgmt.API.Repositories
                 var queryList = new List<string>
                 {
                     $@"
-                        MERGE 
-                        (
-                            c:Culture
-                            {{
-                                Name:  '{culture.Name}',
-                                Type:  '{culture.Type}'
-                            }}        
-                        ) 
+                        MERGE (c:Culture {{
+                                            Name:  '{culture.Name}',
+                                            Type:  '{culture.Type}'
+                                          }}) 
                         RETURN c;
                         ",
                         $@"
                             MATCH 
-                                (c:Culture {{ Name: '{culture.Name}' }}), 
-                                (s:Strain {{ Name: '{culture.Strain}' }})
+                                (c:Culture {{ Name: '{culture.Name}'   }}), 
+                                (s:Strain  {{ Name: '{culture.Strain}' }})
                             MERGE
                                 (c)-[r:HAS_STRAIN]->(s)
                             RETURN r",
@@ -98,10 +95,18 @@ namespace MycoMgmt.API.Repositories
                         ",
                         $@"
                             MATCH 
-                                (c:Culture  {{ Name: '{culture.Name}' }}), 
-                                (d:Day {{ day: { culture.CreatedOn.Day } }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
+                                (c:Culture {{ Name: '{culture.Name}' }}), 
+                                (d:Day     {{ day: { culture.CreatedOn.Day } }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
                             MERGE
                                 (c)-[r:CREATED_ON]->(d)
+                            RETURN r
+                        ",
+                        $@"
+                            MATCH 
+                                (c:Culture {{ Name: '{culture.Name}'      }}),
+                                (u:User    {{ Name: '{culture.CreatedBy}' }})
+                            MERGE
+                                (u)-[r:CREATED]->(c)
                             RETURN r
                         "
                     };
@@ -116,6 +121,16 @@ namespace MycoMgmt.API.Repositories
                                 MERGE
                                     (c)-[r:HAS_PARENT]->(p)
                                 RETURN r
+                            ");
+                }
+
+                if (culture.Finished == true)
+                {
+                    queryList.Add(
+                        $@"
+                                MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                                SET c { culture.IsSuccessful() }
+                                RETURN c
                             ");
                 }
 

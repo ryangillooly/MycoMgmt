@@ -29,21 +29,22 @@ namespace MycoMgmt.API.Controllers
         (
             string name, 
             string? effects,
-            string createdOn,
-            string createdBy,
+            string? createdOn,
+            string? createdBy,
             string? modifiedOn,
             string? modifiedBy
         )
         {
-            var strain = new Strain()
-            {
-                Name       = name,
-                CreatedOn  = DateTime.Parse(createdOn),
-                CreatedBy  = createdBy
-            };
+            var strain = new Strain() { Name = name };
 
             if (effects != null)
                 strain.Effects = effects;
+
+            if (createdOn != null)
+                strain.CreatedOn = DateTime.Parse(createdOn);
+            
+            if(createdBy != null)
+                strain.CreatedBy = createdBy;
             
             if (modifiedOn != null)
                 strain.ModifiedOn = DateTime.Parse(modifiedOn);

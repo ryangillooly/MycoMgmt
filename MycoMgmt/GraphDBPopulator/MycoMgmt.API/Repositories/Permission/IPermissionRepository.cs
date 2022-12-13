@@ -11,6 +11,9 @@ namespace MycoMgmt.API.Repositories
         [HttpPost]
         public Task<string> AddPermission(Permission permission);
 
+        [HttpPost]
+        Task<string> RemovePermission(Permission permission);
+        
         [HttpGet]
         Task<List<Dictionary<string, object>>> GetAllPermissions();
     }

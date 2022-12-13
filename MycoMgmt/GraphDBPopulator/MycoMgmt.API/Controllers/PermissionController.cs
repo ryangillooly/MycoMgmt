@@ -37,6 +37,15 @@ namespace MycoMgmt.API.Controllers
             return result;
         }
         
+        [HttpPost("remove")]
+        public async Task<string> RemovePermission (string name)
+        {
+            var permission = new Permission() { Name = name };
+            
+            var result = await _permissionRepository.RemovePermission(permission);
+            return result;
+        }
+        
         [HttpGet("all")]
         public async Task<string> GetAllPermissions()
         {

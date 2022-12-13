@@ -27,20 +27,38 @@ namespace MycoMgmt.API.Repositories
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Name))
                 throw new ArgumentNullException(nameof(user), "User must not be null");
-
+            
             try
             {
                 var queryList = new List<string>
                 {
                     $@"
-                        MERGE 
-                        (
-                            u:User
-                            {{
-                                Name: '{user.Name}'
-                            }}        
-                        ) 
+                        MERGE (u:User {{ Name: '{user.Name}' }}) 
                         RETURN u;
+                    ",
+                    $@"
+                        MATCH 
+                            (u:User    {{ Name: '{user.Name}'    }}),
+                            (a:Account {{ Name: '{user.Account}' }})
+                        MERGE
+                            (a)-[r:HAS]->(u)
+                        RETURN r
+                    ",
+                    $@"
+                        MATCH 
+                            (u:User {{ Name: '{user.Name}'    }}),
+                            (d:Day  {{ day: {user.CreatedOn.Day} }})<-[:HAS_DAY]-(:Month {{ month: {user.CreatedOn.Month} }})<-[:HAS_MONTH]-(:Year {{ year: {user.CreatedOn.Year} }})
+                        MERGE
+                            (u)-[r:CREATED_ON]->(d)
+                        RETURN r
+                    ",
+                    $@"
+                        MATCH 
+                            (nu:User {{ Name: '{user.Name}'      }}),
+                            (cb:User {{ Name: '{user.CreatedBy}' }})
+                        MERGE
+                            (cb)-[r:CREATED]->(nu)
+                        RETURN r
                     "
                 };
 
@@ -50,8 +68,8 @@ namespace MycoMgmt.API.Repositories
                     {
                         queryList.Add($@"
                             MATCH
-                                (u:User {{ Name: '{ user.Name }' }}),
-                                (p:Permission {{ Name : '{ permission }' }})
+                                (u:User       {{ Name: '{ user.Name }'  }}),
+                                (p:Permission {{ Name: '{ permission }' }})
                             MERGE
                                 (u)-[r:HAS]->(p)
                             RETURN r
@@ -65,15 +83,15 @@ namespace MycoMgmt.API.Repositories
                     {
                         queryList.Add($@"
                             MATCH
-                                (u:User {{ Name: '{ user.Name }' }}),
-                                (r:IAMRole {{ Name : '{ role }' }})
+                                (u:User    {{ Name: '{ user.Name }' }}),
+                                (r:IAMRole {{ Name: '{ role      }' }})
                             MERGE
                                 (u)-[rel:HAS]->(r)
                             RETURN r
                         ");
                     }
                 }
-
+                
                 var result = await _neo4JDataAccess.RunTransaction(queryList);
 
                 return result;

@@ -69,7 +69,7 @@ namespace MycoMgmt.API.Controllers
                 culture.Vendor = vendor;
             
             if (successful != null)
-                culture.Successful = successful;
+                culture.Successful = successful.Value;
 
             if (modifiedOn != null)
                 culture.ModifiedOn = DateTime.Parse(modifiedOn);
