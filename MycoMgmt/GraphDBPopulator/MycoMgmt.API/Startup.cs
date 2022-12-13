@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MycoMgmt.API.DataStores;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.API.Models.User_Management;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.API.Repositories.Recipe;
@@ -28,21 +29,8 @@ namespace MycoMgmt.API
         {
             services.AddRazorPages();
             services.AddControllers();
-            services.Configure<Neo4JSettings>(Configuration.GetSection("Neo4JSettings"));
-
-            var settings = new Neo4JSettings();
-            Configuration.GetSection("Neo4JSettings").Bind(settings);
-            
-            services.AddSingleton<IDriver>(GraphDatabase.Driver(settings.Neo4jConnection, AuthTokens.Basic(settings.Neo4jUser, settings.Neo4jPassword)));
-            services.AddScoped<INeo4JDataAccess, Neo4JDataAccess>();
-            services.AddTransient<ICultureRepository, CultureRepository>();
-            services.AddTransient<ILocationsRepository, LocationsRepository>();
-            services.AddTransient<IStrainsRepository, StrainsRepository>();
-            services.AddTransient<IAccountRepository, AccountRepository>();
-            services.AddTransient<IRecipeRepository, RecipeRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IPermissionRepository, PermissionRepository>();
-            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddNeoDatabase(Configuration);
+            services.AddRepositories();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
