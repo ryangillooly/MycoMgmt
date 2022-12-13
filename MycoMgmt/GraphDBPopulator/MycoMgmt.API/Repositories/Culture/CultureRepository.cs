@@ -133,6 +133,15 @@ namespace MycoMgmt.API.Repositories
                                 RETURN c
                             ");
                 }
+                else
+                {
+                    queryList.Add(
+                        $@"
+                                MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                                SET c :InProgress
+                                RETURN c
+                            ");
+                }
 
                 var result = await _neo4JDataAccess.RunTransaction(queryList);
 
