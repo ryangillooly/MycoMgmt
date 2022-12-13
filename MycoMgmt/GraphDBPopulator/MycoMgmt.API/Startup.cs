@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MycoMgmt.API.DataStores;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Models.User_Management;
 using MycoMgmt.API.Repositories;
+using MycoMgmt.API.Repositories.Recipe;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API
@@ -37,6 +39,10 @@ namespace MycoMgmt.API
             services.AddTransient<ILocationsRepository, LocationsRepository>();
             services.AddTransient<IStrainsRepository, StrainsRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IRecipeRepository, RecipeRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IPermissionRepository, PermissionRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
