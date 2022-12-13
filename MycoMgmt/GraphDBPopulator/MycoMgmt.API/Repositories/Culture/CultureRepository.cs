@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Models.Mushrooms;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -60,10 +61,10 @@ namespace MycoMgmt.API.Repositories
             }
         }
         
-        public async Task<string> AddCulture(Models.Mushrooms.Culture culture)
+        public async Task<string> AddCulture(Culture culture)
         {
             if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
-                throw new System.ArgumentNullException(nameof(culture), "Culture must not be null");
+                throw new ArgumentNullException(nameof(culture), "Culture must not be null");
 
             try
             {
@@ -94,6 +95,14 @@ namespace MycoMgmt.API.Repositories
                             MERGE
                                 (c)-[r:STORED_IN]->(l)
                             RETURN r
+                        ",
+                        $@"
+                            MATCH 
+                                (c:Culture  {{ Name: '{culture.Name}' }}), 
+                                (d:Day {{ day: { culture.CreatedOn.Day } }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
+                            MERGE
+                                (c)-[r:CREATED_ON]->(d)
+                            RETURN r
                         "
                     };
 
@@ -123,10 +132,8 @@ namespace MycoMgmt.API.Repositories
             }
             catch (Exception ex)
             {
-                throw new System.ArgumentException(ex.Message);
+                throw new ArgumentException(ex.Message);
             }
-
-            return null;
         }
         
         public async Task<long> GetCultureCount()

@@ -5,10 +5,10 @@ namespace MycoMgmt.API.Models.Mushrooms
     public class Culture : ModelBase
     {
         public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Culture };
-        public CultureTypes Type { get; set; }
-        public Strain Strain { get; set; }
+        public string Type { get; set; }
+        public string Strain { get; set; }
         public string? Recipe { get; set; }
-        public Locations? Location { get; set; }
+        public string? Location { get; set; }
         public string? Parent { get; set; }
         public string? Child { get; set; }
         public string? Vendor { get; set; }

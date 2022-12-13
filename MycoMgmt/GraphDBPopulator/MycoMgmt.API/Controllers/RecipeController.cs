@@ -21,7 +21,7 @@ namespace MycoMgmt.API.Controllers
         }
 
         [HttpPost("new")]
-        public async void NewRecipe(string name, RecipeTypes type, string desc, string steps)
+        public async void NewRecipe(string name, string type, string desc, string steps)
         {
             var recipe = new Recipe()
             {

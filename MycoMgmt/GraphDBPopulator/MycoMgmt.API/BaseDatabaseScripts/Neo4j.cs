@@ -26,7 +26,7 @@ namespace MycoMgmt.API.BaseDatabaseScripts
               session.CreateRelationships();
               session.TestReads();
               */
-
+/*
               var culture = new Culture
               {
                   Name = "Sp-01",
@@ -36,6 +36,7 @@ namespace MycoMgmt.API.BaseDatabaseScripts
                   // Vendor = new Vendor{ Name = "MycoPunks", URL = new Uri("http://mycopunks.com")},
                   Finished = false
               };
+              */
 
              /* var location = new Location
               {
@@ -268,7 +269,7 @@ namespace MycoMgmt.API.BaseDatabaseScripts
                * CREATE CONSTRAINT UniqueName_Culture IF NOT EXISTS FOR (c:Culture) REQUIRE c.Name IS UNIQUE;
                */
           }
-
+/*
           public static void CreateRolesAndPermissions(this IAsyncSession session)
           {
               var rolePermissions = new Dictionary<Roles, List<Permissions>>()
@@ -312,7 +313,7 @@ namespace MycoMgmt.API.BaseDatabaseScripts
                
                Console.WriteLine(Guid.NewGuid());
            }
-           */
           }
+           */
       }
   }

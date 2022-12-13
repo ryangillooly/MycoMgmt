@@ -36,6 +36,7 @@ namespace MycoMgmt.API
             services.AddTransient<ICultureRepository, CultureRepository>();
             services.AddTransient<ILocationsRepository, LocationsRepository>();
             services.AddTransient<IStrainsRepository, StrainsRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

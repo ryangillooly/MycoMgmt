@@ -27,9 +27,9 @@ namespace MycoMgmt.API.Controllers
         [HttpPost("new")]
         public async Task<string> NewCulture
         (
-            string? name, 
-            string? type, 
-            string? strain, 
+            string name, 
+            string type, 
+            string strain, 
             string? recipe,
             string? location,
             string? parent,
@@ -37,30 +37,45 @@ namespace MycoMgmt.API.Controllers
             string? vendor,
             bool? successful,
             bool finished,
-            string created,
-            string? user
+            string createdOn,
+            string createdBy,
+            string? modifiedOn,
+            string? modifiedBy
         )
         {
-
-            Enum.TryParse(strain, out Strain strains);
-            Enum.TryParse(type, out CultureTypes cultureType);
-            Enum.TryParse(location, out Locations locations);
-
             var culture = new Culture()
             {
-                Name   = name,
-                Type   = cultureType,
-                Strain = strains,
-                Recipe = recipe,
-                Location = locations,
-                Parent = parent ,
-                Child = child,
-                Vendor = vendor,
-                Successful = successful,
-                Finished = finished,
-                CreatedOn = DateTime.Parse(created),
-                CreatedBy = user
+                Name       = name,
+                Type       = type,
+                Strain     = strain,
+                Finished   = finished,
+                CreatedOn  = DateTime.Parse(createdOn),
+                CreatedBy  = createdBy
             };
+
+            if (recipe != null)
+                culture.Recipe = recipe;
+            
+            if (location != null)
+                culture.Location = location;
+            
+            if (parent != null)
+                culture.Parent = parent;
+            
+            if (child != null)
+                culture.Child = child;
+            
+            if (vendor != null)
+                culture.Vendor = vendor;
+            
+            if (successful != null)
+                culture.Successful = successful;
+
+            if (modifiedOn != null)
+                culture.ModifiedOn = DateTime.Parse(modifiedOn);
+            
+            if(modifiedBy != null)
+                culture.ModifiedBy = modifiedBy;
 
             var result = await _cultureRepository.AddCulture(culture);
             return result;
@@ -90,9 +105,8 @@ namespace MycoMgmt.API.Controllers
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {
-            var recipeCount = await _cultureRepository.GetCultureCount();
-            Console.WriteLine($"RecipeCount - { recipeCount.ToString() }");
-            return recipeCount;
+            var cultureCount = await _cultureRepository.GetCultureCount();
+            return cultureCount;
         }
     }
 }

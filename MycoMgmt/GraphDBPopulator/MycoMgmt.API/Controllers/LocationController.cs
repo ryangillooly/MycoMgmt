@@ -24,6 +24,33 @@ namespace MycoMgmt.API.Controllers
             this._driver = driver;
         }
         
+        [HttpPost("new")]
+        public async Task<string> NewLocation
+        (
+            string name,
+            string createdOn,
+            string createdBy,
+            string? modifiedOn,
+            string? modifiedBy
+        )
+        {
+            var location = new Location()
+            {
+                Name       = name,
+                CreatedOn  = DateTime.Parse(createdOn),
+                CreatedBy  = createdBy
+            };
+
+            if (modifiedOn != null)
+                location.ModifiedOn = DateTime.Parse(modifiedOn);
+            
+            if(modifiedBy != null)
+                location.ModifiedBy = modifiedBy;
+
+            var result = await _locationsRepository.AddLocation(location);
+            return result;
+        }
+        
         [HttpGet("all")]
         public async Task<string> GetAllLocations(string name)
         {
