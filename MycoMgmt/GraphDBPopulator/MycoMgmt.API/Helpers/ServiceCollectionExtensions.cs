@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.API.Repositories.Recipe;
+using MycoMgmt.DataStores.Neo4J;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers

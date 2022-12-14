@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MycoMgmt.Domain\MycoMgmt.Domain.csproj" />
       <ProjectReference Include="..\MycoMgmt.Populator\MycoMgmt.Populator.csproj" />
     </ItemGroup>
 

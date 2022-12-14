@@ -4,13 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MycoMgmt.API.DataStores;
-using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.API.Helpers;
-using MycoMgmt.API.Models.User_Management;
-using MycoMgmt.API.Repositories;
-using MycoMgmt.API.Repositories.Recipe;
-using Neo4j.Driver;
 
 namespace MycoMgmt.API
 {

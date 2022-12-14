@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
 using MycoMgmt.API.Repositories;
+using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -52,14 +49,14 @@ namespace MycoMgmt.API.Controllers
             if(modifiedBy != null)
                 strain.ModifiedBy = modifiedBy;
 
-            var result = await _strainsRepository.AddStrain(strain);
+            var result = await _strainsRepository.Add(strain);
             return result;
         }
         
         [HttpGet("all")]
         public async Task<string> GetAllLocations(string name)
         {
-            var node = await _strainsRepository.GetAllStrains();
+            var node = await _strainsRepository.GetAll();
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
     }

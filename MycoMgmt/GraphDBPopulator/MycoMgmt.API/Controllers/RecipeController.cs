@@ -1,11 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Repositories;
 using MycoMgmt.API.Repositories.Recipe;
+using MycoMgmt.Domain.Models;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -25,20 +22,19 @@ namespace MycoMgmt.API.Controllers
         {
             var recipe = new Recipe()
             {
-                Id          = Guid.NewGuid(),
                 Name        = name,
                 Type        = type,
                 Description = desc,
                 Steps       = steps
             };
 
-            await _repo.AddRecipe(recipe);
+            await _repo.Add(recipe);
         }
 
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {
-            var recipeCount = await _repo.GetRecipeCount();
+            var recipeCount = await _repo.GetCount();
             Console.WriteLine($"RecipeCount - { recipeCount.ToString() }");
             return recipeCount;
         }

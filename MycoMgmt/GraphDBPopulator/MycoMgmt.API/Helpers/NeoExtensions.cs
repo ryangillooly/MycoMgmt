@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using MycoMgmt.API.DataStores;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
+﻿using System.Collections.Generic;
+using MycoMgmt.Domain.Models;
+using MycoMgmt.Domain.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers

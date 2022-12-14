@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
-using MycoMgmt.API.Models.User_Management;
+using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -33,7 +28,7 @@ namespace MycoMgmt.API.Controllers
                 Name = name
             };
             
-            var result = await _permissionRepository.AddPermission(permission);
+            var result = await _permissionRepository.Add(permission);
             return result;
         }
         
@@ -42,14 +37,14 @@ namespace MycoMgmt.API.Controllers
         {
             var permission = new Permission() { Name = name };
             
-            var result = await _permissionRepository.RemovePermission(permission);
+            var result = await _permissionRepository.Remove(permission);
             return result;
         }
         
         [HttpGet("all")]
         public async Task<string> GetAllPermissions()
         {
-            var node = await _permissionRepository.GetAllPermissions();
+            var node = await _permissionRepository.GetAll();
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
     }

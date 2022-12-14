@@ -11,19 +11,13 @@ namespace MycoMgmt.API.Repositories.Recipe
 
         private ILogger<RecipeRepository> _logger;
 
-        /// <summary>
-        /// Initializes a new instance of the "PersonRepository" class.
-        /// </summary>
         public RecipeRepository(INeo4JDataAccess neo4JDataAccess, ILogger<RecipeRepository> logger)
         {
             _neo4JDataAccess = neo4JDataAccess;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Searches the name of the person.
-        /// </summary>
-        public async Task<List<Dictionary<string, object>>> SearchRecipeByName(string searchString)
+        public async Task<List<Dictionary<string, object>>> SearchByName(string searchString)
         {
             const string query = @"MATCH (r:Recipe) WHERE toUpper(r.name) CONTAINS toUpper($searchString) RETURN r{ name: r.name, type: r.type } ORDER BY r.Name LIMIT 5";
 
@@ -34,10 +28,7 @@ namespace MycoMgmt.API.Repositories.Recipe
             return persons;
         }
 
-        /// <summary>
-        /// Adds a new person
-        /// </summary>
-        public async Task<string> AddRecipe(Models.Recipe recipe)
+        public async Task<string> Add(Domain.Models.Recipe recipe)
         {
             if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
             {
@@ -46,7 +37,6 @@ namespace MycoMgmt.API.Repositories.Recipe
                                 (
                                     :Recipe
                                     {{
-                                        Id:    '{ recipe.Id          }',
                                         Name:  '{ recipe.Name        }',
                                         Type:  '{ recipe.Type        }',
                                         Desc:  '{ recipe.Description }',
@@ -63,10 +53,7 @@ namespace MycoMgmt.API.Repositories.Recipe
             }
         }
 
-        /// <summary>
-        /// Get count of persons
-        /// </summary>
-        public async Task<long> GetRecipeCount()
+        public async Task<long> GetCount()
         {
             const string query = @"Match (r:Recipe) RETURN count(r) as recipeCount";
             var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);

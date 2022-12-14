@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Models;
+using MycoMgmt.Domain.Models;
 
 namespace MycoMgmt.API.Repositories
 {
     public interface ILocationsRepository
     {
         [HttpPost]
-        Task<string> AddLocation(Location location);
+        Task<string> Add(Location location);
         
         [HttpGet]
-        public Task<List<Dictionary<string, object>>> GetAllLocations();
+        public Task<List<Dictionary<string, object>>> GetAll();
     }
 }

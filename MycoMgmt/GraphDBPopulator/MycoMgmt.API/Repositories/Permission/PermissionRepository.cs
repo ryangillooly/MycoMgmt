@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.DataStores.Neo4J;
-using MycoMgmt.API.Models.Mushrooms;
-using MycoMgmt.API.Models.User_Management;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -23,7 +22,7 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> AddPermission(Permission permission)
+        public async Task<string> Add(Permission permission)
         {
             if (permission == null || string.IsNullOrWhiteSpace(permission.Name))
                 throw new ArgumentNullException(nameof(permission), "Permission must not be null");
@@ -61,24 +60,20 @@ namespace MycoMgmt.API.Repositories
             }
         }
         
-        public async Task<string> RemovePermission(Permission permission)
+        public async Task<string> Remove(Permission permission)
         {
             if (permission == null || string.IsNullOrWhiteSpace(permission.Name))
                 throw new ArgumentNullException(nameof(permission), "Permission must not be null");
 
+            return await PersistToDatabase(permission);
+        }
+
+        private async Task<string> PersistToDatabase(Permission permission)
+        {
             try
             {
-                var queryList = new List<string>
-                {
-                    $@"
-                        MATCH (p:Permission {{ Name: '{permission.Name}' }}) 
-                        DETACH DELETE p
-                        RETURN p;
-                    "
-                };
-
+                var queryList = CreateQueryList(permission);
                 var result = await _neo4JDataAccess.RunTransaction(queryList);
-
                 return result;
             }
             catch (ClientException ex)
@@ -91,8 +86,21 @@ namespace MycoMgmt.API.Repositories
             }
         }
 
-        
-        public async Task<List<Dictionary<string, object>>> GetAllPermissions()
+        private static List<string> CreateQueryList(Permission permission)
+        {
+            var queryList = new List<string>
+            {
+                $@"
+                        MATCH (p:Permission {{ Name: '{permission.Name}' }}) 
+                        DETACH DELETE p
+                        RETURN p;
+                    "
+            };
+            return queryList;
+        }
+
+
+        public async Task<List<Dictionary<string, object>>> GetAll()
         {
             const string query = @"MATCH (p:Permission) RETURN p { Name: p.Name } ORDER BY p.Name";
             var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "p");

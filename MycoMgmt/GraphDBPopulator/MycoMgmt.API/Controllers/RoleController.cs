@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
-using MycoMgmt.API.Models.User_Management;
+using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -36,14 +31,14 @@ namespace MycoMgmt.API.Controllers
                 Permissions = permissionList
             };
 
-            var result = await _roleRepository.AddRole(role);
+            var result = await _roleRepository.Add(role);
             return result;
         }
         
         [HttpGet("all")]
         public async Task<string> GetAllRoles()
         {
-            var node = await _roleRepository.GetAllRoles();
+            var node = await _roleRepository.GetAll();
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
     }

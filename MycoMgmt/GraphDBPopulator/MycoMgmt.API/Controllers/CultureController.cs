@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
 using MycoMgmt.API.Repositories;
+using MycoMgmt.Domain.Models.Mushrooms;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -77,35 +74,35 @@ namespace MycoMgmt.API.Controllers
             if(modifiedBy != null)
                 culture.ModifiedBy = modifiedBy;
 
-            var result = await _cultureRepository.AddCulture(culture);
+            var result = await _cultureRepository.Add(culture);
             return result;
         }
 
         [HttpGet("{id:long}")]
         public async Task<string> GetCultureById(long id)
         {
-            var node = await _cultureRepository.GetCultureById(id.ToString());
+            var node = await _cultureRepository.GetById(id.ToString());
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
         
         [HttpGet("{name}")]
         public async Task<string> GetCultureByName(string name)
         {
-            var node = await _cultureRepository.GetCultureByName(name);
+            var node = await _cultureRepository.GetByName(name);
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
         
         [HttpGet("search/name/{name}")]
         public async Task<string> SearchCulturesByName(string name)
         {
-            var node = await _cultureRepository.SearchCulturesByName(name);
+            var node = await _cultureRepository.SearchByName(name);
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
 
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {
-            var cultureCount = await _cultureRepository.GetCultureCount();
+            var cultureCount = await _cultureRepository.GetCount();
             return cultureCount;
         }
     }

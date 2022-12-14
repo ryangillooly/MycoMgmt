@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MycoMgmt.API.DataStores.Neo4J;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
-namespace MycoMgmt.API.DataStores.Neo4J
+namespace MycoMgmt.DataStores.Neo4J
 {
     public class Neo4JDataAccess : INeo4JDataAccess
     {

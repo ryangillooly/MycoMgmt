@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
-using MycoMgmt.API.Models;
+using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -21,7 +21,7 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> AddLocation(Location location)
+        public async Task<string> Add(Location location)
         {
             if (location == null || string.IsNullOrWhiteSpace(location.Name))
                 throw new ArgumentNullException(nameof(location), "Location must not be null");
@@ -29,32 +29,31 @@ namespace MycoMgmt.API.Repositories
             if ((location.ModifiedBy != null && location.ModifiedOn == null) || (location.ModifiedBy == null && location.ModifiedOn != null))
                 throw new ArgumentException("ModifiedBy and ModifiedOn must either both be Null, or both be Populated");
             
+            return await PersistToDatabase(location);
+        }
+        
+        public async Task<List<Dictionary<string, object>>> GetAll()
+        {
+            const string query = @"MATCH (l:Location) RETURN l { Name: l.Name } ORDER BY l.Name";
+            var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "l");
+
+            return locations;
+        }
+
+        private async Task<string> PersistToDatabase(Location location)
+        {
             try
             {
-                var queryList = new List<string>
-                {
-                    $@"
-                        MERGE 
-                        (
-                            l:Location
-                            {{
-                                Name:  '{location.Name}'
-                            }}        
-                        ) 
-                        RETURN l;
-                    "
-                };
-
+                var queryList = CreateQueryList(location);
                 var result = await _neo4JDataAccess.RunTransaction(queryList);
-
                 return result;
             }
             catch (ClientException ex)
             {
                 if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
                     throw;
-                
-                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name { location.Name }" });
+
+                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {location.Name}" });
             }
             catch (Exception ex)
             {
@@ -62,13 +61,16 @@ namespace MycoMgmt.API.Repositories
             }
         }
 
-        
-        public async Task<List<Dictionary<string, object>>> GetAllLocations()
+        private static List<string> CreateQueryList(Location location)
         {
-            const string query = @"MATCH (l:Location) RETURN l { Name: l.Name } ORDER BY l.Name";
-            var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "l");
-
-            return locations;
+            var queryList = new List<string>
+            {
+                $@"
+                    MERGE(l:Location {{ Name:  '{location.Name}' }}) 
+                    RETURN l;
+                    "
+            };
+            return queryList;
         }
     }
 }

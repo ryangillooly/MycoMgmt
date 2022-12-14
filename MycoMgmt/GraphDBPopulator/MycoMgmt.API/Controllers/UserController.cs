@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
-using MycoMgmt.API.Models.User_Management;
+using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -59,14 +55,14 @@ namespace MycoMgmt.API.Controllers
             if(modifiedBy != null)
                 user.ModifiedBy = modifiedBy;
 
-            var result = await _userRepository.AddUser(user);
+            var result = await _userRepository.Add(user);
             return result;
         }
         
         [HttpGet("all")]
         public async Task<string> GetAllUsers()
         {
-            var node = await _userRepository.GetAllUsers();
+            var node = await _userRepository.GetAll();
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
     }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MycoMgmt.API.Helpers;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Models.Mushrooms;
+using MycoMgmt.Domain.Models;
+using MycoMgmt.Domain.Models.Mushrooms;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 

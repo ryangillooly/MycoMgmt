@@ -4,8 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
-using MycoMgmt.API.Models;
-using MycoMgmt.API.Repositories.Recipe;
+using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -22,7 +21,7 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> AddStrain(Strain strain)
+        public async Task<string> Add(Strain strain)
         {
             if (strain == null || string.IsNullOrWhiteSpace(strain.Name))
                 throw new ArgumentNullException(nameof(strain), "Strain must not be null");
@@ -30,11 +29,35 @@ namespace MycoMgmt.API.Repositories
             if ((strain.ModifiedBy != null && strain.ModifiedOn == null) || (strain.ModifiedBy == null && strain.ModifiedOn != null))
                 throw new ArgumentException("ModifiedBy and ModifiedOn must either both be Null, or both be Populated");
             
+            return await PersistToDatabase(strain);
+        }
+
+        private async Task<string> PersistToDatabase(Strain strain)
+        {
             try
             {
-                var queryList = new List<string>
-                {
-                    $@"
+                var queryList = CreateQueryList(strain);
+                var result = await _neo4JDataAccess.RunTransaction(queryList);
+                return result;
+            }
+            catch (ClientException ex)
+            {
+                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                    throw;
+
+                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {strain.Name}" });
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+
+        private static List<string> CreateQueryList(Strain strain)
+        {
+            var queryList = new List<string>
+            {
+                $@"
                         MERGE 
                         (
                             s:Strain
@@ -45,26 +68,11 @@ namespace MycoMgmt.API.Repositories
                         ) 
                         RETURN s;
                     "
-                };
-
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-                
-                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name { strain.Name }" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+            };
+            return queryList;
         }
-        
-        public async Task<List<Dictionary<string, object>>> GetAllStrains()
+
+        public async Task<List<Dictionary<string, object>>> GetAll()
         {
             const string query = @"MATCH (s:Strain) RETURN s { Name: s.Name } ORDER BY s.Name";
             var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "s");

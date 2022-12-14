@@ -4,8 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
-using MycoMgmt.API.Models.Mushrooms;
-using MycoMgmt.API.Models.User_Management;
+using MycoMgmt.Domain.Models.UserManagement;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -23,16 +22,40 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> AddAccount(Account account)
+        public async Task<string> Add(Account account)
         {
             if (account == null || string.IsNullOrWhiteSpace(account.Name))
                 throw new ArgumentNullException(nameof(account), "Account must not be null");
 
+            return await PersistToDatabase(account);
+        }
+
+        private async Task<string> PersistToDatabase(Account account)
+        {
             try
             {
-                var queryList = new List<string>
-                {
-                    $@"
+                var queryList = CreateQueryList(account);
+                var result = await _neo4JDataAccess.RunTransaction(queryList);
+                return result;
+            }
+            catch (ClientException ex)
+            {
+                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                    throw;
+
+                return JsonConvert.SerializeObject(new { Message = $"An Account already exists with the name {account.Name}" });
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+
+        private static List<string> CreateQueryList(Account account)
+        {
+            var queryList = new List<string>
+            {
+                $@"
                         MERGE 
                         (
                             a:Account
@@ -42,26 +65,11 @@ namespace MycoMgmt.API.Repositories
                         ) 
                         RETURN a;
                     "
-                };
-
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-                
-                return JsonConvert.SerializeObject(new { Message = $"An Account already exists with the name { account.Name }" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+            };
+            return queryList;
         }
-        
-        public async Task<List<Dictionary<string, object>>> GetAllAccounts()
+
+        public async Task<List<Dictionary<string, object>>> GetAll()
         {
             const string query = @"MATCH (a:Account) RETURN a { Name: a.Name } ORDER BY a.Name";
             var accounts = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "a");
