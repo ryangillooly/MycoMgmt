@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.Mushrooms;
+using Neo4j.Driver;
 
 namespace MycoMgmt.API.Repositories
 {
@@ -13,6 +14,7 @@ namespace MycoMgmt.API.Repositories
         public Task<long> GetCount();
         public Task<string> GetById(string id);
         public Task<string> GetAll();
-        //Task<string> Test(string name);
+        public Task DeleteById(string elementId);
+        public Task<string> Update(string elementId, Culture culture);
     }
 }

@@ -10,7 +10,7 @@ public interface INeo4JDataAccess : IAsyncDisposable
 
     Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null);
 
-    Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null);
+    Task<T> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null);
 
     Task<string> RunTransaction(List<string> queryList);
 

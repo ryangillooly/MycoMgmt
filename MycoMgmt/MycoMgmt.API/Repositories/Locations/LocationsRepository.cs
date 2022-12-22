@@ -53,7 +53,8 @@ namespace MycoMgmt.API.Repositories
                 if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
                     throw;
 
-                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {location.Name}" });
+                _logger.LogWarning("A culture already exists with the name {LocationName}", location.Name);
+                throw;
             }
             catch (Exception ex)
             {

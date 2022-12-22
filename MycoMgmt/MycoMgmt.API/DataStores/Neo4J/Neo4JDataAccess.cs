@@ -65,7 +65,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
     }
         
-    public async Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null)
+    public async Task<T> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null)
     {
         try
         {
@@ -80,14 +80,14 @@ public class Neo4JDataAccess : INeo4JDataAccess
                 return scalar;
             });
 
-            return JsonConvert.SerializeObject(result);
+            return result;
         }
         catch (InvalidOperationException ex)
         {
             if (ex.Message != "The result is empty.") 
                 throw;
-            
-            return JsonConvert.SerializeObject(new { Message = $"No results were found for Culture" });
+
+            throw;
         }
         catch (Exception ex)
         {

@@ -6,6 +6,6 @@
         public string? Parent { get; set; }
         public string? Child { get; set; }
         public bool Successful { get; set; }
-        public bool Finished { get; set; } = false;
+        public bool? Finished { get; set; } = false;
     }
 }
