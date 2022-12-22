@@ -30,6 +30,12 @@ namespace MycoMgmt.API.Repositories
 
             return persons;
         }
+
+        public async Task<string> Test()
+        {
+            var data = await _neo4JDataAccess.GetNodesAsync();
+            return JsonConvert.SerializeObject(data);
+        }
         
         public async Task<List<Dictionary<string, object>>> GetByName(string name)
         {
@@ -69,7 +75,21 @@ namespace MycoMgmt.API.Repositories
 
             return await PersistToDatabase(culture);
         }
+        
+        public async Task<List<string>> GetAll()
+        {
+            const string query = "MATCH (c:Culture) RETURN c ORDER BY c.Name ASC";
+            var cultures = await _neo4JDataAccess.ExecuteReadListAsync(query, "c");
+            return cultures;
+        }
 
+        public async Task<long> GetCount()
+        {
+            const string query = "Match (c:Culture) RETURN count(c) as CultureCount";
+            var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
+            return count;
+        }
+        
         private async Task<string> PersistToDatabase(Culture culture)
         {
             try
@@ -177,13 +197,6 @@ namespace MycoMgmt.API.Repositories
             }
 
             return queryList;
-        }
-
-        public async Task<long> GetCount()
-        {
-            const string query = @"Match (c:Culture) RETURN count(c) as CultureCount";
-            var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
-            return count;
         }
     }
 }

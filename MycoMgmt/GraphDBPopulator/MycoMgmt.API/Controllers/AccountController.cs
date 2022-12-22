@@ -3,33 +3,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.UserManagement;
-using Neo4j.Driver;
 using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/accounts")]
+    [Route("accounts")]
     [ApiController]
     public class AccountController : Controller
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IDriver _driver;
         
-        public AccountController(IAccountRepository repo, IDriver driver)
+        public AccountController(IAccountRepository repo)
         {
-            this._accountRepository = repo;
-            this._driver = driver;
+            _accountRepository = repo;
         }
         
-        [HttpPost("new")]
-        public async Task<string> NewAccount
-        (
-            string name,
-            string createdOn,
-            string createdBy,
-            string? modifiedOn,
-            string? modifiedBy
-        )
+        [HttpPost]
+        public async Task<string> Create (string name, string createdOn, string createdBy, string? modifiedOn, string? modifiedBy)
         {
             var account = new Account()
             {
@@ -44,15 +34,14 @@ namespace MycoMgmt.API.Controllers
             if(modifiedBy != null)
                 account.ModifiedBy = modifiedBy;
 
-            var result = await _accountRepository.Add(account);
+            var result = await _accountRepository.CreateAsync(account);
             return result;
         }
+
+        [HttpDelete("{id}")]
+        public async Task<string> Delete (long id) => await _accountRepository.DeleteAsync(id);
         
         [HttpGet("all")]
-        public async Task<string> GetAllLocations(string name)
-        {
-            var node = await _accountRepository.GetAll();
-            return node is null ? null : JsonConvert.SerializeObject(node);
-        }
+        public async Task<string> GetAll (string name) => await _accountRepository.GetAllAsync();
     }
 }

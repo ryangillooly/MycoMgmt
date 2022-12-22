@@ -8,17 +8,15 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/roles")]
+    [Route("roles")]
     [ApiController]
     public class RoleController : Controller
     {
         private readonly IRoleRepository _roleRepository;
-        private readonly IDriver _driver;
         
         public RoleController(IRoleRepository repo, IDriver driver)
         {
-            this._roleRepository = repo;
-            this._driver = driver;
+            _roleRepository = repo;
         }
         
         [HttpPost("new")]

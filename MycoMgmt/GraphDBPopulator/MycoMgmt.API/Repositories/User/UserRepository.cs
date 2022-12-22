@@ -25,11 +25,19 @@ namespace MycoMgmt.API.Repositories
         public async Task<string> Add(User user)
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Name))
-                throw new ArgumentNullException(nameof(user), "User must not be null");
+                throw new ArgumentNullException(nameof(user), "User cannot not be null");
 
             return await PersistToDatabase(user);
         }
 
+        public async Task<List<Dictionary<string, object>>> GetAll()
+        {
+            const string query = @"MATCH (u:User) RETURN u ORDER BY u.Name";
+            var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "u");
+
+            return users;
+        }
+        
         private async Task<string> PersistToDatabase(User user)
         {
             try
@@ -116,14 +124,6 @@ namespace MycoMgmt.API.Repositories
             }
 
             return queryList;
-        }
-
-        public async Task<List<Dictionary<string, object>>> GetAll()
-        {
-            const string query = @"MATCH (u:User) RETURN u { Name: u.Name } ORDER BY u.Name";
-            var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "u");
-
-            return users;
         }
     }
 }

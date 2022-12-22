@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MycoMgmt.API.DataStores;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.API.Repositories.Recipe;

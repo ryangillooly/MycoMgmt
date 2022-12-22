@@ -8,17 +8,15 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/locations")]
+    [Route("locations")]
     [ApiController]
     public class LocationController : Controller
     {
         private readonly ILocationsRepository _locationsRepository;
-        private readonly IDriver _driver;
         
         public LocationController(ILocationsRepository repo, IDriver driver)
         {
-            this._locationsRepository = repo;
-            this._driver = driver;
+            _locationsRepository = repo;
         }
         
         [HttpPost("new")]

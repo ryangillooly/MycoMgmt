@@ -13,5 +13,7 @@ namespace MycoMgmt.API.Repositories
         Task<List<Dictionary<string, object>>> GetByName(string name);
         public Task<long> GetCount();
         public Task<string> GetById(string id);
+        public Task<List<string>> GetAll();
+        Task<string> Test();
     }
 }

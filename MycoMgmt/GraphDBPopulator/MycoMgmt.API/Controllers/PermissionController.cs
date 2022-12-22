@@ -7,17 +7,15 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/permissions")]
+    [Route("permissions")]
     [ApiController]
     public class PermissionController : Controller
     {
         private readonly IPermissionRepository _permissionRepository;
-        private readonly IDriver _driver;
         
         public PermissionController(IPermissionRepository repo, IDriver driver)
         {
-            this._permissionRepository = repo;
-            this._driver = driver;
+            _permissionRepository = repo;
         }
         
         [HttpPost("new")]

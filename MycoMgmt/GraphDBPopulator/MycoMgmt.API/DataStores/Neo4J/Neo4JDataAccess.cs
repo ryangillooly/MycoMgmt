@@ -14,20 +14,23 @@ namespace MycoMgmt.DataStores.Neo4J
     public class Neo4JDataAccess : INeo4JDataAccess
     {
         private readonly IAsyncSession _session;
+        private readonly IDriver _driver;
         private readonly ILogger<Neo4JDataAccess> _logger;
+        private readonly string _database;
 
         public Neo4JDataAccess(IDriver driver, ILogger<Neo4JDataAccess> logger, IOptions<Neo4JSettings> appSettingsOptions)
         {
             _logger = logger;
-            var database = appSettingsOptions.Value.Neo4jDatabase ?? "neo4j";
-            _session = driver.AsyncSession(o => o.WithDatabase(database));
+            _database = appSettingsOptions.Value.Neo4jDatabase ?? "neo4j";
+            _driver = driver;
+            _session = driver.AsyncSession(o => o.WithDatabase(_database));
         }
         
         public async Task<List<string>> ExecuteReadListAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
         {
             return await ExecuteReadTransactionAsync<string>(query, returnObjectKey, parameters);
         }
-
+        
         public async Task<List<Dictionary<string, object>>> ExecuteReadDictionaryAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
         {
             return await ExecuteReadTransactionAsync<Dictionary<string, object>>(query, returnObjectKey, parameters);
@@ -62,8 +65,7 @@ namespace MycoMgmt.DataStores.Neo4J
             }
         }
         
-        public async Task<string> ExecuteWriteTransactionAsync<T>(string query,
-            IDictionary<string, object>? parameters = null)
+        public async Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null)
         {
             try
             {
@@ -104,9 +106,9 @@ namespace MycoMgmt.DataStores.Neo4J
                     
                     foreach(var query in queryList)
                     {
-                        var res = await tx.RunAsync(query);
-
-                        var scalar = (await res.SingleAsync())[0];
+                        var res   = await tx.RunAsync(query);
+                        var scalarObj = await res.SingleAsync();
+                        var scalar     = scalarObj[0];
 
                         returnList.Add(JsonConvert.SerializeObject(scalar));
                     }
@@ -133,15 +135,15 @@ namespace MycoMgmt.DataStores.Neo4J
         {
             try
             {                
-                parameters = parameters ?? new Dictionary<string, object>();
+                parameters = parameters == null ? new Dictionary<string, object>() : parameters;
 
-                var result = await _session.ExecuteReadAsync(async tx =>
+                var result = await _session.ReadTransactionAsync(async tx =>
                 {
                     var res = await tx.RunAsync(query, parameters);
                     var records = await res.ToListAsync();
-                    var data = records.Select(x => (T) x.Values[returnObjectKey]).ToList();
+                    var data = records.Select(x => (T) x.Values[returnObjectKey]);
 
-                    return data;
+                    return data.ToList();
                 });
 
                 return result;
@@ -151,6 +153,21 @@ namespace MycoMgmt.DataStores.Neo4J
                 _logger.LogError(ex, "There was a problem while executing database query");
                 throw;
             }
+        }
+        
+        public async Task<List<INode>> GetNodesAsync()
+        {
+            // Create a new session using the driver
+            await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+            
+            // Execute a Cypher query that returns a list of nodes
+            var result = session.RunAsync("MATCH (n) RETURN n");
+            
+            // Iterate through the results and add the nodes to a list
+            var  nodes = new List<INode>();
+            await result.Result.ForEachAsync(record => nodes.Add(record["n"].As<INode>()));
+
+            return nodes;
         }
         
         async ValueTask IAsyncDisposable.DisposeAsync()

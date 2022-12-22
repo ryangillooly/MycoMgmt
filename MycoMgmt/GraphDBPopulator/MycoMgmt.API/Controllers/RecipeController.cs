@@ -6,7 +6,7 @@ using MycoMgmt.Domain.Models;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/recipes")]
+    [Route("recipes")]
     [ApiController]
     public class RecipeController : Controller
     {
@@ -14,7 +14,7 @@ namespace MycoMgmt.API.Controllers
         
         public RecipeController(IRecipeRepository repo)
         {
-            this._repo = repo;
+            _repo = repo;
         }
 
         [HttpPost("new")]

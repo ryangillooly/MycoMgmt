@@ -8,17 +8,15 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/strains")]
+    [Route("strains")]
     [ApiController]
     public class StrainsController : Controller
     {
         private readonly IStrainsRepository _strainsRepository;
-        private readonly IDriver _driver;
         
         public StrainsController(IStrainsRepository repo, IDriver driver)
         {
-            this._strainsRepository = repo;
-            this._driver = driver;
+            _strainsRepository = repo;
         }
         
         [HttpPost("new")]
@@ -54,7 +52,7 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpGet("all")]
-        public async Task<string> GetAllLocations(string name)
+        public async Task<string> GetAllLocations()
         {
             var node = await _strainsRepository.GetAll();
             return node is null ? null : JsonConvert.SerializeObject(node);

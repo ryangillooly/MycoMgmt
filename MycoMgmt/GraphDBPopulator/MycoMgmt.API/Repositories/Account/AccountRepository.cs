@@ -22,14 +22,29 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(Account account)
+        public async Task<string> CreateAsync(Account account)
         {
             if (account == null || string.IsNullOrWhiteSpace(account.Name))
                 throw new ArgumentNullException(nameof(account), "Account must not be null");
 
             return await PersistToDatabase(account);
         }
+        public async Task<string> DeleteAsync(long id)
+        {
+            var query = new List<string>{ $"MATCH (a:Account) WHERE ID(a) = { id } DETACH DELETE a RETURN a" };
+            var accounts = await _neo4JDataAccess.RunTransaction(query);
 
+            return accounts is null ? null : JsonConvert.SerializeObject(accounts);
+        }
+
+        public async Task<string> UpdateAsync(Account account)
+        {
+            // Fix this query. Placeholder put in for the time being until I get round to it
+            var query = new List<string> { $"MATCH (a:Account {{ Name: '{account.Name}' }}) DETACH DELETE a RETURN a" };
+            var accounts = await _neo4JDataAccess.RunTransaction(query);
+
+            return accounts is null ? null : JsonConvert.SerializeObject(accounts);
+        }
         private async Task<string> PersistToDatabase(Account account)
         {
             try
@@ -50,7 +65,6 @@ namespace MycoMgmt.API.Repositories
                 throw new ArgumentException(ex.Message);
             }
         }
-
         private static List<string> CreateQueryList(Account account)
         {
             var queryList = new List<string>
@@ -68,13 +82,12 @@ namespace MycoMgmt.API.Repositories
             };
             return queryList;
         }
-
-        public async Task<List<Dictionary<string, object>>> GetAll()
+        public async Task<string> GetAllAsync()
         {
-            const string query = @"MATCH (a:Account) RETURN a { Name: a.Name } ORDER BY a.Name";
+            const string query = "MATCH (a:Account) RETURN a ORDER BY a.Name";
             var accounts = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "a");
 
-            return accounts;
+            return accounts is null ? null : JsonConvert.SerializeObject(accounts);
         }
     }
 }

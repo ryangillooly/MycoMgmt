@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
@@ -8,17 +9,15 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("api/cultures")]
+    [Route("cultures")]
     [ApiController]
     public class CultureController : Controller
     {
         private readonly ICultureRepository _cultureRepository;
-        private readonly IDriver _driver;
         
         public CultureController(ICultureRepository repo, IDriver driver)
         {
-            this._cultureRepository = repo;
-            this._driver = driver;
+            _cultureRepository = repo;
         }
 
         [HttpPost("new")]
@@ -98,11 +97,25 @@ namespace MycoMgmt.API.Controllers
             var node = await _cultureRepository.SearchByName(name);
             return node is null ? null : JsonConvert.SerializeObject(node);
         }
+        
+        [HttpGet("all")]
+        public async Task<string> GetCultures()
+        {
+            var cultures = await _cultureRepository.GetAll();
+            return cultures is null ? null : JsonConvert.SerializeObject(cultures);
+        }        
 
         [HttpGet("count")]
         public async Task<long> GetRecipeCount()
         {
             var cultureCount = await _cultureRepository.GetCount();
+            return cultureCount;
+        }
+        
+        [HttpGet("test")]
+        public async Task<string> GetNodes()
+        {
+            var cultureCount = await _cultureRepository.Test();
             return cultureCount;
         }
     }

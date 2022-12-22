@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Neo4j.Driver;
 
 namespace MycoMgmt.API.DataStores.Neo4J
 {
@@ -15,5 +16,7 @@ namespace MycoMgmt.API.DataStores.Neo4J
         Task<string> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object> parameters = null);
 
         Task<string> RunTransaction(List<string> queryList);
+
+        Task<List<INode>> GetNodesAsync();
     }
 }
