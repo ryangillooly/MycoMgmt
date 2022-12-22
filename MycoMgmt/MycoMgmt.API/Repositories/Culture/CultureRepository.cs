@@ -209,38 +209,148 @@ public class CultureRepository : ICultureRepository
     {
         var query = $"MATCH (c:Culture) WHERE elementId(c) = '{elementId}' ";
 
-        var queryList = new List<string>()
-        {
-            
-        };
+        var queryList = new List<string>();
         
+        // Update Name
         if (!string.IsNullOrEmpty(culture.Name))
             queryList.Add(query + $"SET c.Name = '{culture.Name}' RETURN c");
 
+        // Update Strain
         if (!string.IsNullOrEmpty(culture.Strain))
         {
             queryList.Add($@"
-                                    MATCH 
-                                        (c:Culture)-[r:HAS_STRAIN]->(:Strain)
-                                    WHERE
-                                        elementId(c) = '{elementId}'
-                                    DELETE 
-                                        r
-                                    RETURN 
-                                        r
-                                 ");
+                MATCH 
+                    (c:Culture)-[r:HAS_STRAIN]->(:Strain)
+                WHERE
+                    elementId(c) = '{elementId}'
+                DELETE 
+                    r
+                RETURN 
+                    r
+            ");
             
             queryList.Add($@"
-                                    MATCH 
-                                        (c:Culture),
-                                        (s:Strain  {{ Name: '{culture.Strain}' }})
-                                    WHERE
-                                        elementId(c) = '{elementId}'
-                                    MERGE 
-                                        (c)-[r:HAS_STRAIN]->(s) 
-                                    RETURN 
-                                        r
-                                 ");
+                MATCH 
+                    (c:Culture),
+                    (s:Strain  {{ Name: '{culture.Strain}' }})
+                WHERE
+                    elementId(c) = '{elementId}'
+                MERGE 
+                    (c)-[r:HAS_STRAIN]->(s) 
+                RETURN 
+                    r
+            ");
+        }
+        
+        // Update Type
+        if (!string.IsNullOrEmpty(culture.Type))
+            queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
+        
+        // Update Recipe
+        // if (!string.IsNullOrEmpty(culture.Type))
+        //   queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
+        
+        // Update Location
+        if (!string.IsNullOrEmpty(culture.Location))
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)-[r:STORED_IN]->(:Location)
+                WHERE
+                    elementId(c) = '{elementId}'
+                DELETE 
+                    r
+                RETURN 
+                    r
+            ");
+            
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture),
+                    (l:Location  {{ Name: '{culture.Location}' }})
+                WHERE
+                    elementId(c) = '{elementId}'
+                MERGE 
+                    (c)-[r:STORED_IN]->(l) 
+                RETURN 
+                    r
+            ");
+        }
+        
+        // Update Parent
+        if (string.IsNullOrEmpty(culture.Parent))
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:HAS_PARENT]->(n)
+                DELETE
+                    r
+                RETURN  
+                    r
+            ");
+        }
+        else
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:HAS_PARENT]->(n)
+                DELETE
+                    r
+                WITH
+                    c
+                MATCH 
+                    (p {{Name: '{culture.Parent}' }})
+                MERGE 
+                    (c)-[r:HAS_PARENT]->(p) 
+                RETURN 
+                    r
+            ");
+        }
+        
+        // Update Child
+        if (string.IsNullOrEmpty(culture.Child))
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)<-[r:HAS_PARENT]-(n)
+                DELETE
+                    r
+                RETURN  
+                    r
+            ");
+        }
+        else
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)<-[r:HAS_PARENT]-(n)
+                DELETE
+                    r
+                WITH
+                    c
+                MATCH 
+                    (p {{Name: '{culture.Child}' }})
+                MERGE 
+                    (c)<-[r:HAS_PARENT]-(p) 
+                RETURN 
+                    r
+            ");
         }
         
         var cultures = await _neo4JDataAccess.RunTransaction(queryList);
