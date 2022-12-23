@@ -62,15 +62,7 @@ public class CultureRepository : ICultureRepository
             throw;
         }
     }
-        
-    public async Task<string> Create(Culture culture)
-    {
-        if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
-            throw new ArgumentNullException(nameof(culture), "Culture must not be null");
-
-        return await PersistToDatabase(culture);
-    }
-        
+    
     public async Task<string> GetAll()
     {
         const string query = "MATCH (c:Culture) RETURN c ORDER BY c.Name ASC";
@@ -84,130 +76,16 @@ public class CultureRepository : ICultureRepository
         var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
         return count;
     }
-        
-    private async Task<string> PersistToDatabase(Culture culture)
+    
+    public async Task<string> Create(Culture culture)
     {
-        try
-        {
-            var queryList = CreateQueryList(culture);
-            var result = await _neo4JDataAccess.RunTransaction(queryList);
-            return result;
-        }
-        catch (ClientException ex)
-        {
-            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                throw;
+        if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
+            throw new ArgumentNullException(nameof(culture), "Culture must not be null");
 
-            return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {culture.Name}" });
-        }
-        catch (Exception ex)
-        {
-            throw new ArgumentException(ex.Message);
-        }
+        return await PersistToDatabase(culture);
     }
-
-    private static List<string> CreateQueryList(Culture culture)
-    {
-        var queryList = new List<string>
-        {
-            // Create New Culture
-            $@"
-                CREATE (c:Culture {{
-                                    Name:  '{culture.Name}',
-                                    Type:  '{culture.Type}'
-                                  }}) 
-                RETURN c;
-            ",
-            // Create Relationship Between Culture and Strain
-            $@"
-                MATCH 
-                    (c:Culture {{ Name: '{culture.Name}'   }}), 
-                    (s:Strain  {{ Name: '{culture.Strain}' }})
-                MERGE
-                    (c)-[r:HAS_STRAIN]->(s)
-                RETURN r
-            ",
-            // Create Relationship Between Culture and Location
-            $@"
-                MATCH 
-                    (c:Culture  {{ Name: '{culture.Name}' }}), 
-                    (l:Location {{ Name: '{culture.Location}' }})
-                MERGE
-                    (c)-[r:STORED_IN]->(l)
-                RETURN r
-            ",
-            // Create Relationship Between Culture and Day
-            $@"
-                MATCH 
-                    (c:Culture {{ Name: '{culture.Name}' }}), 
-                    (d:Day     {{ day: {culture.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
-                MERGE
-                    (c)-[r:CREATED_ON]->(d)
-                RETURN r
-            ",
-            // Create Relationship Between Culture and User 
-            $@"
-                MATCH 
-                    (c:Culture {{ Name: '{culture.Name}'      }}),
-                    (u:User    {{ Name: '{culture.CreatedBy}' }})
-                MERGE
-                    (u)-[r:CREATED]->(c)
-                RETURN r
-            "
-        };
-
-        if (culture.Parent != null)
-        {
-            queryList.Add(
-                // Create Relationship Between Culture and Parent
-                $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{culture.Name}' }}), 
-                            (p {{ Name: '{culture.Parent}' }})
-                        MERGE
-                            (c)-[r:HAS_PARENT]->(p)
-                        RETURN r
-                    ");
-        }
-
-        if (culture.Finished == true)
-        {
-            queryList.Add(
-                // Create IsSuccessful Label on Culture
-                $@"
-                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                        SET c {culture.IsSuccessful()}
-                        RETURN c
-                    ");
-        }
-        else
-        {
-            queryList.Add(
-                // Create InProgress Label on Culture
-                $@"
-                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                        SET c :InProgress
-                        RETURN c
-                    ");
-        }
-
-        if (culture.Vendor != null)
-        {
-            queryList.Add($@"
-                MATCH 
-                    (c:Culture {{ Name: '{culture.Name}'}} ),
-                    (v:Vendor  {{ Name: '{culture.Vendor}' }})
-                MERGE
-                    (c)-[r:PURCHASED_FROM]->(v)
-                RETURN 
-                    r
-            ");
-        }
-
-        return queryList;
-    }
-        
-    public async Task DeleteById(string elementId)
+    
+    public async Task Delete(string elementId)
     {
         var query = $"MATCH (c:Culture) WHERE elementId(c) = '{ elementId }' DETACH DELETE c RETURN c";
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
@@ -299,8 +177,7 @@ public class CultureRepository : ICultureRepository
             queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
         
         // Update Recipe
-        // if (!string.IsNullOrEmpty(culture.Type))
-        //   queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
+        // TODO
         
         // Update Location
         if (!string.IsNullOrEmpty(culture.Location))
@@ -436,5 +313,127 @@ public class CultureRepository : ICultureRepository
         
         var cultures = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(cultures, Formatting.Indented);
+    }
+    
+    private async Task<string> PersistToDatabase(Culture culture)
+    {
+        try
+        {
+            var queryList = CreateQueryList(culture);
+            var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
+        }
+        catch (ClientException ex)
+        {
+            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                throw;
+
+            return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {culture.Name}" });
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException(ex.Message);
+        }
+    }
+
+    private static List<string> CreateQueryList(Culture culture)
+    {
+        var queryList = new List<string>
+        {
+            // Create New Culture
+            $@"
+                CREATE (c:Culture {{
+                                    Name:  '{culture.Name}',
+                                    Type:  '{culture.Type}'
+                                  }}) 
+                RETURN c;
+            ",
+            // Create Relationship Between Culture and Strain
+            $@"
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'   }}), 
+                    (s:Strain  {{ Name: '{culture.Strain}' }})
+                MERGE
+                    (c)-[r:HAS_STRAIN]->(s)
+                RETURN r
+            ",
+            // Create Relationship Between Culture and Location
+            $@"
+                MATCH 
+                    (c:Culture  {{ Name: '{culture.Name}' }}), 
+                    (l:Location {{ Name: '{culture.Location}' }})
+                MERGE
+                    (c)-[r:STORED_IN]->(l)
+                RETURN r
+            ",
+            // Create Relationship Between Culture and Day
+            $@"
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}' }}), 
+                    (d:Day     {{ day: {culture.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
+                MERGE
+                    (c)-[r:CREATED_ON]->(d)
+                RETURN r
+            ",
+            // Create Relationship Between Culture and User 
+            $@"
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'      }}),
+                    (u:User    {{ Name: '{culture.CreatedBy}' }})
+                MERGE
+                    (u)-[r:CREATED]->(c)
+                RETURN r
+            "
+        };
+
+        if (culture.Parent != null)
+        {
+            queryList.Add(
+                // Create Relationship Between Culture and Parent
+                $@"
+                        MATCH 
+                            (c:Culture {{ Name: '{culture.Name}' }}), 
+                            (p {{ Name: '{culture.Parent}' }})
+                        MERGE
+                            (c)-[r:HAS_PARENT]->(p)
+                        RETURN r
+                    ");
+        }
+
+        if (culture.Finished == true)
+        {
+            queryList.Add(
+                // Create IsSuccessful Label on Culture
+                $@"
+                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                        SET c {culture.IsSuccessful()}
+                        RETURN c
+                    ");
+        }
+        else
+        {
+            queryList.Add(
+                // Create InProgress Label on Culture
+                $@"
+                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                        SET c :InProgress
+                        RETURN c
+                    ");
+        }
+
+        if (culture.Vendor != null)
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'}} ),
+                    (v:Vendor  {{ Name: '{culture.Vendor}' }})
+                MERGE
+                    (c)-[r:PURCHASED_FROM]->(v)
+                RETURN 
+                    r
+            ");
+        }
+
+        return queryList;
     }
 }
