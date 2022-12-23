@@ -125,11 +125,15 @@ public class CultureController : Controller
         string? vendor,
         bool? successful,
         bool? finished,
-        string? modifiedOn,
-        string? modifiedBy
+        string modifiedOn,
+        string modifiedBy
     )
     {
-        var culture = new Culture();
+        var culture = new Culture
+        {
+            ModifiedOn = DateTime.Parse(modifiedOn),
+            ModifiedBy = modifiedBy
+        };
         
         if (name != null)
             culture.Name = name;
@@ -160,12 +164,6 @@ public class CultureController : Controller
 
         if (finished != null)
             culture.Finished = finished;
-        
-        if (modifiedOn != null)
-            culture.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            culture.ModifiedBy = modifiedBy;
 
         var result = await _cultureRepository.Update(elementId, culture);
 
