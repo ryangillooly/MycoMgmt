@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -112,48 +112,48 @@ public class CultureRepository : ICultureRepository
         {
             // Create New Culture
             $@"
-                    CREATE (c:Culture {{
-                                        Name:  '{culture.Name}',
-                                        Type:  '{culture.Type}'
-                                      }}) 
-                    RETURN c;
-                    ",
+                CREATE (c:Culture {{
+                                    Name:  '{culture.Name}',
+                                    Type:  '{culture.Type}'
+                                  }}) 
+                RETURN c;
+            ",
             // Create Relationship Between Culture and Strain
             $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{culture.Name}'   }}), 
-                            (s:Strain  {{ Name: '{culture.Strain}' }})
-                        MERGE
-                            (c)-[r:HAS_STRAIN]->(s)
-                        RETURN r
-                    ",
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'   }}), 
+                    (s:Strain  {{ Name: '{culture.Strain}' }})
+                MERGE
+                    (c)-[r:HAS_STRAIN]->(s)
+                RETURN r
+            ",
             // Create Relationship Between Culture and Location
             $@"
-                        MATCH 
-                            (c:Culture  {{ Name: '{culture.Name}' }}), 
-                            (l:Location {{ Name: '{culture.Location}' }})
-                        MERGE
-                            (c)-[r:STORED_IN]->(l)
-                        RETURN r
-                    ",
+                MATCH 
+                    (c:Culture  {{ Name: '{culture.Name}' }}), 
+                    (l:Location {{ Name: '{culture.Location}' }})
+                MERGE
+                    (c)-[r:STORED_IN]->(l)
+                RETURN r
+            ",
             // Create Relationship Between Culture and Day
             $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{culture.Name}' }}), 
-                            (d:Day     {{ day: {culture.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
-                        MERGE
-                            (c)-[r:CREATED_ON]->(d)
-                        RETURN r
-                    ",
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}' }}), 
+                    (d:Day     {{ day: {culture.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {culture.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {culture.CreatedOn.Year} }})
+                MERGE
+                    (c)-[r:CREATED_ON]->(d)
+                RETURN r
+            ",
             // Create Relationship Between Culture and User 
             $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{culture.Name}'      }}),
-                            (u:User    {{ Name: '{culture.CreatedBy}' }})
-                        MERGE
-                            (u)-[r:CREATED]->(c)
-                        RETURN r
-                    "
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'      }}),
+                    (u:User    {{ Name: '{culture.CreatedBy}' }})
+                MERGE
+                    (u)-[r:CREATED]->(c)
+                RETURN r
+            "
         };
 
         if (culture.Parent != null)
@@ -161,13 +161,13 @@ public class CultureRepository : ICultureRepository
             queryList.Add(
                 // Create Relationship Between Culture and Parent
                 $@"
-                                MATCH 
-                                    (c:Culture {{ Name: '{culture.Name}' }}), 
-                                    (p:Culture {{ Name: '{culture.Parent}' }})
-                                MERGE
-                                    (c)-[r:HAS_PARENT]->(p)
-                                RETURN r
-                            ");
+                        MATCH 
+                            (c:Culture {{ Name: '{culture.Name}' }}), 
+                            (p {{ Name: '{culture.Parent}' }})
+                        MERGE
+                            (c)-[r:HAS_PARENT]->(p)
+                        RETURN r
+                    ");
         }
 
         if (culture.Finished == true)
@@ -175,20 +175,33 @@ public class CultureRepository : ICultureRepository
             queryList.Add(
                 // Create IsSuccessful Label on Culture
                 $@"
-                                MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                                SET c {culture.IsSuccessful()}
-                                RETURN c
-                            ");
+                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                        SET c {culture.IsSuccessful()}
+                        RETURN c
+                    ");
         }
         else
         {
             queryList.Add(
                 // Create InProgress Label on Culture
                 $@"
-                                MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                                SET c :InProgress
-                                RETURN c
-                            ");
+                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
+                        SET c :InProgress
+                        RETURN c
+                    ");
+        }
+
+        if (culture.Vendor != null)
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture {{ Name: '{culture.Name}'}} ),
+                    (v:Vendor  {{ Name: '{culture.Vendor}' }})
+                MERGE
+                    (c)-[r:PURCHASED_FROM]->(v)
+                RETURN 
+                    r
+            ");
         }
 
         return queryList;
@@ -209,7 +222,50 @@ public class CultureRepository : ICultureRepository
     {
         var query = $"MATCH (c:Culture) WHERE elementId(c) = '{elementId}' ";
 
-        var queryList = new List<string>();
+        DateTime.TryParse(culture.ModifiedOn.ToString(), out var parsedDateTime);
+        
+        var queryList = new List<string>
+        {
+            // Updated ModifiedOn Relationship
+            $@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:MODIFIED_ON]->(d)
+                DELETE 
+                    r
+                WITH
+                    c
+                MATCH
+                    (d:Day {{ day: {parsedDateTime.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {parsedDateTime.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {parsedDateTime.Year} }})
+                MERGE
+                    (c)-[r:MODIFIED_ON]->(d)
+                RETURN 
+                    r
+            ",
+            
+            // Update Modified Relationship
+            $@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (u)-[r:MODIFIED]->(c)
+                DELETE
+                    r
+                WITH
+                    c
+                MATCH
+                    (u:User {{ Name: '{culture.ModifiedBy}'}} )
+                MERGE 
+                    (u)-[r:MODIFIED]->(c)
+                RETURN
+                    r            
+            "
+        };
         
         // Update Name
         if (!string.IsNullOrEmpty(culture.Name))
@@ -352,6 +408,32 @@ public class CultureRepository : ICultureRepository
                     r
             ");
         }
+        
+        // Update Vendor
+        if (!string.IsNullOrEmpty(culture.Vendor))
+        {
+            queryList.Add($@"
+                MATCH 
+                    (c:Culture)
+                WHERE
+                    elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:PURCHASED_FROM]->(v)
+                DELETE 
+                    r
+                WITH
+                    c
+                MATCH
+                    (v:Vendor  {{ Name: '{culture.Vendor}' }})
+                MERGE
+                    (c)-[r:PURCHASED_FROM]->(v)
+                RETURN 
+                    r
+            ");
+        }
+        
+        // Update Successful + Finished
+        // TODO
         
         var cultures = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(cultures);

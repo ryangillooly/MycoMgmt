@@ -107,10 +107,9 @@ public class Neo4JDataAccess : INeo4JDataAccess
                 foreach(var query in queryList)
                 {
                     var res   = await tx.RunAsync(query);
-                    var scalarObj = await res.SingleAsync();
-                    var scalar     = scalarObj[0];
+                    var scalarObj = await res.ToListAsync();
 
-                    returnList.Add(JsonConvert.SerializeObject(scalar));
+                    returnList.Add(JsonConvert.SerializeObject(scalarObj));
                 }
                 return returnList;
             });
