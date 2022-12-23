@@ -1,8 +1,6 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers;
 
