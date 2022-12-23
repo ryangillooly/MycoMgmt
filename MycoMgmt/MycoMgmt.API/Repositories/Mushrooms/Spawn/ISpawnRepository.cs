@@ -6,15 +6,15 @@ using Neo4j.Driver;
 
 namespace MycoMgmt.API.Repositories
 {
-    public interface ICultureRepository
+    public interface ISpawnRepository
     {
-        public Task<string> Create(Culture culture);
+        public Task<string> Create(Spawn spawn);
         Task<string> SearchByName(string name);
         Task<string> GetByName(string name);
         public Task<long> GetCount();
         public Task<string> GetById(string id);
         public Task<string> GetAll();
-        public Task DeleteById(string elementId);
-        public Task<string> Update(string elementId, Culture culture);
+        public Task Delete(string elementId);
+        public Task<string> Update(string elementId, Spawn spawn);
     }
 }

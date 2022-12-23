@@ -17,6 +17,7 @@ namespace MycoMgmt.API.Helpers
                 throw new ArgumentNullException(nameof(services));
             
             services.AddTransient<ICultureRepository,    CultureRepository>();
+            services.AddTransient<ISpawnRepository,      SpawnRepository>();
             services.AddTransient<ILocationsRepository,  LocationsRepository>();
             services.AddTransient<IStrainsRepository,    StrainsRepository>();
             services.AddTransient<IAccountRepository,    AccountRepository>();

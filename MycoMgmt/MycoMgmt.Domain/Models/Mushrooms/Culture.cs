@@ -12,4 +12,19 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         public string? Recipe { get; set; }
         public string? Vendor { get; set; }
     }
+
+    public static class CultureExtensions
+    {
+        public static string IsSuccessful(this Culture culture)
+        {
+            if ((bool)!culture.Finished) 
+                return ":InProgress";
+
+            return culture.Successful switch
+            {
+                true => ":Successful",
+                false => ":Failed"
+            };
+        }
+    }
 }

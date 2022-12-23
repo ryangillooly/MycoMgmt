@@ -67,18 +67,6 @@ namespace MycoMgmt.API.Helpers
             return await r.ToListAsync();
         }).Result;
         
-        public static string IsSuccessful(this Culture culture)
-        {
-            if ((bool)!culture.Finished) 
-                return ":InProgress";
-
-            return culture.Successful switch
-            {
-                true => ":Successful",
-                false => ":Failed"
-            };
-        }
-
         public static string? IsPurchase(this Culture culture) => culture.Vendor is null ? null : ":Purchase";
         
         public static void CreateLocation(this IAsyncSession session, Location location)

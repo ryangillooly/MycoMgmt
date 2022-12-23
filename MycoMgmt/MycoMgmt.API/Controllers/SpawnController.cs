@@ -4,15 +4,15 @@ using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("cultures")]
+[Route("spawn")]
 [ApiController]
-public class CultureController : Controller
+public class SpawnController : Controller
 {
-    private readonly ICultureRepository _cultureRepository;
+    private readonly ISpawnRepository _spawnRepository;
 
-    public CultureController(ICultureRepository repo)
+    public SpawnController(ISpawnRepository repo)
     {
-        _cultureRepository = repo;
+        _spawnRepository = repo;
     }
 
     [HttpPost]
@@ -34,41 +34,37 @@ public class CultureController : Controller
         string? modifiedBy
     )
     {
-        var culture = new Culture()
+        var spawn = new Spawn()
         {
             Name = name,
             Type = type,
-            Strain = strain,
             Finished = finished,
             CreatedOn = DateTime.Parse(createdOn),
             CreatedBy = createdBy
         };
 
         if (recipe != null)
-            culture.Recipe = recipe;
+            spawn.Recipe = recipe;
 
         if (location != null)
-            culture.Location = location;
+            spawn.Location = location;
 
         if (parent != null)
-            culture.Parent = parent;
+            spawn.Parent = parent;
 
         if (child != null)
-            culture.Child = child;
-
-        if (vendor != null)
-            culture.Vendor = vendor;
+            spawn.Child = child;
 
         if (successful != null)
-            culture.Successful = successful.Value;
+            spawn.Successful = successful.Value;
 
         if (modifiedOn != null)
-            culture.ModifiedOn = DateTime.Parse(modifiedOn);
+            spawn.ModifiedOn = DateTime.Parse(modifiedOn);
 
         if (modifiedBy != null)
-            culture.ModifiedBy = modifiedBy;
+            spawn.ModifiedBy = modifiedBy;
 
-        var result = await _cultureRepository.Create(culture);
+        var result = await _spawnRepository.Create(spawn);
 
         return Created("", result);
     }
@@ -91,43 +87,37 @@ public class CultureController : Controller
         string modifiedBy
     )
     {
-        var culture = new Culture
+        var spawn = new Spawn
         {
             ModifiedOn = DateTime.Parse(modifiedOn),
             ModifiedBy = modifiedBy
         };
         
         if (name != null)
-            culture.Name = name;
-        
-        if (strain != null)
-            culture.Strain = strain;
-        
+            spawn.Name = name;
+
         if (type != null)
-            culture.Type = type;
+            spawn.Type = type;
         
         if (recipe != null)
-            culture.Recipe = recipe;
+            spawn.Recipe = recipe;
 
         if (location != null)
-            culture.Location = location;
+            spawn.Location = location;
 
         if (parent != null)
-            culture.Parent = parent;
+            spawn.Parent = parent;
 
         if (child != null)
-            culture.Child = child;
-
-        if (vendor != null)
-            culture.Vendor = vendor;
+            spawn.Child = child;
 
         if (successful != null)
-            culture.Successful = successful.Value;
+            spawn.Successful = successful.Value;
 
         if (finished != null)
-            culture.Finished = finished;
+            spawn.Finished = finished;
 
-        var result = await _cultureRepository.Update(elementId, culture);
+        var result = await _spawnRepository.Update(elementId, spawn);
 
         return Ok(result);
     }
@@ -135,21 +125,21 @@ public class CultureController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var records = await _cultureRepository.GetAll();
+        var records = await _spawnRepository.GetAll();
         return Ok(records);
     }
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId)
     {
-        var results = await _cultureRepository.GetById(elementId);
+        var results = await _spawnRepository.GetById(elementId);
         return Ok(results);
     }
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var results = await _cultureRepository.GetByName(name);
+        var results = await _spawnRepository.GetByName(name);
         return Ok(results);
     }
 
@@ -157,14 +147,14 @@ public class CultureController : Controller
     [HttpGet("search/name/{name}")]
     public async Task<IActionResult> SearchByName(string name)
     {
-        var results = await _cultureRepository.SearchByName(name);
+        var results = await _spawnRepository.SearchByName(name);
         return Ok(results);
     }
 
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _cultureRepository.Delete(elementId);
+        await _spawnRepository.Delete(elementId);
         return NoContent();
     }
 }
