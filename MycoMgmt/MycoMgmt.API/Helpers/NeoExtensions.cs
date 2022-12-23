@@ -69,7 +69,8 @@ namespace MycoMgmt.API.Helpers
         
         public static string IsSuccessful(this Culture culture)
         {
-            if ((bool)!culture.Finished) return string.Empty;
+            if ((bool)!culture.Finished) 
+                return ":InProgress";
 
             return culture.Successful switch
             {

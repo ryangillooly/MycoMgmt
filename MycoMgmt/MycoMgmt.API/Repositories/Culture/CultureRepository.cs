@@ -276,23 +276,19 @@ public class CultureRepository : ICultureRepository
         {
             queryList.Add($@"
                 MATCH 
-                    (c:Culture)-[r:HAS_STRAIN]->(:Strain)
+                    (c:Culture)
                 WHERE
                     elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:HAS_STRAIN]->(:Strain)
                 DELETE 
                     r
-                RETURN 
-                    r
-            ");
-            
-            queryList.Add($@"
-                MATCH 
-                    (c:Culture),
-                    (s:Strain  {{ Name: '{culture.Strain}' }})
-                WHERE
-                    elementId(c) = '{elementId}'
-                MERGE 
-                    (c)-[r:HAS_STRAIN]->(s) 
+                WITH
+                    c
+                MATCH
+                    (s:Strain {{ Name: '{culture.Strain}' }})
+                MERGE
+                    (c)-[r:HAS_STRAIN]->(s)
                 RETURN 
                     r
             ");
@@ -311,22 +307,18 @@ public class CultureRepository : ICultureRepository
         {
             queryList.Add($@"
                 MATCH 
-                    (c:Culture)-[r:STORED_IN]->(:Location)
+                    (c:Culture)
                 WHERE
                     elementId(c) = '{elementId}'
+                OPTIONAL MATCH
+                    (c)-[r:STORED_IN]->(:Location)
                 DELETE 
                     r
-                RETURN 
-                    r
-            ");
-            
-            queryList.Add($@"
-                MATCH 
-                    (c:Culture),
-                    (l:Location  {{ Name: '{culture.Location}' }})
-                WHERE
-                    elementId(c) = '{elementId}'
-                MERGE 
+                WITH
+                    c
+                MATCH
+                    (l:Location {{ Name: '{culture.Location}' }})
+                MERGE
                     (c)-[r:STORED_IN]->(l) 
                 RETURN 
                     r
@@ -334,22 +326,7 @@ public class CultureRepository : ICultureRepository
         }
         
         // Update Parent
-        if (string.IsNullOrEmpty(culture.Parent))
-        {
-            queryList.Add($@"
-                MATCH 
-                    (c:Culture)
-                WHERE
-                    elementId(c) = '{elementId}'
-                OPTIONAL MATCH
-                    (c)-[r:HAS_PARENT]->(n)
-                DELETE
-                    r
-                RETURN  
-                    r
-            ");
-        }
-        else
+        if (culture.Parent != null)
         {
             queryList.Add($@"
                 MATCH 
@@ -372,22 +349,7 @@ public class CultureRepository : ICultureRepository
         }
         
         // Update Child
-        if (string.IsNullOrEmpty(culture.Child))
-        {
-            queryList.Add($@"
-                MATCH 
-                    (c:Culture)
-                WHERE
-                    elementId(c) = '{elementId}'
-                OPTIONAL MATCH
-                    (c)<-[r:HAS_PARENT]-(n)
-                DELETE
-                    r
-                RETURN  
-                    r
-            ");
-        }
-        else
+        if (culture.Child != null)
         {
             queryList.Add($@"
                 MATCH 
@@ -433,9 +395,46 @@ public class CultureRepository : ICultureRepository
         }
         
         // Update Successful + Finished
-        // TODO
+        if (culture.Finished == true || culture.Successful != null)
+        {
+            queryList.Add(
+            // Create IsSuccessful Label on Culture
+        $@"
+                MATCH 
+                    (c:Culture)
+                WHERE 
+                    elementId(c) = '{elementId}'
+                REMOVE 
+                    c :InProgress:Successful:Failed
+                WITH 
+                    c                    
+                SET 
+                    c {culture.IsSuccessful()}
+                RETURN 
+                    c
+            ");
+        }
+        else
+        {
+            queryList.Add(
+            // Create InProgress Label on Culture
+        $@"
+                MATCH 
+                    (c:Culture)
+                WHERE 
+                    elementId(c) = '{elementId}'
+                REMOVE 
+                    c :InProgress:Successful:Failed
+                WITH 
+                    c                    
+                SET 
+                    c :InProgress
+                RETURN 
+                    c
+            ");
+        }
         
         var cultures = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(cultures);
+        return JsonConvert.SerializeObject(cultures, Formatting.Indented);
     }
 }
