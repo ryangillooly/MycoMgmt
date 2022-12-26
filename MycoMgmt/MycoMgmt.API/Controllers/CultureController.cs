@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Domain.Models.Mushrooms;
@@ -25,7 +26,9 @@ public class CultureController : Controller
         string? recipe,
         string? location,
         string? parent,
+        string? parentType,
         string? child,
+        string? childType,
         string? vendor,
         bool? successful,
         bool finished,
@@ -50,12 +53,24 @@ public class CultureController : Controller
 
         if (location != null)
             culture.Location = location;
-
-        if (parent != null)
-            culture.Parent = parent;
-
-        if (child != null)
-            culture.Child = child;
+        
+        if((parent == null && parentType != null ) || (parent != null && parentType == null))
+            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
+        
+        if((child == null && childType != null ) || (child != null && childType == null))
+            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+        
+        if (parent != null && parentType != null)
+        {
+            culture.Parent     = parent;
+            culture.ParentType = parentType;
+        }
+        
+        if (child != null && childType != null)
+        {
+            culture.Child     = child;
+            culture.ChildType = childType;
+        }
 
         if (vendor != null)
             culture.Vendor = vendor;
@@ -87,7 +102,9 @@ public class CultureController : Controller
         string? recipe,
         string? location,
         string? parent,
+        string? parentType,
         string? child,
+        string? childType,
         string? vendor,
         bool? successful,
         bool? finished,
@@ -100,6 +117,15 @@ public class CultureController : Controller
             ModifiedOn = DateTime.Parse(modifiedOn),
             ModifiedBy = modifiedBy
         };
+        
+        if((parent == null && parentType != null ) || (parent != null && parentType == null))
+            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
+        
+        if((child == null && childType != null ) || (child != null && childType == null))
+            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+        
+        if (finished == null && successful != null)
+            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
         
         if (name != null)
             culture.Name = name;
@@ -115,16 +141,22 @@ public class CultureController : Controller
 
         if (location != null)
             culture.Location = location;
-
-        if (parent != null)
-            culture.Parent = parent;
-
-        if (child != null)
-            culture.Child = child;
+        
+        if (parent != null && parentType != null)
+        {
+            culture.Parent     = parent;
+            culture.ParentType = parentType;
+        }
+        
+        if (child != null && childType != null)
+        {
+            culture.Child     = child;
+            culture.ChildType = childType;
+        }
 
         if (vendor != null)
             culture.Vendor = vendor;
-
+        
         if (successful != null)
             culture.Successful = successful.Value;
 

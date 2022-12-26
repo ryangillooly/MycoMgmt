@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MycoMgmt.API.Helpers;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -294,6 +295,7 @@ public class SpawnRepository : ISpawnRepository
     {
         var queryList = new List<string>
         {
+            /*
             // Create New Spawn
             $@"
                 CREATE (s:Spawn {{
@@ -310,21 +312,28 @@ public class SpawnRepository : ISpawnRepository
                 MERGE
                     (s)-[r:STORED_IN]->(l)
                 RETURN r
-            "
+            ",
+            */
+            spawn.Create(),
+            spawn.CreateLocationRelationship(),
+            spawn.CreateCreatedOnRelationship(),
+            spawn.CreateCreatedRelationship()
         };
         
+        /*
         // Create Relationship Between Spawn and Day
-        queryList.Add(spawn.ToCreatedOnQuery());
+        queryList.Add(spawn.CreateCreatedOnRelationship());
         
         // Create Relationship Between Spawn and User 
-        queryList.Add(spawn.ToCreatedQuery());
-
+        queryList.Add(spawn.CreateCreatedRelationship());
+        */
+        
         if (spawn.Parent != null)
         {
-            queryList.Add(spawn.ToParentQuery());
+            queryList.Add(spawn.CreateParentRelationship());
         }
 
-        queryList.Add(spawn.ToNodeLabelQuery());
+        queryList.Add(spawn.CreateNodeLabels());
         
         return queryList;
     }

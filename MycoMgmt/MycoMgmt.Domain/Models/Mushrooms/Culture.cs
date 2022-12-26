@@ -11,7 +11,6 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             Tags.Add(EntityTypes.Culture.ToString());
         }
         public string Type { get; set; }
-        public string Strain { get; set; }
         public string? Recipe { get; set; }
         public string? Vendor { get; set; }
     }

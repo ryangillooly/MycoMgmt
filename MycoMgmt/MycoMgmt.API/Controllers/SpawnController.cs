@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 
@@ -23,7 +24,9 @@ public class SpawnController : Controller
         string? recipe,
         string? location,
         string? parent,
+        string? parentType,
         string? child,
+        string? childType,
         bool? successful,
         bool finished,
         string createdOn,
@@ -47,11 +50,25 @@ public class SpawnController : Controller
         if (location != null)
             spawn.Location = location;
 
-        if (parent != null)
-            spawn.Parent = parent;
-
-        if (child != null)
-            spawn.Child = child;
+        if (parent != null && parentType != null)
+        {
+            spawn.Parent     = parent;
+            spawn.ParentType = parentType;
+        }
+        else
+        {
+            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
+        }
+        
+        if (child != null && childType != null)
+        {
+            spawn.Child     = child;
+            spawn.ChildType = childType;
+        }
+        else
+        {
+            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+        }
 
         if (successful != null)
             spawn.Successful = successful.Value;
