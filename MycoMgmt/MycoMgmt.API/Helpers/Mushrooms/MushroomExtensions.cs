@@ -264,9 +264,8 @@ public static string? UpdateChildRelationship(this Mushroom mushroom, string ele
 
         return mushroom.Successful switch
         {
-            true => "Successful",
-            false => "Failed",
-            _ => "Failed"
+            true  => "Successful",
+                _ => "Failed"
         };
     }
 }

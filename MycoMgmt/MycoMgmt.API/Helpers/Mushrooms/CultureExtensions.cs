@@ -6,7 +6,8 @@ public static class CultureExtensions
 {
     public static string Create(this Culture culture) =>
         $@"CREATE (x:{culture.Tags[0]} {{ Name:  '{culture.Name}' }}) RETURN x";
-
+    
+    
     public static string? CreateVendorRelationship(this Culture culture)
     {
         return

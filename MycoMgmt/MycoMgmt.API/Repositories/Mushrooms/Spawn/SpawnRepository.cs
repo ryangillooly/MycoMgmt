@@ -10,6 +10,7 @@ using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories;
@@ -105,45 +106,9 @@ public class SpawnRepository : ISpawnRepository
         
         var queryList = new List<string>
         {
-            // Updated ModifiedOn Relationship
-            $@"
-                MATCH 
-                    (s:Spawn)
-                WHERE
-                    elementId(s) = '{elementId}'
-                OPTIONAL MATCH
-                    (s)-[r:MODIFIED_ON]->(d)
-                DELETE 
-                    r
-                WITH
-                    s
-                MATCH
-                    (d:Day {{ day: {parsedDateTime.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {parsedDateTime.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {parsedDateTime.Year} }})
-                MERGE
-                    (s)-[r:MODIFIED_ON]->(d)
-                RETURN 
-                    r
-            ",
-            
-            // Update Modified Relationship
-            $@"
-                MATCH 
-                    (s:Spawn)
-                WHERE
-                    elementId(s) = '{elementId}'
-                OPTIONAL MATCH
-                    (u)-[r:MODIFIED]->(s)
-                DELETE
-                    r
-                WITH
-                    s
-                MATCH
-                    (u:User {{ Name: '{spawn.ModifiedBy}'}} )
-                MERGE 
-                    (u)-[r:MODIFIED]->(s)
-                RETURN
-                    r            
-            "
+            spawn.UpdateModifiedOnRelationship(elementId),
+            spawn.UpdateModifiedRelationship(elementId),
+            spawn.UpdateStatus(elementId)
         };
         
         // Update Name
@@ -154,117 +119,41 @@ public class SpawnRepository : ISpawnRepository
         if (!string.IsNullOrEmpty(spawn.Type))
             queryList.Add(query + $"SET s.Type = '{spawn.Type}' RETURN s");
         
+
+        /*
+         USE THIS TO LOOK AT REMOVING LABELS TO CHANGE TYPE
+         
+         MATCH (s:Spawn)
+        WHERE s.
+        FOREACH (label IN labels(n) |
+          REMOVE n:Successful)
+        SET n:LabelToKeep
+        RETURN n;
+         */
+        
+        
         // Update Recipe
         // TODO
         
         // Update Location
         if (!string.IsNullOrEmpty(spawn.Location))
         {
-            queryList.Add($@"
-                MATCH 
-                    (s:Spawn)
-                WHERE
-                    elementId(s) = '{elementId}'
-                OPTIONAL MATCH
-                    (s)-[r:STORED_IN]->(:Location)
-                DELETE 
-                    r
-                WITH
-                    s
-                MATCH
-                    (l:Location {{ Name: '{spawn.Location}' }})
-                MERGE
-                    (s)-[r:STORED_IN]->(l) 
-                RETURN 
-                    r
-            ");
+            queryList.Add(spawn.UpdateLocationRelationship(elementId));
         }
         
         // Update Parent
         if (spawn.Parent != null)
         {
-            queryList.Add($@"
-                MATCH 
-                    (s:Spawn)
-                WHERE
-                    elementId(s) = '{elementId}'
-                OPTIONAL MATCH
-                    (s)-[r:HAS_PARENT]->(n)
-                DELETE
-                    r
-                WITH
-                    s
-                MATCH 
-                    (p {{Name: '{spawn.Parent}' }})
-                MERGE 
-                    (s)-[r:HAS_PARENT]->(p) 
-                RETURN 
-                    r
-            ");
+            queryList.Add(spawn.UpdateParentRelationship(elementId));
         }
         
         // Update Child
         if (spawn.Child != null)
         {
-            queryList.Add($@"
-                MATCH 
-                    (s:Spawn)
-                WHERE
-                    elementId(s) = '{elementId}'
-                OPTIONAL MATCH
-                    (s)<-[r:HAS_PARENT]-(n)
-                DELETE
-                    r
-                WITH
-                    s
-                MATCH 
-                    (p {{Name: '{spawn.Child}' }})
-                MERGE 
-                    (s)<-[r:HAS_PARENT]-(p) 
-                RETURN 
-                    r
-            ");
+            queryList.Add(spawn.UpdateChildRelationship(elementId));
         }
-        
-        // Update Successful + Finished
-        if (spawn.Finished == true || spawn.Successful != null)
-        {
-            queryList.Add(
-            // Create IsSuccessful Label on Spawn
-        $@"
-                MATCH 
-                    (s:Spawn)
-                WHERE 
-                    elementId(s) = '{elementId}'
-                REMOVE 
-                    s :InProgress:Successful:Failed
-                WITH 
-                    s                    
-                SET 
-                    s {spawn.IsSuccessful()}
-                RETURN 
-                    s
-            ");
-        }
-        else
-        {
-            queryList.Add(
-            // Create InProgress Label on Spawn
-        $@"
-                MATCH 
-                    (s:Spawn)
-                WHERE 
-                    elementId(s) = '{elementId}'
-                REMOVE 
-                    s :InProgress:Successful:Failed
-                WITH 
-                    s                    
-                SET 
-                    s :InProgress
-                RETURN 
-                    s
-            ");
-        }
+
+        queryList.RemoveAll(item => item is null);
         
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
@@ -295,38 +184,11 @@ public class SpawnRepository : ISpawnRepository
     {
         var queryList = new List<string>
         {
-            /*
-            // Create New Spawn
-            $@"
-                CREATE (s:Spawn {{
-                                    Name:  '{spawn.Name}',
-                                    Type:  '{spawn.Type}'
-                                  }}) 
-                RETURN s;
-            ",
-            // Create Relationship Between Spawn and Location
-            $@"
-                MATCH 
-                    (s:Spawn  {{ Name: '{spawn.Name}' }}), 
-                    (l:Location {{ Name: '{spawn.Location}' }})
-                MERGE
-                    (s)-[r:STORED_IN]->(l)
-                RETURN r
-            ",
-            */
             spawn.Create(),
             spawn.CreateLocationRelationship(),
             spawn.CreateCreatedOnRelationship(),
             spawn.CreateCreatedRelationship()
         };
-        
-        /*
-        // Create Relationship Between Spawn and Day
-        queryList.Add(spawn.CreateCreatedOnRelationship());
-        
-        // Create Relationship Between Spawn and User 
-        queryList.Add(spawn.CreateCreatedRelationship());
-        */
         
         if (spawn.Parent != null)
         {

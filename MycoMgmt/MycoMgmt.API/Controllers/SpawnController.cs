@@ -50,24 +50,22 @@ public class SpawnController : Controller
         if (location != null)
             spawn.Location = location;
 
+        if((parent == null && parentType != null ) || (parent != null && parentType == null))
+            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
+        
+        if((child == null && childType != null ) || (child != null && childType == null))
+            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+        
         if (parent != null && parentType != null)
         {
             spawn.Parent     = parent;
             spawn.ParentType = parentType;
-        }
-        else
-        {
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         }
         
         if (child != null && childType != null)
         {
             spawn.Child     = child;
             spawn.ChildType = childType;
-        }
-        else
-        {
-            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
         }
 
         if (successful != null)
@@ -96,7 +94,9 @@ public class SpawnController : Controller
         string? recipe,
         string? location,
         string? parent,
+        string? parentType,
         string? child,
+        string? childType,
         bool? successful,
         bool? finished,
         string modifiedOn,
@@ -109,6 +109,15 @@ public class SpawnController : Controller
             ModifiedBy = modifiedBy
         };
         
+        if((parent == null && parentType != null ) || (parent != null && parentType == null))
+            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
+        
+        if((child == null && childType != null ) || (child != null && childType == null))
+            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+        
+        if (finished == null && successful != null)
+            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
+
         if (name != null)
             spawn.Name = name;
 
@@ -121,11 +130,17 @@ public class SpawnController : Controller
         if (location != null)
             spawn.Location = location;
 
-        if (parent != null)
-            spawn.Parent = parent;
-
-        if (child != null)
-            spawn.Child = child;
+        if (parent != null && parentType != null)
+        {
+            spawn.Parent     = parent;
+            spawn.ParentType = parentType;
+        }
+        
+        if (child != null && childType != null)
+        {
+            spawn.Child     = child;
+            spawn.ChildType = childType;
+        }
 
         if (successful != null)
             spawn.Successful = successful.Value;
