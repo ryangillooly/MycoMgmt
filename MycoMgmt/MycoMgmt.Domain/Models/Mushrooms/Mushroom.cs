@@ -2,6 +2,7 @@
 {
     public class Mushroom : ModelBase
     {
+        public List<string> Tags { get; set; } = new List<string>();
         public string? Location { get; set; }
         public string? Parent { get; set; }
         public string? Child { get; set; }

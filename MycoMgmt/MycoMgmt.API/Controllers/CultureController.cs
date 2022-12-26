@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
+using MycoMgmt.Domain.Models;
 using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
@@ -37,7 +38,7 @@ public class CultureController : Controller
         var culture = new Culture()
         {
             Name = name,
-            Type = type,
+            Type = type.Replace(" ",""),
             Strain = strain,
             Finished = finished,
             CreatedOn = DateTime.Parse(createdOn),
@@ -67,6 +68,9 @@ public class CultureController : Controller
 
         if (modifiedBy != null)
             culture.ModifiedBy = modifiedBy;
+        
+        culture.Tags.Add(culture.IsSuccessful());
+        culture.Tags.Add(culture.Type);
 
         var result = await _cultureRepository.Create(culture);
 

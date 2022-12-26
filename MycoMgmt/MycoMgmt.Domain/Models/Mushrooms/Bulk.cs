@@ -5,7 +5,11 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Bulk : Mushroom
     {
-        public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Bulk };
+        public Bulk()
+        {
+            Tags.Add(EntityTypes.Bulk.ToString());
+        }
+        
         public string? Notes { get; set; }
         public string? Recipe { get; set; }
     }

@@ -16,9 +16,9 @@ namespace MycoMgmt.API.Repositories;
 public class SpawnRepository : ISpawnRepository
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
-    private ILogger<CultureRepository> _logger;
+    private ILogger<SpawnRepository> _logger;
         
-    public SpawnRepository(INeo4JDataAccess neo4JDataAccess, ILogger<CultureRepository> logger)
+    public SpawnRepository(INeo4JDataAccess neo4JDataAccess, ILogger<SpawnRepository> logger)
     {
         _neo4JDataAccess = neo4JDataAccess;
         _logger = logger;
@@ -26,23 +26,23 @@ public class SpawnRepository : ISpawnRepository
 
     public async Task<string> SearchByName(string name)
     {
-        var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) CONTAINS toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-        var cultures = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
+        var query = $"MATCH (s:Spawn) WHERE toUpper(s.Name) CONTAINS toUpper('{ name }') RETURN s {{ Name: s.Name, Type: s.Type }} ORDER BY s.Name LIMIT 5";
+        var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
-        return JsonConvert.SerializeObject(cultures);
+        return JsonConvert.SerializeObject(spawn);
     }
 
     public async Task<string> GetByName(string name)
     {
-        var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) = toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-        var cultures = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
+        var query = $"MATCH (s:Spawn) WHERE toUpper(s.Name) = toUpper('{ name }') RETURN s {{ Name: s.Name, Type: s.Type }} ORDER BY s.Name LIMIT 5";
+        var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "s");
 
-        return JsonConvert.SerializeObject(cultures);
+        return JsonConvert.SerializeObject(spawn);
     }
 
     public async Task<string> GetById(string id)
     {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{id}' RETURN c";
+        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{id}' RETURN s";
 
         try
         {
@@ -54,7 +54,7 @@ public class SpawnRepository : ISpawnRepository
             if (ex.Message != "The result is empty.") 
                 throw;
                 
-            return JsonConvert.SerializeObject(new { Message = $"No results were found for Culture Id { id }" });
+            return JsonConvert.SerializeObject(new { Message = $"No results were found for Spawn Id { id }" });
         }
         catch(Exception ex)
         {
@@ -65,14 +65,14 @@ public class SpawnRepository : ISpawnRepository
     
     public async Task<string> GetAll()
     {
-        const string query = "MATCH (c:Culture) RETURN c ORDER BY c.Name ASC";
-        var cultures = await _neo4JDataAccess.ExecuteReadListAsync(query, "c");
-        return JsonConvert.SerializeObject(cultures);
+        const string query = "MATCH (s:Spawn) RETURN s ORDER BY s.Name ASC";
+        var spawn = await _neo4JDataAccess.ExecuteReadListAsync(query, "s");
+        return JsonConvert.SerializeObject(spawn);
     }
 
     public async Task<long> GetCount()
     {
-        const string query = "Match (c:Culture) RETURN count(c) as CultureCount";
+        const string query = "Match (s:Spawn) RETURN count(s) as SpawnCount";
         var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
         return count;
     }
@@ -80,14 +80,14 @@ public class SpawnRepository : ISpawnRepository
     public async Task<string> Create(Spawn spawn)
     {
         if (spawn == null || string.IsNullOrWhiteSpace(spawn.Name))
-            throw new ArgumentNullException(nameof(spawn), "Culture must not be null");
+            throw new ArgumentNullException(nameof(spawn), "Spawn must not be null");
 
         return await PersistToDatabase(spawn);
     }
     
     public async Task Delete(string elementId)
     {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{ elementId }' DETACH DELETE c RETURN c";
+        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{ elementId }' DETACH DELETE s RETURN s";
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
 
         if(delete.ElementId != elementId)
@@ -98,7 +98,7 @@ public class SpawnRepository : ISpawnRepository
         
     public async Task<string> Update(string elementId, Spawn spawn)
     {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{elementId}' ";
+        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{elementId}' ";
 
         DateTime.TryParse(spawn.ModifiedOn.ToString(), out var parsedDateTime);
         
@@ -107,19 +107,19 @@ public class SpawnRepository : ISpawnRepository
             // Updated ModifiedOn Relationship
             $@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 OPTIONAL MATCH
-                    (c)-[r:MODIFIED_ON]->(d)
+                    (s)-[r:MODIFIED_ON]->(d)
                 DELETE 
                     r
                 WITH
-                    c
+                    s
                 MATCH
                     (d:Day {{ day: {parsedDateTime.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {parsedDateTime.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {parsedDateTime.Year} }})
                 MERGE
-                    (c)-[r:MODIFIED_ON]->(d)
+                    (s)-[r:MODIFIED_ON]->(d)
                 RETURN 
                     r
             ",
@@ -127,19 +127,19 @@ public class SpawnRepository : ISpawnRepository
             // Update Modified Relationship
             $@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 OPTIONAL MATCH
-                    (u)-[r:MODIFIED]->(c)
+                    (u)-[r:MODIFIED]->(s)
                 DELETE
                     r
                 WITH
-                    c
+                    s
                 MATCH
                     (u:User {{ Name: '{spawn.ModifiedBy}'}} )
                 MERGE 
-                    (u)-[r:MODIFIED]->(c)
+                    (u)-[r:MODIFIED]->(s)
                 RETURN
                     r            
             "
@@ -147,11 +147,11 @@ public class SpawnRepository : ISpawnRepository
         
         // Update Name
         if (!string.IsNullOrEmpty(spawn.Name))
-            queryList.Add(query + $"SET c.Name = '{spawn.Name}' RETURN c");
+            queryList.Add(query + $"SET s.Name = '{spawn.Name}' RETURN s");
         
         // Update Type
         if (!string.IsNullOrEmpty(spawn.Type))
-            queryList.Add(query + $"SET c.Type = '{spawn.Type}' RETURN c");
+            queryList.Add(query + $"SET s.Type = '{spawn.Type}' RETURN s");
         
         // Update Recipe
         // TODO
@@ -161,19 +161,19 @@ public class SpawnRepository : ISpawnRepository
         {
             queryList.Add($@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 OPTIONAL MATCH
-                    (c)-[r:STORED_IN]->(:Location)
+                    (s)-[r:STORED_IN]->(:Location)
                 DELETE 
                     r
                 WITH
-                    c
+                    s
                 MATCH
                     (l:Location {{ Name: '{spawn.Location}' }})
                 MERGE
-                    (c)-[r:STORED_IN]->(l) 
+                    (s)-[r:STORED_IN]->(l) 
                 RETURN 
                     r
             ");
@@ -184,19 +184,19 @@ public class SpawnRepository : ISpawnRepository
         {
             queryList.Add($@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 OPTIONAL MATCH
-                    (c)-[r:HAS_PARENT]->(n)
+                    (s)-[r:HAS_PARENT]->(n)
                 DELETE
                     r
                 WITH
-                    c
+                    s
                 MATCH 
                     (p {{Name: '{spawn.Parent}' }})
                 MERGE 
-                    (c)-[r:HAS_PARENT]->(p) 
+                    (s)-[r:HAS_PARENT]->(p) 
                 RETURN 
                     r
             ");
@@ -207,19 +207,19 @@ public class SpawnRepository : ISpawnRepository
         {
             queryList.Add($@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 OPTIONAL MATCH
-                    (c)<-[r:HAS_PARENT]-(n)
+                    (s)<-[r:HAS_PARENT]-(n)
                 DELETE
                     r
                 WITH
-                    c
+                    s
                 MATCH 
                     (p {{Name: '{spawn.Child}' }})
                 MERGE 
-                    (c)<-[r:HAS_PARENT]-(p) 
+                    (s)<-[r:HAS_PARENT]-(p) 
                 RETURN 
                     r
             ");
@@ -229,44 +229,44 @@ public class SpawnRepository : ISpawnRepository
         if (spawn.Finished == true || spawn.Successful != null)
         {
             queryList.Add(
-            // Create IsSuccessful Label on Culture
+            // Create IsSuccessful Label on Spawn
         $@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE 
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 REMOVE 
-                    c :InProgress:Successful:Failed
+                    s :InProgress:Successful:Failed
                 WITH 
-                    c                    
+                    s                    
                 SET 
-                    c {spawn.IsSuccessful()}
+                    s {spawn.IsSuccessful()}
                 RETURN 
-                    c
+                    s
             ");
         }
         else
         {
             queryList.Add(
-            // Create InProgress Label on Culture
+            // Create InProgress Label on Spawn
         $@"
                 MATCH 
-                    (c:Culture)
+                    (s:Spawn)
                 WHERE 
-                    elementId(c) = '{elementId}'
+                    elementId(s) = '{elementId}'
                 REMOVE 
-                    c :InProgress:Successful:Failed
+                    s :InProgress:Successful:Failed
                 WITH 
-                    c                    
+                    s                    
                 SET 
-                    c :InProgress
+                    s :InProgress
                 RETURN 
-                    c
+                    s
             ");
         }
         
-        var cultures = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(cultures, Formatting.Indented);
+        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
     }
     
     private async Task<string> PersistToDatabase(Spawn spawn)
@@ -282,7 +282,7 @@ public class SpawnRepository : ISpawnRepository
             if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
                 throw;
 
-            return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {spawn.Name}" });
+            return JsonConvert.SerializeObject(new { Message = $"A spawn already exists with the name {spawn.Name}" });
         }
         catch (Exception ex)
         {
@@ -294,77 +294,37 @@ public class SpawnRepository : ISpawnRepository
     {
         var queryList = new List<string>
         {
-            // Create New Culture
+            // Create New Spawn
             $@"
-                CREATE (c:Culture {{
+                CREATE (s:Spawn {{
                                     Name:  '{spawn.Name}',
                                     Type:  '{spawn.Type}'
                                   }}) 
-                RETURN c;
+                RETURN s;
             ",
-            // Create Relationship Between Culture and Location
+            // Create Relationship Between Spawn and Location
             $@"
                 MATCH 
-                    (c:Culture  {{ Name: '{spawn.Name}' }}), 
+                    (s:Spawn  {{ Name: '{spawn.Name}' }}), 
                     (l:Location {{ Name: '{spawn.Location}' }})
                 MERGE
-                    (c)-[r:STORED_IN]->(l)
-                RETURN r
-            ",
-            // Create Relationship Between Culture and Day
-            $@"
-                MATCH 
-                    (c:Culture {{ Name: '{spawn.Name}' }}), 
-                    (d:Day     {{ day: {spawn.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {spawn.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {spawn.CreatedOn.Year} }})
-                MERGE
-                    (c)-[r:CREATED_ON]->(d)
-                RETURN r
-            ",
-            // Create Relationship Between Culture and User 
-            $@"
-                MATCH 
-                    (c:Culture {{ Name: '{spawn.Name}'      }}),
-                    (u:User    {{ Name: '{spawn.CreatedBy}' }})
-                MERGE
-                    (u)-[r:CREATED]->(c)
+                    (s)-[r:STORED_IN]->(l)
                 RETURN r
             "
         };
+        
+        // Create Relationship Between Spawn and Day
+        queryList.Add(spawn.ToCreatedOnQuery());
+        
+        // Create Relationship Between Spawn and User 
+        queryList.Add(spawn.ToCreatedQuery());
 
         if (spawn.Parent != null)
         {
-            queryList.Add(
-                // Create Relationship Between Culture and Parent
-                $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{spawn.Name}' }}), 
-                            (p {{ Name: '{spawn.Parent}' }})
-                        MERGE
-                            (c)-[r:HAS_PARENT]->(p)
-                        RETURN r
-                    ");
+            queryList.Add(spawn.ToParentQuery());
         }
 
-        if (spawn.Finished == true)
-        {
-            queryList.Add(
-                // Create IsSuccessful Label on Culture
-                $@"
-                        MATCH (c:Culture {{ Name: '{spawn.Name}' }})
-                        SET c {spawn.IsSuccessful()}
-                        RETURN c
-                    ");
-        }
-        else
-        {
-            queryList.Add(
-                // Create InProgress Label on Culture
-                $@"
-                        MATCH (c:Culture {{ Name: '{spawn.Name}' }})
-                        SET c :InProgress
-                        RETURN c
-                    ");
-        }
+        queryList.Add(spawn.ToNodeLabelQuery());
         
         return queryList;
     }

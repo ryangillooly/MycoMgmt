@@ -388,50 +388,31 @@ public class CultureRepository : ICultureRepository
 
         if (culture.Parent != null)
         {
-            queryList.Add(
-                // Create Relationship Between Culture and Parent
-                $@"
-                        MATCH 
-                            (c:Culture {{ Name: '{culture.Name}' }}), 
-                            (p {{ Name: '{culture.Parent}' }})
-                        MERGE
-                            (c)-[r:HAS_PARENT]->(p)
-                        RETURN r
-                    ");
+            queryList.Add(culture.ToParentQuery());
         }
 
-        if (culture.Finished == true)
-        {
-            queryList.Add(
-                // Create IsSuccessful Label on Culture
-                $@"
+        queryList.Add(culture.ToNodeLabelQuery());
+        
+        /*
+        queryList.Add($@"
                         MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                        SET c {culture.IsSuccessful()}
+                        SET c:{ string.Join(":", culture.Tags) }
                         RETURN c
                     ");
-        }
-        else
-        {
-            queryList.Add(
-                // Create InProgress Label on Culture
-                $@"
-                        MATCH (c:Culture {{ Name: '{culture.Name}' }})
-                        SET c :InProgress
-                        RETURN c
-                    ");
-        }
+        */
+
 
         if (culture.Vendor != null)
         {
             queryList.Add($@"
-                MATCH 
-                    (c:Culture {{ Name: '{culture.Name}'}} ),
-                    (v:Vendor  {{ Name: '{culture.Vendor}' }})
-                MERGE
-                    (c)-[r:PURCHASED_FROM]->(v)
-                RETURN 
-                    r
-            ");
+                                    MATCH 
+                                        (c:Culture {{ Name: '{culture.Name}'}} ),
+                                        (v:Vendor  {{ Name: '{culture.Vendor}' }})
+                                    MERGE
+                                        (c)-[r:PURCHASED_FROM]->(v)
+                                    RETURN 
+                                        r
+                                ");
         }
 
         return queryList;

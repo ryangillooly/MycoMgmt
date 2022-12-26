@@ -20,12 +20,10 @@ public class SpawnController : Controller
     (
         string name,
         string type,
-        string strain,
         string? recipe,
         string? location,
         string? parent,
         string? child,
-        string? vendor,
         bool? successful,
         bool finished,
         string createdOn,
@@ -64,6 +62,9 @@ public class SpawnController : Controller
         if (modifiedBy != null)
             spawn.ModifiedBy = modifiedBy;
 
+        spawn.Tags.Add(spawn.IsSuccessful());
+        spawn.Tags.Add(spawn.Type);
+        
         var result = await _spawnRepository.Create(spawn);
 
         return Created("", result);
@@ -75,12 +76,10 @@ public class SpawnController : Controller
         string elementId,
         string? name,
         string? type,
-        string? strain,
         string? recipe,
         string? location,
         string? parent,
         string? child,
-        string? vendor,
         bool? successful,
         bool? finished,
         string modifiedOn,
