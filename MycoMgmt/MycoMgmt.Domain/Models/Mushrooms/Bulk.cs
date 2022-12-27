@@ -9,8 +9,5 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         {
             Tags.Add(EntityTypes.Bulk.ToString());
         }
-        
-        public string? Notes { get; set; }
-        public string? Recipe { get; set; }
     }
 }

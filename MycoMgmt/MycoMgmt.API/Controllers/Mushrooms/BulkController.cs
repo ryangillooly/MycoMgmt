@@ -87,10 +87,17 @@ public class BulkController : Controller
         var resultList = new List<string>();
         var bulkName = bulk.Name;
         
-        for (var i = 1; i <= count; i++)
+        if (count == 1)
         {
-            bulk.Name = bulkName + "-" + i.ToString("D2");
-            resultList.Add(await _bulkRepository.Create(bulk));
+            resultList.Add(await _bulkRepository.Create(bulk));   
+        }
+        else
+        {
+            for (var i = 1; i <= count; i++)
+            {
+                bulk.Name = bulkName + "-" + i.ToString("D2");
+                resultList.Add(await _bulkRepository.Create(bulk));
+            }
         }
 
         return Created("", string.Join(",", resultList));

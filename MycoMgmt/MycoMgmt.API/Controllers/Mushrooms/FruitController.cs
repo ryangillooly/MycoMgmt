@@ -5,25 +5,25 @@ using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("spawn")]
+[Route("fruit")]
 [ApiController]
-public class SpawnController : Controller
+public class FruitController : Controller
 {
-    private readonly ISpawnRepository _spawnRepository;
+    private readonly IFruitRepository _fruitRepository;
 
-    public SpawnController(ISpawnRepository repo)
+    public FruitController(IFruitRepository repo)
     {
-        _spawnRepository = repo;
+        _fruitRepository = repo;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create
     (
         string  name,
-        string  type,
         string  strain,
-        string? recipe,
         string? notes,
+        decimal? wetWeight,
+        decimal? dryWeight,
         string? location,
         string? parent,
         string? parentType,
@@ -38,24 +38,26 @@ public class SpawnController : Controller
         int?    count = 1
     )
     {
-        var spawn = new Spawn()
+        var fruit = new Fruit()
         {
-            Name = name,
-            Type = type,
-            Strain = strain,
-            Finished = finished,
+            Name      = name,
+            Strain    = strain,
+            Finished  = finished,
             CreatedOn = DateTime.Parse(createdOn),
             CreatedBy = createdBy
         };
 
-        if (recipe != null)
-            spawn.Recipe = recipe;
-
-        if (location != null)
-            spawn.Location = location;
+        if (wetWeight != null)
+            fruit.WetWeight = wetWeight.Value;
         
+        if (dryWeight != null)
+            fruit.DryWeight = dryWeight.Value;
+        
+        if (location != null)
+            fruit.Location = location;
+
         if (notes != null)
-            spawn.Notes = notes;
+            fruit.Notes = notes;
 
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
@@ -65,41 +67,40 @@ public class SpawnController : Controller
         
         if (parent != null && parentType != null)
         {
-            spawn.Parent     = parent;
-            spawn.ParentType = parentType;
+            fruit.Parent     = parent;
+            fruit.ParentType = parentType;
         }
         
         if (child != null && childType != null)
         {
-            spawn.Child     = child;
-            spawn.ChildType = childType;
+            fruit.Child     = child;
+            fruit.ChildType = childType;
         }
 
         if (successful != null)
-            spawn.Successful = successful.Value;
+            fruit.Successful = successful.Value;
 
         if (modifiedOn != null)
-            spawn.ModifiedOn = DateTime.Parse(modifiedOn);
+            fruit.ModifiedOn = DateTime.Parse(modifiedOn);
 
         if (modifiedBy != null)
-            spawn.ModifiedBy = modifiedBy;
+            fruit.ModifiedBy = modifiedBy;
 
-        spawn.Tags.Add(spawn.IsSuccessful());
-        spawn.Tags.Add(spawn.Type);
-        
+        fruit.Tags.Add(fruit.IsSuccessful());
+
         var resultList = new List<string>();
-        var spawnName = spawn.Name;
+        var bulkName = fruit.Name;
 
         if (count == 1)
         {
-            resultList.Add(await _spawnRepository.Create(spawn));   
+            resultList.Add(await _fruitRepository.Create(fruit));   
         }
         else
         {
             for (var i = 1; i <= count; i++)
             {
-                spawn.Name = spawnName + "-" + i.ToString("D2");
-                resultList.Add(await _spawnRepository.Create(spawn));
+                fruit.Name = bulkName + "-" + i.ToString("D2");
+                resultList.Add(await _fruitRepository.Create(fruit));
             }
         }
 
@@ -109,24 +110,24 @@ public class SpawnController : Controller
     [HttpPut("{elementId}")]
     public async Task<IActionResult> Update
     (
-        string elementId,
-        string? name,
-        string? strain,
-        string? notes,
-        string? type,
-        string? recipe,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        bool? successful,
-        bool? finished,
-        string modifiedOn,
-        string modifiedBy
+        string   elementId,
+        string?  name,
+        decimal? wetWeight,
+        decimal? dryWeight,
+        string?  strain,
+        string?  notes,
+        string?  location,
+        string?  parent,
+        string?  parentType,
+        string?  child,
+        string?  childType,
+        bool?    successful,
+        bool?    finished,
+        string   modifiedOn,
+        string   modifiedBy
     )
     {
-        var spawn = new Spawn
+        var fruit = new Fruit()
         {
             ModifiedOn = DateTime.Parse(modifiedOn),
             ModifiedBy = modifiedBy
@@ -141,43 +142,43 @@ public class SpawnController : Controller
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
 
+        if (wetWeight != null)
+            fruit.WetWeight = wetWeight.Value;
+        
+        if (dryWeight != null)
+            fruit.DryWeight = dryWeight.Value;
+        
         if (name != null)
-            spawn.Name = name;
+            fruit.Name = name;
 
-        if (notes != null)
-            spawn.Notes = notes;
-        
         if (strain != null)
-            spawn.Strain = strain;
+            fruit.Strain = strain;
         
-        if (type != null)
-            spawn.Type = type;
-        
-        if (recipe != null)
-            spawn.Recipe = recipe;
+        if (notes != null)
+            fruit.Notes = notes;
 
         if (location != null)
-            spawn.Location = location;
+            fruit.Location = location;
 
         if (parent != null && parentType != null)
         {
-            spawn.Parent     = parent;
-            spawn.ParentType = parentType;
+            fruit.Parent     = parent;
+            fruit.ParentType = parentType;
         }
         
         if (child != null && childType != null)
         {
-            spawn.Child     = child;
-            spawn.ChildType = childType;
+            fruit.Child     = child;
+            fruit.ChildType = childType;
         }
 
         if (successful != null)
-            spawn.Successful = successful.Value;
+            fruit.Successful = successful.Value;
 
         if (finished != null)
-            spawn.Finished = finished;
+            fruit.Finished = finished;
 
-        var result = await _spawnRepository.Update(elementId, spawn);
+        var result = await _fruitRepository.Update(elementId, fruit);
 
         return Ok(result);
     }
@@ -185,21 +186,21 @@ public class SpawnController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var records = await _spawnRepository.GetAll();
+        var records = await _fruitRepository.GetAll();
         return Ok(records);
     }
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId)
     {
-        var results = await _spawnRepository.GetById(elementId);
+        var results = await _fruitRepository.GetById(elementId);
         return Ok(results);
     }
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var results = await _spawnRepository.GetByName(name);
+        var results = await _fruitRepository.GetByName(name);
         return Ok(results);
     }
 
@@ -207,14 +208,14 @@ public class SpawnController : Controller
     [HttpGet("search/name/{name}")]
     public async Task<IActionResult> SearchByName(string name)
     {
-        var results = await _spawnRepository.SearchByName(name);
+        var results = await _fruitRepository.SearchByName(name);
         return Ok(results);
     }
 
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _spawnRepository.Delete(elementId);
+        await _fruitRepository.Delete(elementId);
         return NoContent();
     }
 }

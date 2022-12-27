@@ -6,11 +6,10 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {
         public Fruit()
         {
-            Tags.Add(EntityTypes.Fruits.ToString());
+            Tags.Add(EntityTypes.Fruit.ToString());
         }
         
-        public decimal WetWeight { get; set; }
-        public decimal DryWeight { get; set; }
-        public string? Notes { get; set; }
+        public decimal? WetWeight { get; set; }
+        public decimal? DryWeight { get; set; }
     }
 }

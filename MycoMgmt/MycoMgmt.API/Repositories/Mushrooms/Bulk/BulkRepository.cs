@@ -76,6 +76,7 @@ public class BulkRepository : IBulkRepository
             bulk.CreateLocationRelationship(),
             bulk.CreateCreatedRelationship(),
             bulk.CreateCreatedOnRelationship(),
+            bulk.CreateRecipeRelationship(),
             bulk.CreateParentRelationship(),
             bulk.CreateChildRelationship(),
             bulk.CreateNodeLabels()
@@ -110,16 +111,17 @@ public class BulkRepository : IBulkRepository
             bulk.UpdateStatus(elementId)
         };
         
-        // Update Recipe
-        // TODO
-        
         // Update Name
         if (!string.IsNullOrEmpty(bulk.Name))
             queryList.Add(query + $"SET b.Name = '{bulk.Name}' RETURN b");
         
         // Update Notes
-        if (!string.IsNullOrEmpty(bulk.Name))
+        if (!string.IsNullOrEmpty(bulk.Notes))
             queryList.Add(query + $"SET b.Notes = '{bulk.Notes}' RETURN b");
+        
+        // Update Recipe
+        if (!string.IsNullOrEmpty(bulk.Recipe))
+            queryList.Add(bulk.UpdateRecipeRelationship(elementId));
         
         // Update Location
         if (!string.IsNullOrEmpty(bulk.Location))

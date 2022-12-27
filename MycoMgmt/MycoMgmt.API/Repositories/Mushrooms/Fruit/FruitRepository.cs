@@ -15,12 +15,12 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories;
 
-public class SpawnRepository : ISpawnRepository
+public class FruitRepository : IFruitRepository
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
-    private ILogger<SpawnRepository> _logger;
+    private ILogger<FruitRepository> _logger;
         
-    public SpawnRepository(INeo4JDataAccess neo4JDataAccess, ILogger<SpawnRepository> logger)
+    public FruitRepository(INeo4JDataAccess neo4JDataAccess, ILogger<FruitRepository> logger)
     {
         _neo4JDataAccess = neo4JDataAccess;
         _logger = logger;
@@ -28,7 +28,7 @@ public class SpawnRepository : ISpawnRepository
 
     public async Task<string> SearchByName(string name)
     {
-        var query = $"MATCH (s:Spawn) WHERE toUpper(s.Name) CONTAINS toUpper('{ name }') RETURN s {{ Name: s.Name, Type: s.Type }} ORDER BY s.Name LIMIT 5";
+        var query = $"MATCH (f:Fruit) WHERE toUpper(f.Name) CONTAINS toUpper('{ name }') RETURN f {{ Name: f.Name, Type: f.Type }} ORDER BY f.Name LIMIT 5";
         var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
 
         return JsonConvert.SerializeObject(spawn);
@@ -36,7 +36,7 @@ public class SpawnRepository : ISpawnRepository
 
     public async Task<string> GetByName(string name)
     {
-        var query = $"MATCH (s:Spawn) WHERE toUpper(s.Name) = toUpper('{ name }') RETURN s {{ Name: s.Name, Type: s.Type }} ORDER BY s.Name LIMIT 5";
+        var query = $"MATCH (f:Fruit) WHERE toUpper(f.Name) = toUpper('{ name }') RETURN f {{ Name: f.Name, Type: f.Type }} ORDER BY f.Name LIMIT 5";
         var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "s");
 
         return JsonConvert.SerializeObject(spawn);
@@ -44,7 +44,7 @@ public class SpawnRepository : ISpawnRepository
 
     public async Task<string> GetById(string id)
     {
-        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{id}' RETURN s";
+        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{id}' RETURN f";
 
         try
         {
@@ -56,7 +56,7 @@ public class SpawnRepository : ISpawnRepository
             if (ex.Message != "The result is empty.") 
                 throw;
                 
-            return JsonConvert.SerializeObject(new { Message = $"No results were found for Spawn Id { id }" });
+            return JsonConvert.SerializeObject(new { Message = $"No results were found for Fruit Id { id }" });
         }
         catch(Exception ex)
         {
@@ -67,33 +67,33 @@ public class SpawnRepository : ISpawnRepository
     
     public async Task<string> GetAll()
     {
-        const string query = "MATCH (s:Spawn) RETURN s ORDER BY s.Name ASC";
-        var spawn = await _neo4JDataAccess.ExecuteReadListAsync(query, "s");
+        const string query = "MATCH (f:Fruit) RETURN f ORDER BY f.Name ASC";
+        var spawn = await _neo4JDataAccess.ExecuteReadListAsync(query, "f");
         return JsonConvert.SerializeObject(spawn);
     }
 
     public async Task<long> GetCount()
     {
-        const string query = "Match (s:Spawn) RETURN count(s) as SpawnCount";
+        const string query = "Match (f:Fruit) RETURN count(f) as FruitCount";
         var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
         return count;
     }
     
-    public async Task<string> Create(Spawn spawn)
+    public async Task<string> Create(Fruit fruit)
     {
-        if (spawn == null || string.IsNullOrWhiteSpace(spawn.Name))
-            throw new ArgumentNullException(nameof(spawn), "Spawn must not be null");
+        if (fruit == null || string.IsNullOrWhiteSpace(fruit.Name))
+            throw new ArgumentNullException(nameof(fruit), "Fruit must not be null");
 
         var queryList = new List<string>
         {
-            spawn.Create(),
-            spawn.CreateStrainRelationship(),
-            spawn.CreateLocationRelationship(),
-            spawn.CreateCreatedRelationship(),
-            spawn.CreateCreatedOnRelationship(),
-            spawn.CreateParentRelationship(),
-            spawn.CreateChildRelationship(),
-            spawn.CreateNodeLabels()
+            fruit.Create(),
+            fruit.CreateStrainRelationship(),
+            fruit.CreateLocationRelationship(),
+            fruit.CreateCreatedRelationship(),
+            fruit.CreateCreatedOnRelationship(),
+            fruit.CreateParentRelationship(),
+            fruit.CreateChildRelationship(),
+            fruit.CreateNodeLabels()
         };
 
         queryList.RemoveAll(item => item is null);
@@ -103,7 +103,7 @@ public class SpawnRepository : ISpawnRepository
     
     public async Task Delete(string elementId)
     {
-        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{ elementId }' DETACH DELETE s RETURN s";
+        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{ elementId }' DETACH DELETE f RETURN f";
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
 
         if(delete.ElementId != elementId)
@@ -112,46 +112,50 @@ public class SpawnRepository : ISpawnRepository
         _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", elementId);
     }
         
-    public async Task<string> Update(string elementId, Spawn spawn)
+    public async Task<string> Update(string elementId, Fruit fruit)
     {
-        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{elementId}' ";
+        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{elementId}' ";
 
-        DateTime.TryParse(spawn.ModifiedOn.ToString(), out var parsedDateTime);
+        DateTime.TryParse(fruit.ModifiedOn.ToString(), out var parsedDateTime);
         
         var queryList = new List<string>
         {
-            spawn.UpdateModifiedOnRelationship(elementId),
-            spawn.UpdateModifiedRelationship(elementId),
-            spawn.UpdateStatus(elementId)
+            fruit.UpdateModifiedOnRelationship(elementId),
+            fruit.UpdateModifiedRelationship(elementId),
+            fruit.UpdateStatus(elementId)
         };
         
         // Update Name
-        if (!string.IsNullOrEmpty(spawn.Name))
-            queryList.Add(query + $"SET s.Name = '{spawn.Name}' RETURN s");
+        if (!string.IsNullOrEmpty(fruit.Name))
+            queryList.Add(query + $"SET f.Name = '{fruit.Name}' RETURN f");
         
-        // Update Type
-        if (!string.IsNullOrEmpty(spawn.Type))
-            queryList.Add(query + $"SET s.Type = '{spawn.Type}' RETURN s");
+
+        /*
+         USE THIS TO LOOK AT REMOVING LABELS TO CHANGE TYPE
+         
+         MATCH (s:Spawn)
+        WHERE s.
+        FOREACH (label IN labels(n) |
+          REMOVE n:Successful)
+        SET n:LabelToKeep
+        RETURN n;
+         */
         
-        // Update Notes
-        if(!string.IsNullOrEmpty(spawn.Notes))
-            queryList.Add(query + $"SET s.Notes = '{spawn.Notes}' RETURN s");
         
         // Update Recipe
-        if (!string.IsNullOrEmpty(spawn.Recipe))
-            queryList.Add(spawn.UpdateRecipeRelationship(elementId));
+        // TODO
         
         // Update Location
-        if (!string.IsNullOrEmpty(spawn.Location))
-            queryList.Add(spawn.UpdateLocationRelationship(elementId));
+        if (!string.IsNullOrEmpty(fruit.Location))
+            queryList.Add(fruit.UpdateLocationRelationship(elementId));
         
         // Update Parent
-        if (spawn.Parent != null)
-            queryList.Add(spawn.UpdateParentRelationship(elementId));
+        if (fruit.Parent != null)
+            queryList.Add(fruit.UpdateParentRelationship(elementId));
         
         // Update Child
-        if (spawn.Child != null)
-            queryList.Add(spawn.UpdateChildRelationship(elementId));
+        if (fruit.Child != null)
+            queryList.Add(fruit.UpdateChildRelationship(elementId));
 
         queryList.RemoveAll(item => item is null);
         

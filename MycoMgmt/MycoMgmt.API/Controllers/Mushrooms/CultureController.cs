@@ -24,6 +24,7 @@ public class CultureController : Controller
         string  type,
         string  strain,
         string? recipe,
+        string? notes,
         string? location,
         string? parent,
         string? parentType,
@@ -76,6 +77,9 @@ public class CultureController : Controller
         if (vendor != null)
             culture.Vendor = vendor;
 
+        if (notes != null)
+            culture.Notes = notes;
+
         if (successful != null)
             culture.Successful = successful.Value;
 
@@ -91,10 +95,17 @@ public class CultureController : Controller
         var resultList = new List<string>();
         var cultureName = culture.Name;
         
-        for (var i = 1; i <= count; i++)
+        if (count == 1)
         {
-            culture.Name = cultureName + "-" + i.ToString("D2");
-            resultList.Add(await _cultureRepository.Create(culture));
+            resultList.Add(await _cultureRepository.Create(culture));   
+        }
+        else
+        {
+            for (var i = 1; i <= count; i++)
+            {
+                culture.Name = cultureName + "-" + i.ToString("D2");
+                resultList.Add(await _cultureRepository.Create(culture));
+            }
         }
 
         return Created("", string.Join(",", resultList));
@@ -108,6 +119,7 @@ public class CultureController : Controller
         string? type,
         string? strain,
         string? recipe,
+        string? notes,
         string? location,
         string? parent,
         string? parentType,
@@ -143,6 +155,9 @@ public class CultureController : Controller
         
         if (type != null)
             culture.Type = type;
+
+        if (notes != null)
+            culture.Notes = notes;
         
         if (recipe != null)
             culture.Recipe = recipe;

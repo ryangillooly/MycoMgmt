@@ -93,6 +93,7 @@ public class CultureRepository : ICultureRepository
             culture.CreateCreatedRelationship(),
             culture.CreateCreatedOnRelationship(),
             culture.CreateParentRelationship(),
+            culture.CreateRecipeRelationship(),
             culture.CreateChildRelationship(),
             culture.CreateNodeLabels(),
             culture.CreateVendorRelationship()
@@ -129,42 +130,37 @@ public class CultureRepository : ICultureRepository
         if (!string.IsNullOrEmpty(culture.Name))
             queryList.Add(query + $"SET c.Name = '{culture.Name}' RETURN c");
 
-        // Update Strain
-        if (!string.IsNullOrEmpty(culture.Strain))
-        {
-            queryList.Add(culture.UpdateStrainRelationship(elementId));
-        }
-        
         // Update Type
         if (!string.IsNullOrEmpty(culture.Type))
             queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
+                
+        // Update Notes
+        if(!string.IsNullOrEmpty(culture.Notes))
+            queryList.Add(query + $"SET c.Notes = '{culture.Notes}' RETURN c");
         
         // Update Recipe
-        // TODO
+        if (!string.IsNullOrEmpty(culture.Recipe))
+            queryList.Add(culture.UpdateRecipeRelationship(elementId));
+        
+        // Update Strain
+        if (!string.IsNullOrEmpty(culture.Strain))
+            queryList.Add(culture.UpdateStrainRelationship(elementId));
         
         // Update Location
         if (!string.IsNullOrEmpty(culture.Location))
-        {
             queryList.Add(culture.UpdateLocationRelationship(elementId));
-        }
         
         // Update Parent
         if (culture.Parent != null)
-        {
             queryList.Add(culture.UpdateParentRelationship(elementId));
-        }
         
         // Update Child
         if (culture.Child != null)
-        {
             queryList.Add(culture.UpdateChildRelationship(elementId));
-        }
         
         // Update Vendor
         if (!string.IsNullOrEmpty(culture.Vendor))
-        {
             queryList.Add(culture.UpdateVendorRelationship(elementId));
-        }
 
         queryList.RemoveAll(item => item is null);
         
