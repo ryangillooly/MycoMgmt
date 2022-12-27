@@ -5,6 +5,7 @@ using MycoMgmt.API.DataStores;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.DataStores.Neo4J;
+using MycoMgmt.Domain.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers
@@ -17,10 +18,13 @@ namespace MycoMgmt.API.Helpers
                 throw new ArgumentNullException(nameof(services));
             
             services.AddTransient<ICultureRepository,    CultureRepository>();
+            services.AddTransient<ISpawnRepository,      SpawnRepository>();
+            services.AddTransient<IBulkRepository,       BulkRepository>();
+            services.AddTransient<IFruitRepository,      FruitRepository>();
             services.AddTransient<ILocationsRepository,  LocationsRepository>();
             services.AddTransient<IStrainsRepository,    StrainsRepository>();
             services.AddTransient<IAccountRepository,    AccountRepository>();
-           // services.AddTransient<IRecipeRepository,     RecipeRepository>();
+            services.AddTransient<IRecipeRepository,     RecipeRepository>();
             services.AddTransient<IUserRepository,       UserRepository>();
             services.AddTransient<IPermissionRepository, PermissionRepository>();
             services.AddTransient<IRoleRepository,       RoleRepository>();

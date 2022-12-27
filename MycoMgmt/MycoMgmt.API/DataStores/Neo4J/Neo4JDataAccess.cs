@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -55,7 +56,10 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
         catch (InvalidOperationException ex)
         {
-            Console.WriteLine(ex);
+            if (ex.Message != "The result is empty.") 
+                throw;
+            
+            _logger.LogError(ex, "No results were found for node");
             throw;
         }
         catch (Exception ex)
@@ -115,6 +119,13 @@ public class Neo4JDataAccess : INeo4JDataAccess
             });
 
             return JsonConvert.SerializeObject(result);
+        }
+        catch (ClientException ex)
+        {
+            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                throw;
+
+            return JsonConvert.SerializeObject(new { Message = ex.Message });
         }
         catch (InvalidOperationException ex)
         {

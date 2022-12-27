@@ -5,7 +5,7 @@
         Culture,
         Spawn,
         Bulk,
-        Fruits,
+        Fruit,
         Location,
         Recipe,
         Ingredient,
