@@ -20,9 +20,9 @@ public class CultureController : Controller
     [HttpPost]
     public async Task<IActionResult> Create
     (
-        string name,
-        string type,
-        string strain,
+        string  name,
+        string  type,
+        string  strain,
         string? recipe,
         string? location,
         string? parent,
@@ -30,20 +30,21 @@ public class CultureController : Controller
         string? child,
         string? childType,
         string? vendor,
-        bool? successful,
-        bool finished,
-        string createdOn,
-        string createdBy,
+        bool?   successful,
+        bool    finished,
+        string  createdOn,
+        string  createdBy,
         string? modifiedOn,
-        string? modifiedBy
+        string? modifiedBy,
+        int?    count = 1
     )
     {
         var culture = new Culture()
         {
-            Name = name,
-            Type = type.Replace(" ",""),
-            Strain = strain,
-            Finished = finished,
+            Name      = name,
+            Type      = type.Replace(" ",""),
+            Strain    = strain,
+            Finished  = finished,
             CreatedOn = DateTime.Parse(createdOn),
             CreatedBy = createdBy
         };
@@ -87,15 +88,22 @@ public class CultureController : Controller
         culture.Tags.Add(culture.IsSuccessful());
         culture.Tags.Add(culture.Type);
 
-        var result = await _cultureRepository.Create(culture);
+        var resultList = new List<string>();
+        var cultureName = culture.Name;
+        
+        for (var i = 1; i <= count; i++)
+        {
+            culture.Name = cultureName + "-" + i.ToString("D2");
+            resultList.Add(await _cultureRepository.Create(culture));
+        }
 
-        return Created("", result);
+        return Created("", string.Join(",", resultList));
     }
 
     [HttpPut("{elementId}")]
     public async Task<IActionResult> Update
     (
-        string elementId,
+        string  elementId,
         string? name,
         string? type,
         string? strain,
@@ -106,10 +114,10 @@ public class CultureController : Controller
         string? child,
         string? childType,
         string? vendor,
-        bool? successful,
-        bool? finished,
-        string modifiedOn,
-        string modifiedBy
+        bool?   successful,
+        bool?   finished,
+        string  modifiedOn,
+        string  modifiedBy
     )
     {
         var culture = new Culture

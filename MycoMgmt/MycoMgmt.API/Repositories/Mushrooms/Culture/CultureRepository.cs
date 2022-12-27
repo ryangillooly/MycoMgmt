@@ -85,37 +85,22 @@ public class CultureRepository : ICultureRepository
         if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
             throw new ArgumentNullException(nameof(culture), "Culture must not be null");
 
-        try
+        var queryList = new List<string>
         {
-            var queryList = new List<string>
-            {
-                culture.Create(),
-                culture.CreateStrainRelationship(),
-                culture.CreateLocationRelationship(),
-                culture.CreateCreatedRelationship(),
-                culture.CreateCreatedOnRelationship(),
-                culture.CreateParentRelationship(),
-                culture.CreateChildRelationship(),
-                culture.CreateNodeLabels(),
-                culture.CreateVendorRelationship()
-            };
+            culture.Create(),
+            culture.CreateStrainRelationship(),
+            culture.CreateLocationRelationship(),
+            culture.CreateCreatedRelationship(),
+            culture.CreateCreatedOnRelationship(),
+            culture.CreateParentRelationship(),
+            culture.CreateChildRelationship(),
+            culture.CreateNodeLabels(),
+            culture.CreateVendorRelationship()
+        };
 
-            queryList.RemoveAll(item => item is null);
-            
-            var result = await _neo4JDataAccess.RunTransaction(queryList);
-            return result;
-        }
-        catch (ClientException ex)
-        {
-            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                throw;
-
-            return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {culture.Name}" });
-        }
-        catch (Exception ex)
-        {
-            throw new ArgumentException(ex.Message);
-        }
+        queryList.RemoveAll(item => item is null);
+           
+        return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
     public async Task Delete(string elementId)

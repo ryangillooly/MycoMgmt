@@ -19,26 +19,29 @@ public class SpawnController : Controller
     [HttpPost]
     public async Task<IActionResult> Create
     (
-        string name,
-        string type,
+        string  name,
+        string  type,
+        string  strain,
         string? recipe,
         string? location,
         string? parent,
         string? parentType,
         string? child,
         string? childType,
-        bool? successful,
-        bool finished,
-        string createdOn,
-        string createdBy,
+        bool?   successful,
+        bool    finished,
+        string  createdOn,
+        string  createdBy,
         string? modifiedOn,
-        string? modifiedBy
+        string? modifiedBy,
+        int?    count = 1
     )
     {
         var spawn = new Spawn()
         {
             Name = name,
             Type = type,
+            Strain = strain,
             Finished = finished,
             CreatedOn = DateTime.Parse(createdOn),
             CreatedBy = createdBy
@@ -80,9 +83,16 @@ public class SpawnController : Controller
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Tags.Add(spawn.Type);
         
-        var result = await _spawnRepository.Create(spawn);
+        var resultList = new List<string>();
+        var spawnName = spawn.Name;
 
-        return Created("", result);
+        for (var i = 1; i <= count; i++)
+        {
+            spawn.Name = spawnName + "-" + i.ToString("D2");
+            resultList.Add(await _spawnRepository.Create(spawn));
+        }
+
+        return Created("", string.Join(",", resultList));
     }
 
     [HttpPut("{elementId}")]
@@ -90,6 +100,7 @@ public class SpawnController : Controller
     (
         string elementId,
         string? name,
+        string? strain,
         string? type,
         string? recipe,
         string? location,
@@ -121,6 +132,9 @@ public class SpawnController : Controller
         if (name != null)
             spawn.Name = name;
 
+        if (strain != null)
+            spawn.Strain = strain;
+        
         if (type != null)
             spawn.Type = type;
         

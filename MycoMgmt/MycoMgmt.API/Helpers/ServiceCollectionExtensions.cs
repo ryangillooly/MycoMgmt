@@ -18,6 +18,7 @@ namespace MycoMgmt.API.Helpers
             
             services.AddTransient<ICultureRepository,    CultureRepository>();
             services.AddTransient<ISpawnRepository,      SpawnRepository>();
+            services.AddTransient<IBulkRepository,      BulkRepository>();
             services.AddTransient<ILocationsRepository,  LocationsRepository>();
             services.AddTransient<IStrainsRepository,    StrainsRepository>();
             services.AddTransient<IAccountRepository,    AccountRepository>();

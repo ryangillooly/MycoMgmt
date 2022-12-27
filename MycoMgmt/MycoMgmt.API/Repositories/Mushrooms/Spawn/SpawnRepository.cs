@@ -84,7 +84,21 @@ public class SpawnRepository : ISpawnRepository
         if (spawn == null || string.IsNullOrWhiteSpace(spawn.Name))
             throw new ArgumentNullException(nameof(spawn), "Spawn must not be null");
 
-        return await PersistToDatabase(spawn);
+        var queryList = new List<string>
+        {
+            spawn.Create(),
+            spawn.CreateStrainRelationship(),
+            spawn.CreateLocationRelationship(),
+            spawn.CreateCreatedRelationship(),
+            spawn.CreateCreatedOnRelationship(),
+            spawn.CreateParentRelationship(),
+            spawn.CreateChildRelationship(),
+            spawn.CreateNodeLabels()
+        };
+
+        queryList.RemoveAll(item => item is null);
+
+        return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
     public async Task Delete(string elementId)
@@ -157,46 +171,5 @@ public class SpawnRepository : ISpawnRepository
         
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
-    }
-    
-    private async Task<string> PersistToDatabase(Spawn spawn)
-    {
-        try
-        {
-            var queryList = CreateQueryList(spawn);
-            var result = await _neo4JDataAccess.RunTransaction(queryList);
-            return result;
-        }
-        catch (ClientException ex)
-        {
-            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                throw;
-
-            return JsonConvert.SerializeObject(new { Message = $"A spawn already exists with the name {spawn.Name}" });
-        }
-        catch (Exception ex)
-        {
-            throw new ArgumentException(ex.Message);
-        }
-    }
-
-    private static List<string> CreateQueryList(Spawn spawn)
-    {
-        var queryList = new List<string>
-        {
-            spawn.Create(),
-            spawn.CreateLocationRelationship(),
-            spawn.CreateCreatedOnRelationship(),
-            spawn.CreateCreatedRelationship()
-        };
-        
-        if (spawn.Parent != null)
-        {
-            queryList.Add(spawn.CreateParentRelationship());
-        }
-
-        queryList.Add(spawn.CreateNodeLabels());
-        
-        return queryList;
     }
 }
