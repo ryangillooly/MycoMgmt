@@ -104,6 +104,8 @@ public class Neo4JDataAccess : INeo4JDataAccess
     {
         try
         {
+            queryList.RemoveAll(item => item is null);
+            
             var result = await _session.ExecuteWriteAsync(async tx =>
             {
                 var returnList = new List<string>();

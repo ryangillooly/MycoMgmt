@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("accounts")]
+    [Route("account")]
     [ApiController]
     public class AccountController : Controller
     {
@@ -19,29 +19,49 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpPost]
-        public async Task<string> Create (string name, string createdOn, string createdBy, string? modifiedOn, string? modifiedBy)
+        public async Task<IActionResult> Create 
+        (
+            string  name, 
+            string  createdOn, 
+            string  createdBy
+        )
         {
             var account = new Account()
             {
-                Name       = name,
-                CreatedOn  = DateTime.Parse(createdOn),
-                CreatedBy  = createdBy
+                Name      = name,
+                CreatedOn = DateTime.Parse(createdOn),
+                CreatedBy = createdBy
             };
 
-            if (modifiedOn != null)
-                account.ModifiedOn = DateTime.Parse(modifiedOn);
-            
-            if(modifiedBy != null)
-                account.ModifiedBy = modifiedBy;
-
-            var result = await _accountRepository.CreateAsync(account);
-            return result;
+            var result = await _accountRepository.Create(account);
+            return Created("", result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<string> Delete (long id) => await _accountRepository.DeleteAsync(id);
+        [HttpPut("{elementId}")]
+        public async Task<IActionResult> Update
+        (
+            string elementId,
+            string name,
+            string modifiedOn,
+            string modifiedBy   
+        )
+        {
+            var account = new Account
+            {
+                Name       = name,
+                ModifiedOn = DateTime.Parse(modifiedOn),
+                ModifiedBy = modifiedBy
+            };
+
+            var result = await _accountRepository.Update(account, elementId);
+
+            return Ok(result);
+        }
         
-        [HttpGet("all")]
-        public async Task<string> GetAll (string name) => await _accountRepository.GetAllAsync();
+        [HttpDelete("{elementId}")]
+        public async Task<string> Delete (string elementId) => await _accountRepository.Delete(elementId);
+        
+        [HttpGet]
+        public async Task<string> GetAll (string name) => await _accountRepository.GetAll();
     }
 }

@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 namespace MycoMgmt.API.Repositories
 {
@@ -21,15 +23,42 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(Location location)
+        public async Task<string> Create(Location location)
         {
             if (location == null || string.IsNullOrWhiteSpace(location.Name))
                 throw new ArgumentNullException(nameof(location), "Location must not be null");
-
-            if ((location.ModifiedBy != null && location.ModifiedOn == null) || (location.ModifiedBy == null && location.ModifiedOn != null))
-                throw new ArgumentException("ModifiedBy and ModifiedOn must either both be Null, or both be Populated");
             
-            return await PersistToDatabase(location);
+            var queryList = new List<string>
+            {
+                location.Create(),
+                location.CreateCreatedRelationship(),
+                location.CreateCreatedOnRelationship()
+            };
+            
+            var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
+        }
+
+        public async Task<string> Update(Location location, string elementId)
+        {
+            var query = $"MATCH (l:Location) WHERE elementId(l) = '{elementId}' ";
+
+            var queryList = new List<string>
+            {
+                location.UpdateModifiedOnRelationship(elementId),
+                location.UpdateModifiedRelationship(elementId)
+            };
+        
+            // Update Name
+            if (!string.IsNullOrEmpty(location.Name))
+                queryList.Add(query + $"SET l.Name = '{location.Name}' RETURN l");
+            
+            // Update AgentConfigured
+            if (location.AgentConfigured != null)
+                queryList.Add(query + $"SET l.AgentConfigured = '{location.AgentConfigured}' RETURN l");
+            
+            var cultures = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(cultures, Formatting.Indented);
         }
         
         public async Task<List<object>> GetAll()
@@ -38,40 +67,6 @@ namespace MycoMgmt.API.Repositories
             var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "l");
 
             return locations;
-        }
-
-        private async Task<string> PersistToDatabase(Location location)
-        {
-            try
-            {
-                var queryList = CreateQueryList(location);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-
-                _logger.LogWarning("A culture already exists with the name {LocationName}", location.Name);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-        }
-
-        private static List<string> CreateQueryList(Location location)
-        {
-            var queryList = new List<string>
-            {
-                $@"
-                    MERGE(l:Location {{ Name:  '{location.Name}' }}) 
-                    RETURN l;
-                    "
-            };
-            return queryList;
         }
     }
 }

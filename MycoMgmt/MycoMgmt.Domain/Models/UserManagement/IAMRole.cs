@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Formats.Asn1;
+
 #pragma warning disable CS8618
 
 namespace MycoMgmt.Domain.Models.UserManagement
 {
-    public class IamRole
+    public class IamRole : ModelBase
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.IamRole };
-        public string Name { get; set; }
+        public IamRole()
+        {
+            Tags.Add(EntityTypes.IamRole.ToString());
+        }
         public List<string> Permissions { get; set; }
     }
 }

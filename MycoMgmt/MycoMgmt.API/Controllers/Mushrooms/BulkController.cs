@@ -32,8 +32,6 @@ public class BulkController : Controller
         bool    finished,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
@@ -75,12 +73,6 @@ public class BulkController : Controller
 
         if (successful != null)
             bulk.Successful = successful.Value;
-
-        if (modifiedOn != null)
-            bulk.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            bulk.ModifiedBy = modifiedBy;
 
         bulk.Tags.Add(bulk.IsSuccessful());
 

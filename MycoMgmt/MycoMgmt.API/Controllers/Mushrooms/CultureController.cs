@@ -35,8 +35,6 @@ public class CultureController : Controller
         bool    finished,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
@@ -83,12 +81,6 @@ public class CultureController : Controller
         if (successful != null)
             culture.Successful = successful.Value;
 
-        if (modifiedOn != null)
-            culture.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            culture.ModifiedBy = modifiedBy;
-        
         culture.Tags.Add(culture.IsSuccessful());
         culture.Tags.Add(culture.Type);
 

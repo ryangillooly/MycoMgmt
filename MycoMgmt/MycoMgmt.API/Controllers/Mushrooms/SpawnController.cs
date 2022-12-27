@@ -33,8 +33,6 @@ public class SpawnController : Controller
         bool    finished,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
@@ -77,12 +75,6 @@ public class SpawnController : Controller
 
         if (successful != null)
             spawn.Successful = successful.Value;
-
-        if (modifiedOn != null)
-            spawn.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            spawn.ModifiedBy = modifiedBy;
 
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Tags.Add(spawn.Type);

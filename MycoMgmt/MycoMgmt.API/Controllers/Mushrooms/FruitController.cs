@@ -33,8 +33,6 @@ public class FruitController : Controller
         bool    finished,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
@@ -79,12 +77,6 @@ public class FruitController : Controller
 
         if (successful != null)
             fruit.Successful = successful.Value;
-
-        if (modifiedOn != null)
-            fruit.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            fruit.ModifiedBy = modifiedBy;
 
         fruit.Tags.Add(fruit.IsSuccessful());
 

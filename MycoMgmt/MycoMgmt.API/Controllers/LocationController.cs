@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("locations")]
+    [Route("location")]
     [ApiController]
     public class LocationController : Controller
     {
@@ -19,14 +19,13 @@ namespace MycoMgmt.API.Controllers
             _locationsRepository = repo;
         }
         
-        [HttpPost("new")]
-        public async Task<string> NewLocation
+        [HttpPost]
+        public async Task<IActionResult> Create
         (
             string name,
+            bool?  agentConfigured,
             string createdOn,
-            string createdBy,
-            string? modifiedOn,
-            string? modifiedBy
+            string createdBy
         )
         {
             var location = new Location()
@@ -36,17 +35,47 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy  = createdBy
             };
 
-            if (modifiedOn != null)
-                location.ModifiedOn = DateTime.Parse(modifiedOn);
-            
-            if(modifiedBy != null)
-                location.ModifiedBy = modifiedBy;
+            if (agentConfigured != null)
+                location.AgentConfigured = agentConfigured;
 
-            var result = await _locationsRepository.Add(location);
-            return result;
+            var resultList = new List<string>
+            {
+                await _locationsRepository.Create(location)
+            };   
+            
+            return Created("", string.Join(",", resultList));
         }
         
-        [HttpGet("all")]
+        [HttpPut("{elementId}")]
+    public async Task<IActionResult> Update
+    (
+        string  elementId,
+        string? name,
+        bool?   agentConfigured,
+        string  modifiedOn,
+        string  modifiedBy
+    )
+    {
+        var location = new Location
+        {
+            ModifiedOn = DateTime.Parse(modifiedOn),
+            ModifiedBy = modifiedBy
+        };
+        
+
+        if (name != null)
+            location.Name = name;
+        
+        if (agentConfigured != null)
+            location.AgentConfigured = agentConfigured;
+        
+        
+        var result = await _locationsRepository.Update(location, elementId);
+
+        return Ok(result);
+    }
+        
+        [HttpGet]
         public async Task<string> GetAllLocations(string name)
         {
             var node = await _locationsRepository.GetAll();

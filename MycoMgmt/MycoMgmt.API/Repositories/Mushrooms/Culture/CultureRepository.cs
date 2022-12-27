@@ -99,8 +99,6 @@ public class CultureRepository : ICultureRepository
             culture.CreateVendorRelationship()
         };
 
-        queryList.RemoveAll(item => item is null);
-           
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -161,8 +159,6 @@ public class CultureRepository : ICultureRepository
         // Update Vendor
         if (!string.IsNullOrEmpty(culture.Vendor))
             queryList.Add(culture.UpdateVendorRelationship(elementId));
-
-        queryList.RemoveAll(item => item is null);
         
         var cultures = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(cultures, Formatting.Indented);

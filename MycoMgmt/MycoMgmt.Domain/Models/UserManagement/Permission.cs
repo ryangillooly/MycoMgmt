@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 namespace MycoMgmt.Domain.Models.UserManagement
 {
-    public class Permission
+    public class Permission : ModelBase
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Permission };
-        public string Name { get; set; }
+        public Permission()
+        {
+            Tags.Add(EntityTypes.Permission.ToString());
+        }
     }
 }

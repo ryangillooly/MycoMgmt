@@ -82,8 +82,6 @@ public class BulkRepository : IBulkRepository
             bulk.CreateNodeLabels()
         };
 
-        queryList.RemoveAll(item => item is null);
-
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -134,8 +132,6 @@ public class BulkRepository : IBulkRepository
         // Update Child
         if (bulk.Child != null)
             queryList.Add(bulk.UpdateChildRelationship(elementId));
-
-        queryList.RemoveAll(item => item is null);
         
         var bulkData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(bulkData);

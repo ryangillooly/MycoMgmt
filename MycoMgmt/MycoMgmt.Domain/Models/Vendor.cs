@@ -6,7 +6,12 @@ namespace MycoMgmt.Domain.Models
 {
     public class Vendor : ModelBase
     {
-        public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Vendor };
-        public Uri? Url { get; set; }
+        public Vendor()
+        {
+            Tags.Add(EntityTypes.Vendor.ToString());
+        }
+
+        public string? Url { get; set; }
+        public string? Notes { get; set; }
     }
 }

@@ -96,8 +96,6 @@ public class SpawnRepository : ISpawnRepository
             spawn.CreateNodeLabels()
         };
 
-        queryList.RemoveAll(item => item is null);
-
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -152,8 +150,6 @@ public class SpawnRepository : ISpawnRepository
         // Update Child
         if (spawn.Child != null)
             queryList.Add(spawn.UpdateChildRelationship(elementId));
-
-        queryList.RemoveAll(item => item is null);
         
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData, Formatting.Indented);

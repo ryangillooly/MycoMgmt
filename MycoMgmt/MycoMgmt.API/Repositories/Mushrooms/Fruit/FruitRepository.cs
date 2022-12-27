@@ -96,8 +96,6 @@ public class FruitRepository : IFruitRepository
             fruit.CreateNodeLabels()
         };
 
-        queryList.RemoveAll(item => item is null);
-
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -157,8 +155,6 @@ public class FruitRepository : IFruitRepository
         if (fruit.Child != null)
             queryList.Add(fruit.UpdateChildRelationship(elementId));
 
-        queryList.RemoveAll(item => item is null);
-        
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
     }

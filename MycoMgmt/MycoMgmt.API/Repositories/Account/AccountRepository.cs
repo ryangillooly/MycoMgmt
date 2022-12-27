@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.UserManagement;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories
@@ -22,67 +24,44 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> CreateAsync(Account account)
+        public async Task<string> Create(Account account)
         {
             if (account == null || string.IsNullOrWhiteSpace(account.Name))
                 throw new ArgumentNullException(nameof(account), "Account must not be null");
 
-            return await PersistToDatabase(account);
+            var queryList = new List<string>
+            {
+                account.Create(),
+                account.CreateCreatedRelationship(),
+                account.CreateCreatedOnRelationship()
+            };
+            
+            var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
         }
-        public async Task<string> DeleteAsync(long id)
+        
+        public async Task<string> Delete(string elementId)
         {
-            var query = new List<string>{ $"MATCH (a:Account) WHERE ID(a) = { id } DETACH DELETE a RETURN a" };
+            var query = new List<string>{ $"MATCH (a:Account) WHERE elementId(a) = '{elementId}' DETACH DELETE a RETURN a" };
             var accounts = await _neo4JDataAccess.RunTransaction(query);
 
             return JsonConvert.SerializeObject(accounts);
         }
 
-        public async Task<string> UpdateAsync(Account account)
-        {
-            // Fix this query. Placeholder put in for the time being until I get round to it
-            var query = new List<string> { $"MATCH (a:Account {{ Name: '{account.Name}' }}) DETACH DELETE a RETURN a" };
-            var accounts = await _neo4JDataAccess.RunTransaction(query);
-
-            return JsonConvert.SerializeObject(accounts);
-        }
-        private async Task<string> PersistToDatabase(Account account)
-        {
-            try
-            {
-                var queryList = CreateQueryList(account);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-
-                return JsonConvert.SerializeObject(new { Message = $"An Account already exists with the name {account.Name}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-        }
-        private static List<string> CreateQueryList(Account account)
+        public async Task<string> Update(Account account, string elementId)
         {
             var queryList = new List<string>
             {
-                $@"
-                        MERGE 
-                        (
-                            a:Account
-                            {{
-                                Name:  '{account.Name}'
-                            }}        
-                        ) 
-                        RETURN a;
-                    "
+                $"MATCH (a:Account) WHERE elementId(a) = '{elementId}' SET a.Name = '{account.Name}' RETURN a",
+                account.UpdateModifiedOnRelationship(elementId),
+                account.UpdateModifiedRelationship(elementId)
             };
-            return queryList;
+
+            var cultures = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(cultures, Formatting.Indented);
         }
-        public async Task<string> GetAllAsync()
+
+        public async Task<string> GetAll()
         {
             const string query = "MATCH (a:Account) RETURN a ORDER BY a.Name";
             var accounts = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "a");
