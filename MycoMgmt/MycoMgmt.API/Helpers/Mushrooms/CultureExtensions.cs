@@ -112,7 +112,7 @@ public static class CultureExtensions
                         {{Location:     location.Name}},
                         {{Parent:       properties(parent).Name}},
                         {{ParentType:   labels(parent)[0]}},
-                        {{Child:        properties(child).Name}},
+                        {{Children:        properties(child).Name}},
                         {{ChildType:    labels(child)[0]}},
                         {{InoculatedOn: apoc.date.toISO8601(inoculatedDate.epochMillis, 'ms')}},
                         {{InoculatedBy: inoculatedBy.Name}},

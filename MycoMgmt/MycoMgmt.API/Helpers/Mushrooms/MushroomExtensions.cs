@@ -33,7 +33,7 @@ public static class MushroomExtensions
     public static string? UpdateChildRelationship(this Mushroom mushroom)
     {
         return
-            mushroom.Child is null
+            mushroom.Children is null
                 ? null
                 : $@"
                     MATCH 
@@ -47,7 +47,7 @@ public static class MushroomExtensions
                     WITH
                         p
                     MATCH 
-                        (c:{mushroom.ChildType} {{Name: '{mushroom.Child}' }})
+                        (c:{mushroom.ChildType} {{Name: '{mushroom.Children}' }})
                     MERGE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
@@ -337,12 +337,12 @@ public static class MushroomExtensions
     public static string? CreateChildRelationship(this Mushroom mushroom)
     {
         return 
-            mushroom.Child is null 
+            mushroom.Children is null 
                 ? null 
                 : $@"
                     MATCH 
                         (p:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
-                        (c:{mushroom.ChildType} {{ Name: '{mushroom.Child}' }})
+                        (c:{mushroom.ChildType} {{ Name: '{mushroom.Children}' }})
                     CREATE
                         (c)-[r:HAS_PARENT]->(p)
                     RETURN r

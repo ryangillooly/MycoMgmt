@@ -32,8 +32,23 @@
                 <td>@item.Name</td>
                 <td>@item.Strain</td>
                 <td>@item.Location</td>
-                <td>@item.Parent (@item.ParentType)</td>
-                <td>@item.FinishedOn</td>
+                @if (item.Parent is null)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@item.Parent (@item.ParentType)</td>
+                }
+                
+                @if (item.FinishedOn.Value.Year == 1 || item.FinishedOn is null)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@DateTime.Parse(item.FinishedOn.ToString())</td>
+                }
                 <td>@item.CreatedBy</td>
                 <td>@item.CreatedOn</td>
                 <td>@item.Status</td>

@@ -37,6 +37,10 @@ public static class FruitExtensions
          var query =
             $@"
                 MATCH (x:{fruit.EntityType})
+                OPTIONAL MATCH (x)<-[:HAS_PARENT]-(child)
+                WITH 
+                    x,
+                    collect(child.Name) as children
                 OPTIONAL MATCH (x)-[:CREATED_ON]   ->(cDay:Day)<-[:HAS_DAY]-(cMonth:Month)-[:HAS_MONTH]-(cYear:Year)
                 OPTIONAL MATCH (x)-[:MODIFIED_ON]  ->(mDay:Day)<-[:HAS_DAY]-(mMonth:Month)-[:HAS_MONTH]-(mYear:Year)
                 OPTIONAL MATCH (x)-[:FINISHED_ON]  ->(fDay:Day)<-[:HAS_DAY]-(fMonth:Month)-[:HAS_MONTH]-(fYear:Year)
@@ -45,37 +49,46 @@ public static class FruitExtensions
                 OPTIONAL MATCH (x)-[:HAS_STRAIN]->(strain:Strain)
                 OPTIONAL MATCH (x)-[:STORED_IN]->(location:Location)
                 OPTIONAL MATCH (x)-[:HAS_PARENT]->(parent)
-                OPTIONAL MATCH (x)<-[:HAS_PARENT]-(child)
                 OPTIONAL MATCH (x)-[:CREATED_USING]->(recipe:Recipe)
-                WITH 
+                WITH
                     x, 
+                    reduce(x = '', i IN children | x + i + ',') as childrenString,
                     datetime({{year: cYear.year, month: cMonth.month, day: cDay.day}}) as createdDate,
                     datetime({{year: mYear.year, month: mMonth.month, day: mDay.day}}) as modifiedDate,
                     datetime({{year: fYear.year, month: fMonth.month, day: fDay.day}}) as finishedDate,
-                    properties(cUser) as createdBy,
-                    properties(mUser) as modifiedBy,
-                    properties(strain) as strain,
-                    properties(location) as location,
-                    parent, 
-                    child
+                    properties(cUser).Name as createdBy,
+                    properties(mUser).Name as modifiedBy,
+                    properties(strain).Name as strain,
+                    properties(location).Name as location,
+                    parent
+                WITH    
+                    x,
+                    left(childrenString, size(childrenString)-1) as children,
+                    createdDate,
+                    modifiedDate,
+                    finishedDate,
+                    createdBy,
+                    modifiedBy,
+                    strain,
+                    location,
+                    parent
                 RETURN 
                     apoc.map.mergeList
                     ([
                         {{ElementId:    elementId(x)}},
                         {{Name:         properties(x).Name}},
-                        {{Type:         labels(x)[1]}},
+                        {{EntityType:   properties(x).EntityType}},
                         {{Notes:        properties(x).Notes}},
-                        {{Strain:       strain.Name}},
+                        {{Strain:       strain}},
                         {{Status:       properties(x).Status}},
-                        {{Location:     location.Name}},
+                        {{Location:     location}},
                         {{Parent:       properties(parent).Name}},
-                        {{ParentType:   labels(parent)[0]}},
-                        {{Child:        properties(child).Name}},
-                        {{ChildType:    labels(child)[0]}},
+                        {{ParentType:   properties(parent).EntityType}},
+                        {{Children:     children}},
                         {{CreatedOn:    apoc.date.toISO8601(createdDate.epochMillis, 'ms')}},
-                        {{CreatedBy:    createdBy.Name}},
+                        {{CreatedBy:    createdBy}},
                         {{ModifiedOn:   apoc.date.toISO8601(modifiedDate.epochMillis, 'ms')}},        
-                        {{ModifiedBy:   modifiedBy.Name}},
+                        {{ModifiedBy:   modifiedBy}},
                         {{FinishedOn:   apoc.date.toISO8601(finishedDate.epochMillis, 'ms')}}
                     ])
                     as result
