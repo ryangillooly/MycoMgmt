@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
-using MycoMgmt.Domain.Models;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
@@ -38,49 +38,31 @@ public class CultureController : Controller
         int?    count = 1
     )
     {
-        var culture = new Culture()
-        {
-            Name      = name,
-            Type      = type.Replace(" ",""),
-            Strain    = strain,
-            Finished  = finished,
-            CreatedOn = DateTime.Parse(createdOn),
-            CreatedBy = createdBy
-        };
-
-        if (recipe != null)
-            culture.Recipe = recipe;
-
-        if (location != null)
-            culture.Location = location;
-        
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
             throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
         
-        if (parent != null && parentType != null)
+        var culture = new Culture()
         {
-            culture.Parent     = parent;
-            culture.ParentType = parentType;
-        }
+            Name       = name,
+            Type       = type.Replace(" ",""),
+            Recipe     = recipe,
+            Location   = location,
+            Vendor     = vendor,
+            Notes      = notes,
+            Successful = successful,
+            Strain     = strain,
+            Finished   = finished,
+            Parent     = parent,
+            ParentType = parentType,
+            Child      = child,
+            ChildType  = childType,
+            CreatedOn  = DateTime.Parse(createdOn),
+            CreatedBy  = createdBy
+        };
         
-        if (child != null && childType != null)
-        {
-            culture.Child     = child;
-            culture.ChildType = childType;
-        }
-
-        if (vendor != null)
-            culture.Vendor = vendor;
-
-        if (notes != null)
-            culture.Notes = notes;
-
-        if (successful != null)
-            culture.Successful = successful.Value;
-
         culture.Tags.Add(culture.IsSuccessful());
         culture.Tags.Add(culture.Type);
 
@@ -139,23 +121,15 @@ public class CultureController : Controller
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
         
-        if (name != null)
-            culture.Name = name;
-        
-        if (strain != null)
-            culture.Strain = strain;
-        
-        if (type != null)
-            culture.Type = type;
-
-        if (notes != null)
-            culture.Notes = notes;
-        
-        if (recipe != null)
-            culture.Recipe = recipe;
-
-        if (location != null)
-            culture.Location = location;
+        if (name       != null) culture.Name       = name;
+        if (strain     != null) culture.Strain     = strain;
+        if (type       != null) culture.Type       = type;
+        if (notes      != null) culture.Notes      = notes;
+        if (recipe     != null) culture.Recipe     = recipe;
+        if (location   != null) culture.Location   = location;
+        if (vendor     != null) culture.Vendor     = vendor;
+        if (successful != null) culture.Successful = successful.Value;
+        if (finished   != null) culture.Finished   = finished;
         
         if (parent != null && parentType != null)
         {
@@ -168,16 +142,7 @@ public class CultureController : Controller
             culture.Child     = child;
             culture.ChildType = childType;
         }
-
-        if (vendor != null)
-            culture.Vendor = vendor;
         
-        if (successful != null)
-            culture.Successful = successful.Value;
-
-        if (finished != null)
-            culture.Finished = finished;
-
         var result = await _cultureRepository.Update(elementId, culture);
 
         return Ok(result);

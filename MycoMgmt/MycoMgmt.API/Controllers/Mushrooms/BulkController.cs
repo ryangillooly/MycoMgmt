@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 

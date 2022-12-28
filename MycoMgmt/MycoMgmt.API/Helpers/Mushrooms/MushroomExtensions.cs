@@ -1,4 +1,7 @@
-namespace MycoMgmt.Domain.Models.Mushrooms;
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+using MycoMgmt.Domain.Models.Mushrooms;
+
+namespace MycoMgmt.API.Helpers;
 
 public static class MushroomExtensions
 {
@@ -126,6 +129,59 @@ public static class MushroomExtensions
                         r
                 ";
     }
+
+    public static string? UpdateName(this Mushroom mushroom, string elementId)
+    {
+        return
+            mushroom.Name is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.Tags[0]}) 
+                    WHERE 
+                        elementId(x) = '{elementId}' 
+                    SET 
+                        x.Name = '{mushroom.Name}' 
+                    RETURN s 
+                  ";
+    }
+    
+    public static string? UpdateNotes(this Mushroom mushroom, string elementId)
+    {
+        return
+            mushroom.Notes is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.Tags[0]}) 
+                    WHERE 
+                        elementId(x) = '{elementId}' 
+                    SET 
+                        x.Notes = '{mushroom.Notes}' 
+                    RETURN s 
+                  ";
+    }
+    
+    public static string? UpdateStatus(this Mushroom mushroom, string elementId)
+    {
+        return
+            mushroom.Successful is null && mushroom.Finished is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.Tags[0]})
+                    WHERE 
+                        elementId(x) = '{elementId}'
+                    REMOVE 
+                        x :InProgress:Successful:Failed
+                    WITH 
+                        x                    
+                    SET 
+                        x:{mushroom.IsSuccessful()}
+                    RETURN 
+                        x
+                ";
+    }
     
     public static string? CreateRecipeRelationship(this Mushroom mushroom)
     {
@@ -212,27 +268,6 @@ public static class MushroomExtensions
                 RETURN x
             ";
     }
-
-    public static string? UpdateStatus(this Mushroom mushroom, string elementId)
-    {
-        return
-            mushroom.Successful is null && mushroom.Finished is null
-                ? null
-                : $@"
-                    MATCH 
-                        (x:{mushroom.Tags[0]})
-                    WHERE 
-                        elementId(x) = '{elementId}'
-                    REMOVE 
-                        x :InProgress:Successful:Failed
-                    WITH 
-                        x                    
-                    SET 
-                        x:{mushroom.IsSuccessful()}
-                    RETURN 
-                        x
-                ";
-    }
     
     public static string IsSuccessful(this Mushroom mushroom)
     {
@@ -245,4 +280,38 @@ public static class MushroomExtensions
                 _ => "Failed"
         };
     }
+
+    public static string SearchByNameQuery(this Mushroom mushroom) =>
+        $@"
+            MATCH 
+                (x:{mushroom.Tags[0]}) 
+            WHERE 
+                toUpper(x.Name) CONTAINS toUpper('{ mushroom.Name }') 
+            RETURN 
+                x 
+            ORDER BY 
+                x.Name 
+            LIMIT 
+                100
+        ";
+    
+    public static string GetByNameQuery(this Mushroom mushroom) =>
+        $@"
+            MATCH 
+                (x:{mushroom.Tags[0]}) 
+            WHERE 
+                toUpper(x.Name) = toUpper('{ mushroom.Name }') 
+            RETURN 
+                x
+        ";
+    
+    public static string GetByIdQuery(this Mushroom mushroom) =>
+        $@"
+            MATCH 
+                (x:{mushroom.Tags[0]}) 
+            WHERE 
+                elementId(x) = '{mushroom.ElementId}'
+            RETURN 
+                x
+        ";
 }
