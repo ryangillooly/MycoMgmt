@@ -69,7 +69,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
     }
         
-    public async Task<T> ExecuteWriteTransactionAsync<T>(string query, IDictionary<string, object>? parameters = null)
+    public async Task<T> ExecuteWriteTransactionAsync<T>(string? query, IDictionary<string, object>? parameters = null)
     {
         try
         {
@@ -100,10 +100,12 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
     }
         
-    public async Task<string> RunTransaction(List<string> queryList)
+    public async Task<string> RunTransaction(List<string?> queryList)
     {
         try
         {
+            queryList.RemoveAll(item => item is null);
+            
             var result = await _session.ExecuteWriteAsync(async tx =>
             {
                 var returnList = new List<string>();

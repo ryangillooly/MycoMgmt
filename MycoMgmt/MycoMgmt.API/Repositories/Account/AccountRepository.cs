@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.UserManagement;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories
@@ -22,72 +24,61 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> CreateAsync(Account account)
+        public async Task<string> SearchByName(Account account)
         {
-            if (account == null || string.IsNullOrWhiteSpace(account.Name))
-                throw new ArgumentNullException(nameof(account), "Account must not be null");
-
-            return await PersistToDatabase(account);
-        }
-        public async Task<string> DeleteAsync(long id)
-        {
-            var query = new List<string>{ $"MATCH (a:Account) WHERE ID(a) = { id } DETACH DELETE a RETURN a" };
-            var accounts = await _neo4JDataAccess.RunTransaction(query);
-
-            return JsonConvert.SerializeObject(accounts);
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> UpdateAsync(Account account)
+        public async Task<string> GetByName(Account account)
         {
-            // Fix this query. Placeholder put in for the time being until I get round to it
-            var query = new List<string> { $"MATCH (a:Account {{ Name: '{account.Name}' }}) DETACH DELETE a RETURN a" };
-            var accounts = await _neo4JDataAccess.RunTransaction(query);
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.GetByNameQuery(), "x");
 
-            return JsonConvert.SerializeObject(accounts);
+            return JsonConvert.SerializeObject(result);
         }
-        private async Task<string> PersistToDatabase(Account account)
-        {
-            try
-            {
-                var queryList = CreateQueryList(account);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
 
-                return JsonConvert.SerializeObject(new { Message = $"An Account already exists with the name {account.Name}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-        }
-        private static List<string> CreateQueryList(Account account)
+        public async Task<string> GetById(Account account)
         {
-            var queryList = new List<string>
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(account.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(Account account)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(account.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+        
+        public async Task<string> Create(Account account)
+        {
+            var queryList = new List<string?>
             {
-                $@"
-                        MERGE 
-                        (
-                            a:Account
-                            {{
-                                Name:  '{account.Name}'
-                            }}        
-                        ) 
-                        RETURN a;
-                    "
+                account.Create(),
+                account.CreateCreatedRelationship(),
+                account.CreateCreatedOnRelationship()
             };
-            return queryList;
+            
+            var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
         }
-        public async Task<string> GetAllAsync()
+        
+        public async Task<string> Delete(Account account)
         {
-            const string query = "MATCH (a:Account) RETURN a ORDER BY a.Name";
-            var accounts = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "a");
-
+            var accounts = await _neo4JDataAccess.RunTransaction(new List<string?> { account.Delete() });
             return JsonConvert.SerializeObject(accounts);
+        }
+
+        public async Task<string> Update(Account account)
+        {
+            var queryList = new List<string?>
+            {
+                account.UpdateName(),
+                account.UpdateModifiedOnRelationship(),
+                account.UpdateModifiedRelationship()
+            };
+
+            var cultures = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(cultures);
         }
     }
 }

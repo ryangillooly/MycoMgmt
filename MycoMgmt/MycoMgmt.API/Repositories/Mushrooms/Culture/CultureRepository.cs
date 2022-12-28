@@ -27,67 +27,14 @@ public class CultureRepository : ICultureRepository
         _logger = logger;
     }
 
-    public async Task<string> SearchByName(string name)
-    {
-        var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) CONTAINS toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-        var cultures = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
-
-        return JsonConvert.SerializeObject(cultures);
-    }
-
-    public async Task<string> GetByName(string name)
-    {
-        var query = $"MATCH (c:Culture) WHERE toUpper(c.Name) = toUpper('{ name }') RETURN c{{ Name: c.Name, Type: c.Type }} ORDER BY c.Name LIMIT 5";
-        var cultures = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
-
-        return JsonConvert.SerializeObject(cultures);
-    }
-
-    public async Task<string> GetById(string id)
-    {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{id}' RETURN c";
-
-        try
-        {
-            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(query);
-            return JsonConvert.SerializeObject(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            if (ex.Message != "The result is empty.") 
-                throw;
-                
-            return JsonConvert.SerializeObject(new { Message = $"No results were found for Culture Id { id }" });
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
-    }
-    
-    public async Task<string> GetAll()
-    {
-        const string query = "MATCH (c:Culture) RETURN c ORDER BY c.Name ASC";
-        var cultures = await _neo4JDataAccess.ExecuteReadListAsync(query, "c");
-        return JsonConvert.SerializeObject(cultures);
-    }
-
-    public async Task<long> GetCount()
-    {
-        const string query = "Match (c:Culture) RETURN count(c) as CultureCount";
-        var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
-        return count;
-    }
-    
     public async Task<string> Create(Culture culture)
     {
-        if (culture == null || string.IsNullOrWhiteSpace(culture.Name))
-            throw new ArgumentNullException(nameof(culture), "Culture must not be null");
-
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
             culture.Create(),
+            culture.CreateInoculatedRelationship(),
+            culture.CreateInoculatedOnRelationship(),
+            culture.CreateFinishedOnRelationship(),
             culture.CreateStrainRelationship(),
             culture.CreateLocationRelationship(),
             culture.CreateCreatedRelationship(),
@@ -99,72 +46,66 @@ public class CultureRepository : ICultureRepository
             culture.CreateVendorRelationship()
         };
 
-        queryList.RemoveAll(item => item is null);
-           
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public async Task Delete(string elementId)
+    public async Task Delete(Culture culture)
     {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{ elementId }' DETACH DELETE c RETURN c";
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
-
-        if(delete.ElementId != elementId)
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", elementId);
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(culture.Delete());
         
-        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", elementId);
+        if(delete.ElementId == culture.ElementId)
+            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", culture.ElementId);
+        else
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", culture.ElementId);
     }
         
-    public async Task<string> Update(string elementId, Culture culture)
+    public async Task<string> Update(Culture culture)
     {
-        var query = $"MATCH (c:Culture) WHERE elementId(c) = '{elementId}' ";
-
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
-            culture.UpdateModifiedOnRelationship(elementId),
-            culture.UpdateModifiedRelationship(elementId),
-            culture.UpdateStatus(elementId)
+            culture.UpdateStatus(),
+            culture.UpdateName(),
+            culture.UpdateNotes(),
+            culture.UpdateType(),
+            culture.UpdateInoculatedRelationship(),
+            culture.UpdateInoculatedOnRelationship(),
+            culture.UpdateFinishedOnRelationship(),
+            culture.UpdateRecipeRelationship(),
+            culture.UpdateStrainRelationship(),
+            culture.UpdateLocationRelationship(),
+            culture.UpdateParentRelationship(),
+            culture.UpdateChildRelationship(),
+            culture.UpdateVendorRelationship(),
+            culture.UpdateModifiedOnRelationship(),
+            culture.UpdateModifiedRelationship(),
         };
         
-        // Update Name
-        if (!string.IsNullOrEmpty(culture.Name))
-            queryList.Add(query + $"SET c.Name = '{culture.Name}' RETURN c");
+        var results = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(results);
+    }
+    
+    public async Task<string> SearchByName(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.SearchByNameQuery(), "x");
+        return JsonConvert.SerializeObject(result);
+    }
 
-        // Update Type
-        if (!string.IsNullOrEmpty(culture.Type))
-            queryList.Add(query + $"SET c.Type = '{culture.Type}' RETURN c");
-                
-        // Update Notes
-        if(!string.IsNullOrEmpty(culture.Notes))
-            queryList.Add(query + $"SET c.Notes = '{culture.Notes}' RETURN c");
-        
-        // Update Recipe
-        if (!string.IsNullOrEmpty(culture.Recipe))
-            queryList.Add(culture.UpdateRecipeRelationship(elementId));
-        
-        // Update Strain
-        if (!string.IsNullOrEmpty(culture.Strain))
-            queryList.Add(culture.UpdateStrainRelationship(elementId));
-        
-        // Update Location
-        if (!string.IsNullOrEmpty(culture.Location))
-            queryList.Add(culture.UpdateLocationRelationship(elementId));
-        
-        // Update Parent
-        if (culture.Parent != null)
-            queryList.Add(culture.UpdateParentRelationship(elementId));
-        
-        // Update Child
-        if (culture.Child != null)
-            queryList.Add(culture.UpdateChildRelationship(elementId));
-        
-        // Update Vendor
-        if (!string.IsNullOrEmpty(culture.Vendor))
-            queryList.Add(culture.UpdateVendorRelationship(elementId));
+    public async Task<string> GetByName(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.GetByNameQuery(), "x");
 
-        queryList.RemoveAll(item => item is null);
-        
-        var cultures = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(cultures, Formatting.Indented);
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetById(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(culture.GetByIdQuery());
+        return JsonConvert.SerializeObject(result);
+    }
+    
+    public async Task<string> GetAll(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(), "x");
+        return JsonConvert.SerializeObject(result);
     }
 }

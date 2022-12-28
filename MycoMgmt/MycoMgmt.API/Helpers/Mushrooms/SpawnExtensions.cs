@@ -22,5 +22,4 @@ public static class SpawnExtensions
 
         return query;
     }
-    
 }

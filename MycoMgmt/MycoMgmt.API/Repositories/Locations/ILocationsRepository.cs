@@ -7,10 +7,14 @@ namespace MycoMgmt.API.Repositories
 {
     public interface ILocationsRepository
     {
-        [HttpPost]
-        Task<string> Add(Location location);
+        Task<string> Create(Location location);
+
+        Task<string> Update(Location location);
+        Task Delete(Location location);
         
-        [HttpGet]
-        public Task<List<object>> GetAll();
+        Task<string> GetAll(Location location);
+        Task<string> SearchByName(Location location);
+        Task<string> GetByName(Location location);
+        Task<string> GetById(Location location);
     }
 }

@@ -11,10 +11,8 @@ namespace MycoMgmt.Domain.Models
             Tags.Add(EntityTypes.Recipe.ToString());
         }
         
-        public string Type { get; set; }
         public string? Description { get; set; }
         public List<string>? Steps { get; set; }
-        public string? Notes { get; set; }
         public List<string>? Ingredients { get; set; }
     }
 }

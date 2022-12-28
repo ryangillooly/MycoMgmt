@@ -10,7 +10,9 @@
         public string? ChildType { get; set; }
         public bool? Successful { get; set; }
         public bool? Finished { get; set; }
+        public DateTime? FinishedOn { get; set; }
+        public DateTime? InoculatedOn { get; set; }
+        public string? InoculatedBy { get; set; }
         public string? Recipe { get; set; }
-        public string? Notes { get; set; }
     }
 }

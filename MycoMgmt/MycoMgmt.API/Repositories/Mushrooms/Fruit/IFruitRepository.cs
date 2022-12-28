@@ -9,12 +9,11 @@ namespace MycoMgmt.API.Repositories
     public interface IFruitRepository
     {
         public Task<string> Create(Fruit fruit);
-        Task<string> SearchByName(string name);
-        Task<string> GetByName(string name);
-        public Task<long> GetCount();
-        public Task<string> GetById(string id);
-        public Task<string> GetAll();
-        public Task Delete(string elementId);
-        public Task<string> Update(string elementId, Fruit fruit);
+        Task<string> SearchByName(Fruit fruit);
+        Task<string> GetByName(Fruit fruit);
+        public Task<string> GetById(Fruit fruit);
+        public Task<string> GetAll(Fruit fruit);
+        public Task Delete(Fruit fruit);
+        public Task<string> Update(Fruit fruit);
     }
 }

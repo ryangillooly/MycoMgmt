@@ -11,7 +11,7 @@ public static class BulkExtensions
         
         if (bulk.Notes != null)
             notes = $",Notes: '{bulk.Notes}'";
-        
+
         var query = $@"CREATE 
                                 (
                                     x:{bulk.Tags[0]} {{ 

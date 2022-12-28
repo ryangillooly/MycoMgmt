@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -30,58 +31,40 @@ public class BulkController : Controller
         string? childType,
         bool?   successful,
         bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
-        var bulk = new Bulk()
-        {
-            Name      = name,
-            Strain    = strain,
-            Finished  = finished,
-            CreatedOn = DateTime.Parse(createdOn),
-            CreatedBy = createdBy
-        };
-
-        if (recipe != null)
-            bulk.Recipe = recipe;
-
-        if (location != null)
-            bulk.Location = location;
-
-        if (notes != null)
-            bulk.Notes = notes;
-
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
             throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
         
-        if (parent != null && parentType != null)
+        var bulk = new Bulk()
         {
-            bulk.Parent     = parent;
-            bulk.ParentType = parentType;
-        }
+            Name         = name,
+            Strain       = strain,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
+        };
         
-        if (child != null && childType != null)
-        {
-            bulk.Child     = child;
-            bulk.ChildType = childType;
-        }
-
-        if (successful != null)
-            bulk.Successful = successful.Value;
-
-        if (modifiedOn != null)
-            bulk.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            bulk.ModifiedBy = modifiedBy;
-
         bulk.Tags.Add(bulk.IsSuccessful());
 
         var resultList = new List<string>();
@@ -116,18 +99,16 @@ public class BulkController : Controller
         string? parentType,
         string? child,
         string? childType,
-        bool? successful,
-        bool? finished,
-        string modifiedOn,
-        string modifiedBy
+        bool?   successful,
+        bool?   finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
+        string  modifiedOn,
+        string  modifiedBy
+        
     )
     {
-        var bulk = new Bulk
-        {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
-        };
-        
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
@@ -136,78 +117,47 @@ public class BulkController : Controller
         
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
-        if (name != null)
-            bulk.Name = name;
-
-        if (recipe != null)
-            bulk.Recipe = recipe;
-
-        if (strain != null)
-            bulk.Strain = strain;
         
-        if (notes != null)
-            bulk.Notes = notes;
-
-        if (location != null)
-            bulk.Location = location;
-
-        if (parent != null && parentType != null)
+        var bulk = new Bulk
         {
-            bulk.Parent     = parent;
-            bulk.ParentType = parentType;
-        }
+            ElementId    = elementId,
+            Name         = name,
+            Recipe       = recipe,
+            Strain       = strain,
+            Notes        = notes,
+            Location     = location,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
+        };
         
-        if (child != null && childType != null)
-        {
-            bulk.Child     = child;
-            bulk.ChildType = childType;
-        }
-
-        if (successful != null)
-            bulk.Successful = successful.Value;
-
-        if (finished != null)
-            bulk.Finished = finished;
-
-        var result = await _bulkRepository.Update(elementId, bulk);
-
-        return Ok(result);
+        return Ok(await _bulkRepository.Update(bulk));
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _bulkRepository.GetAll();
-        return Ok(records);
-    }
-
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId)
-    {
-        var results = await _bulkRepository.GetById(elementId);
-        return Ok(results);
-    }
-
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
-    {
-        var results = await _bulkRepository.GetByName(name);
-        return Ok(results);
-    }
-
-
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name)
-    {
-        var results = await _bulkRepository.SearchByName(name);
-        return Ok(results);
-    }
-
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _bulkRepository.Delete(elementId);
+        await _bulkRepository.Delete(new Bulk { ElementId = elementId });
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _bulkRepository.GetAll(new Bulk()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _bulkRepository.GetById(new Bulk { ElementId = elementId }));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _bulkRepository.GetByName(new Bulk { Name = name }));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _bulkRepository.SearchByName(new Bulk { Name = name }));
 }

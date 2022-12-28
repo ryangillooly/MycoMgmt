@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -16,7 +14,7 @@ public class RecipeController : Controller
     {
         _recipeRepository = repo;
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -32,17 +30,13 @@ public class RecipeController : Controller
     {
         var recipe = new Recipe()
         {
-            Name      = name,
-            Type      = type,
-            CreatedOn = DateTime.Parse(createdOn),
-            CreatedBy = createdBy
+            Name        = name,
+            Notes       = notes,
+            Description = description,
+            Type        = type,
+            CreatedOn   = DateTime.Parse(createdOn),
+            CreatedBy   = createdBy
         };
-
-        if (notes != null)
-            recipe.Notes = notes;
-
-        if (description != null)
-            recipe.Description = description;
 
         if (steps != null)
         {
@@ -85,22 +79,14 @@ public class RecipeController : Controller
     {
         var recipe = new Recipe()
         {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
+            Name        = name,
+            Type        = type,
+            Notes       = notes,
+            Description = description,
+            ModifiedOn  = DateTime.Parse(modifiedOn),
+            ModifiedBy  = modifiedBy
         };
         
-        if (name != null)
-            recipe.Name = name;
-
-        if (type != null)
-            recipe.Type = type;
-        
-        if (notes != null)
-            recipe.Notes = notes;
-
-        if (description != null)
-            recipe.Description = description;
-
         if (steps != null)
         {
             recipe.Steps = steps.Split(",").ToList();
@@ -121,16 +107,26 @@ public class RecipeController : Controller
             }
         }
         
-        var result = await _recipeRepository.Update(elementId, recipe);
-
-        return Ok(result);
+        return Ok(await _recipeRepository.Update(recipe));
     }
     
-
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _recipeRepository.Delete(elementId);
+        await _recipeRepository.Delete(new Recipe { ElementId = elementId});
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _recipeRepository.GetAll(new Recipe()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _recipeRepository.GetById(new Recipe { ElementId = elementId }));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _recipeRepository.GetByName(new Recipe { Name = name }));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _recipeRepository.SearchByName(new Recipe { Name = name }));
+
 }

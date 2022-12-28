@@ -33,14 +33,19 @@ FOREACH(i in RANGE(0, size(days)-2) |
 
 
                 CREATE CONSTRAINT UniqueName_Culture    IF NOT EXISTS FOR (c:Culture)    REQUIRE c.Name IS UNIQUE;
-                CREATE CONSTRAINT UniqueName_Strain     IF NOT EXISTS FOR (c:Strain)     REQUIRE c.Name IS UNIQUE;
-                CREATE CONSTRAINT UniqueName_Location   IF NOT EXISTS FOR (c:Location)   REQUIRE c.Name IS UNIQUE;
                 CREATE CONSTRAINT UniqueName_Bulk       IF NOT EXISTS FOR (c:Bulk)       REQUIRE c.Name IS UNIQUE;
                 CREATE CONSTRAINT UniqueName_Spawn      IF NOT EXISTS FOR (c:Spawn)      REQUIRE c.Name IS UNIQUE;
                 CREATE CONSTRAINT UniqueName_Fruit      IF NOT EXISTS FOR (c:Fruit)      REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Strain     IF NOT EXISTS FOR (c:Strain)     REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Location   IF NOT EXISTS FOR (c:Location)   REQUIRE c.Name IS UNIQUE;
                 CREATE CONSTRAINT UniqueName_Recipe     IF NOT EXISTS FOR (c:Recipe)     REQUIRE c.Name IS UNIQUE;
                 CREATE CONSTRAINT UniqueName_Ingredient IF NOT EXISTS FOR (c:Ingredient) REQUIRE c.Name IS UNIQUE;
-                
+                CREATE CONSTRAINT UniqueName_User       IF NOT EXISTS FOR (c:User)       REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Account    IF NOT EXISTS FOR (c:Account)    REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Permission IF NOT EXISTS FOR (c:Permission) REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Role       IF NOT EXISTS FOR (c:IAMRole)    REQUIRE c.Name IS UNIQUE;
+                CREATE CONSTRAINT UniqueName_Vendor     IF NOT EXISTS FOR (c:Vendor)     REQUIRE c.Name IS UNIQUE;
+                                
                 MERGE (:Strain { Name: 'GoldenTeacher', Effects:['Visuals','Calming','Oneness']});
                 MERGE (:Strain { Name: 'BPlus', Effects: ['Visuals','Calming','Oneness']});
                 MERGE (:Strain { Name: 'Mazapatec', Effects: ['Visuals','Calming','Oneness']});

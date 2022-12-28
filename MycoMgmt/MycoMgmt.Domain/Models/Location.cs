@@ -6,7 +6,10 @@ namespace MycoMgmt.Domain.Models
 {
     public class Location : ModelBase
     {
-        public List<EntityTypes> Tags { get; set; } = new List<EntityTypes> { EntityTypes.Location };
-        public bool AgentConfigured { get; set; } = false;
+        public Location()
+        {
+            Tags.Add(EntityTypes.Location.ToString());
+        }
+        public bool? AgentConfigured { get; set; }
     }
 }

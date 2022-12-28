@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 
@@ -22,90 +23,64 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(Permission permission)
+        public async Task<string> SearchByName(Permission permission)
         {
-            if (permission == null || string.IsNullOrWhiteSpace(permission.Name))
-                throw new ArgumentNullException(nameof(permission), "Permission must not be null");
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(permission.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
 
-            try
-            {
-                var queryList = new List<string>
-                {
-                    $@"
-                        MERGE 
-                        (
-                            p:Permission
-                            {{
-                                Name: '{permission.Name}'
-                            }}        
-                        ) 
-                        RETURN p;
-                    "
-                };
+        public async Task<string> GetByName(Permission permission)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(permission.GetByNameQuery(), "x");
 
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(result);
+        }
 
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-                
-                return JsonConvert.SerializeObject(new { Message = $"A Permission already exists with the name { permission.Name }" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+        public async Task<string> GetById(Permission permission)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(permission.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(Permission permission)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(permission.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
         }
         
-        public async Task<string> Remove(Permission permission)
+        public async Task<string> Create(Permission permission)
         {
-            if (permission == null || string.IsNullOrWhiteSpace(permission.Name))
-                throw new ArgumentNullException(nameof(permission), "Permission must not be null");
-
-            return await PersistToDatabase(permission);
-        }
-
-        private async Task<string> PersistToDatabase(Permission permission)
-        {
-            try
+            var queryList = new List<string?>
             {
-                var queryList = CreateQueryList(permission);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                return JsonConvert.SerializeObject(new { Message = $"Permission error.... {ex}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-        }
-
-        private static List<string> CreateQueryList(Permission permission)
-        {
-            var queryList = new List<string>
-            {
-                $@"
-                        MATCH (p:Permission {{ Name: '{permission.Name}' }}) 
-                        DETACH DELETE p
-                        RETURN p;
-                    "
+                permission.Create(),
+                permission.CreateCreatedRelationship(),
+                permission.CreateCreatedOnRelationship()
             };
-            return queryList;
+
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
-
-
-        public async Task<List<object>> GetAll()
+        
+        public async Task<string> Update(Permission permission)
         {
-            const string query = @"MATCH (p:Permission) RETURN p { Name: p.Name } ORDER BY p.Name";
-            var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "p");
+            var queryList = new List<string?>
+            {
+                permission.UpdateName(),
+                permission.UpdateModifiedRelationship(),
+                permission.UpdateModifiedOnRelationship()
+            };
 
-            return users;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
+        
+        public async Task Delete(Permission permission)
+        {
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(permission.Delete());
+        
+            if(delete.ElementId == permission.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", permission.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", permission.ElementId);
+        }
+        
     }
 }

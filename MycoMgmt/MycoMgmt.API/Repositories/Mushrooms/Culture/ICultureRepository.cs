@@ -8,13 +8,12 @@ namespace MycoMgmt.API.Repositories
 {
     public interface ICultureRepository
     {
+        Task<string> SearchByName(Culture culture);
+        Task<string> GetByName(Culture culture);
+        public Task<string> GetById(Culture culture);
+        public Task<string> GetAll(Culture culture);
         public Task<string> Create(Culture culture);
-        Task<string> SearchByName(string name);
-        Task<string> GetByName(string name);
-        public Task<long> GetCount();
-        public Task<string> GetById(string id);
-        public Task<string> GetAll();
-        public Task Delete(string elementId);
-        public Task<string> Update(string elementId, Culture culture);
+        public Task Delete(Culture culture);
+        public Task<string> Update(Culture culture);
     }
 }

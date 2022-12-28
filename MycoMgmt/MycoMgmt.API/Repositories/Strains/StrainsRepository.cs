@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
 using Newtonsoft.Json;
@@ -21,63 +22,65 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(Strain strain)
+        public async Task<string> SearchByName(Strain strain)
         {
-            if (strain == null || string.IsNullOrWhiteSpace(strain.Name))
-                throw new ArgumentNullException(nameof(strain), "Strain must not be null");
-
-            if ((strain.ModifiedBy != null && strain.ModifiedOn == null) || (strain.ModifiedBy == null && strain.ModifiedOn != null))
-                throw new ArgumentException("ModifiedBy and ModifiedOn must either both be Null, or both be Populated");
-            
-            return await PersistToDatabase(strain);
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(strain.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
         }
 
-        private async Task<string> PersistToDatabase(Strain strain)
+        public async Task<string> GetByName(Strain strain)
         {
-            try
-            {
-                var queryList = CreateQueryList(strain);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(strain.GetByNameQuery(), "x");
 
-                return JsonConvert.SerializeObject(new { Message = $"A culture already exists with the name {strain.Name}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+            return JsonConvert.SerializeObject(result);
         }
 
-        private static List<string> CreateQueryList(Strain strain)
+        public async Task<string> GetById(Strain strain)
         {
-            var queryList = new List<string>
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(strain.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(Strain strain)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(strain.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+        
+        public async Task<string> Create(Strain strain)
+        {
+            var queryList = new List<string?>
             {
-                $@"
-                        MERGE 
-                        (
-                            s:Strain
-                            {{
-                                Name:  '{strain.Name}',
-                                Effects: ""{strain.Effects}""
-                            }}        
-                        ) 
-                        RETURN s;
-                    "
+                strain.Create(),
+                strain.CreateCreatedRelationship(),
+                strain.CreateCreatedOnRelationship()
             };
-            return queryList;
+
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
-
-        public async Task<List<object>> GetAll()
+        
+        public async Task<string> Update(Strain strain)
         {
-            const string query = @"MATCH (s:Strain) RETURN s { Name: s.Name } ORDER BY s.Name";
-            var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "s");
+            var queryList = new List<string?>
+            {
+                strain.UpdateName(),
+                strain.UpdateEffects(),
+                strain.UpdateModifiedRelationship(),
+                strain.UpdateModifiedOnRelationship()
+            };
 
-            return locations;
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
+        }
+        
+        public async Task Delete(Strain strain)
+        {
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(strain.Delete());
+        
+            if(delete.ElementId == strain.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", strain.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", strain.ElementId);
         }
     }
 }

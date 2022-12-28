@@ -15,6 +15,7 @@
         IamRole,
         Permission,
         Successful,
-        Failed
+        Failed,
+        Strain
     }
 }

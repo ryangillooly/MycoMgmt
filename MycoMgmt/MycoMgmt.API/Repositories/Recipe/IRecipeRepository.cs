@@ -5,7 +5,11 @@ namespace MycoMgmt.API.Repositories
     public interface IRecipeRepository
     {
         public Task<string> Create(Recipe recipe);
-        public Task Delete(string elementId);
-        public Task<string> Update(string elementId, Recipe recipe);
+        public Task Delete(Recipe recipe);
+        public Task<string> Update(Recipe recipe);
+        Task<string> SearchByName(Recipe recipe);
+        Task<string> GetByName(Recipe recipe);
+        public Task<string> GetById(Recipe recipe);
+        public Task<string> GetAll(Recipe recipe);
     }
 }

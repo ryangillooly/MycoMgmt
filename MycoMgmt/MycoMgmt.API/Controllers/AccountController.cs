@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.UserManagement;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("accounts")]
+    [Route("account")]
     [ApiController]
     public class AccountController : Controller
     {
@@ -19,29 +16,60 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpPost]
-        public async Task<string> Create (string name, string createdOn, string createdBy, string? modifiedOn, string? modifiedBy)
+        public async Task<IActionResult> Create 
+        (
+            string  name, 
+            string  createdOn, 
+            string  createdBy
+        )
         {
             var account = new Account()
             {
-                Name       = name,
-                CreatedOn  = DateTime.Parse(createdOn),
-                CreatedBy  = createdBy
+                Name      = name,
+                CreatedOn = DateTime.Parse(createdOn),
+                CreatedBy = createdBy
             };
 
-            if (modifiedOn != null)
-                account.ModifiedOn = DateTime.Parse(modifiedOn);
-            
-            if(modifiedBy != null)
-                account.ModifiedBy = modifiedBy;
-
-            var result = await _accountRepository.CreateAsync(account);
-            return result;
+            return Created("", await _accountRepository.Create(account));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<string> Delete (long id) => await _accountRepository.DeleteAsync(id);
-        
-        [HttpGet("all")]
-        public async Task<string> GetAll (string name) => await _accountRepository.GetAllAsync();
+        [HttpPut("{elementId}")]
+        public async Task<IActionResult> Update
+        (
+            string elementId,
+            string name,
+            string modifiedOn,
+            string modifiedBy   
+        )
+        {
+            var account = new Account
+            {
+                ElementId  = elementId,
+                Name       = name,
+                ModifiedOn = DateTime.Parse(modifiedOn),
+                ModifiedBy = modifiedBy
+            };
+
+            return Ok(await _accountRepository.Update(account));
+        }
+
+        [HttpDelete("{elementId}")]
+        public async Task<IActionResult> Delete(string elementId)
+        {
+            await _accountRepository.Delete(new Account { ElementId = elementId });
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => Ok(await _accountRepository.GetAll(new Account()));
+
+        [HttpGet("id/{elementId}")]
+        public async Task<IActionResult> GetById(string elementId) => Ok(await _accountRepository.GetById(new Account { ElementId = elementId}));
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name) => Ok(await _accountRepository.GetByName(new Account { Name = name}));
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> SearchByName(string name) => Ok(await _accountRepository.SearchByName(new Account { Name = name}));
     }
 }

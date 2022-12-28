@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -31,59 +32,41 @@ public class SpawnController : Controller
         string? childType,
         bool?   successful,
         bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  createdOn,
         string  createdBy,
-        string? modifiedOn,
-        string? modifiedBy,
         int?    count = 1
     )
     {
-        var spawn = new Spawn()
-        {
-            Name = name,
-            Type = type,
-            Strain = strain,
-            Finished = finished,
-            CreatedOn = DateTime.Parse(createdOn),
-            CreatedBy = createdBy
-        };
-
-        if (recipe != null)
-            spawn.Recipe = recipe;
-
-        if (location != null)
-            spawn.Location = location;
-        
-        if (notes != null)
-            spawn.Notes = notes;
-
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
             throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
-        
-        if (parent != null && parentType != null)
+
+        var spawn = new Spawn()
         {
-            spawn.Parent     = parent;
-            spawn.ParentType = parentType;
-        }
+            Name         = name,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Type         = type,
+            Strain       = strain,
+            Successful   = successful,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
+        };
         
-        if (child != null && childType != null)
-        {
-            spawn.Child     = child;
-            spawn.ChildType = childType;
-        }
-
-        if (successful != null)
-            spawn.Successful = successful.Value;
-
-        if (modifiedOn != null)
-            spawn.ModifiedOn = DateTime.Parse(modifiedOn);
-
-        if (modifiedBy != null)
-            spawn.ModifiedBy = modifiedBy;
-
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Tags.Add(spawn.Type);
         
@@ -109,7 +92,7 @@ public class SpawnController : Controller
     [HttpPut("{elementId}")]
     public async Task<IActionResult> Update
     (
-        string elementId,
+        string  elementId,
         string? name,
         string? strain,
         string? notes,
@@ -120,18 +103,15 @@ public class SpawnController : Controller
         string? parentType,
         string? child,
         string? childType,
-        bool? successful,
-        bool? finished,
-        string modifiedOn,
-        string modifiedBy
+        bool?   successful,
+        bool?   finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
+        string  modifiedOn,
+        string  modifiedBy
     )
     {
-        var spawn = new Spawn
-        {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
-        };
-        
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
@@ -140,81 +120,49 @@ public class SpawnController : Controller
         
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
-        if (name != null)
-            spawn.Name = name;
-
-        if (notes != null)
-            spawn.Notes = notes;
         
-        if (strain != null)
-            spawn.Strain = strain;
-        
-        if (type != null)
-            spawn.Type = type;
-        
-        if (recipe != null)
-            spawn.Recipe = recipe;
-
-        if (location != null)
-            spawn.Location = location;
-
-        if (parent != null && parentType != null)
+        var spawn = new Spawn()
         {
-            spawn.Parent     = parent;
-            spawn.ParentType = parentType;
-        }
-        
-        if (child != null && childType != null)
-        {
-            spawn.Child     = child;
-            spawn.ChildType = childType;
-        }
+            ElementId    = elementId,
+            Name         = name,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Type         = type,
+            Strain       = strain,
+            Successful   = successful,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
+        };
 
-        if (successful != null)
-            spawn.Successful = successful.Value;
-
-        if (finished != null)
-            spawn.Finished = finished;
-
-        var result = await _spawnRepository.Update(elementId, spawn);
-
-        return Ok(result);
+        return Ok(await _spawnRepository.Update(spawn));
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _spawnRepository.GetAll();
-        return Ok(records);
-    }
-
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId)
-    {
-        var results = await _spawnRepository.GetById(elementId);
-        return Ok(results);
-    }
-
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
-    {
-        var results = await _spawnRepository.GetByName(name);
-        return Ok(results);
-    }
-
-
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name)
-    {
-        var results = await _spawnRepository.SearchByName(name);
-        return Ok(results);
-    }
-
+    
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _spawnRepository.Delete(elementId);
+        await _spawnRepository.Delete(new Spawn { ElementId = elementId });
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _spawnRepository.GetAll(new Spawn()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _spawnRepository.GetById(new Spawn { ElementId = elementId}));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _spawnRepository.GetByName(new Spawn { Name = name}));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _spawnRepository.SearchByName(new Spawn { Name = name}));
 }

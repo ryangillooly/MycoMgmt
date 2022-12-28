@@ -7,10 +7,12 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IRoleRepository
     {
-        [HttpPost]
-        public Task<string> Add(IamRole role);
-
-        [HttpGet]
-        Task<List<object>> GetAll();
+        Task<string> SearchByName(IamRole role);
+        Task<string> GetByName(IamRole role);
+        public Task<string> GetById(IamRole role);
+        public Task<string> GetAll(IamRole role);
+        public Task<string> Create(IamRole role);
+        public Task Delete(IamRole role);
+        public Task<string> Update(IamRole role);
     }
 }

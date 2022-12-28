@@ -7,13 +7,12 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IPermissionRepository
     {
-        [HttpPost]
-        public Task<string> Add(Permission permission);
-
-        [HttpPost]
-        Task<string> Remove(Permission permission);
-        
-        [HttpGet]
-        Task<List<object>> GetAll();
+        public Task<string> Create(Permission permission);
+        public Task<string> Update(Permission permission);
+        Task Delete(Permission permission);
+        Task<string> SearchByName(Permission permission);
+        Task<string> GetByName(Permission permission);
+        public Task<string> GetById(Permission permission);
+        public Task<string> GetAll(Permission permission);
     }
 }
