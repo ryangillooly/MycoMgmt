@@ -73,6 +73,10 @@ public static class CultureExtensions
         return
             $@"
                 MATCH (x:{culture.EntityType})
+                OPTIONAL MATCH (x)<-[:HAS_PARENT]-(child)
+                WITH 
+                    x,
+                    collect(child.Name) as children
                 OPTIONAL MATCH (x)-[:INOCULATED_ON]->(iDay:Day)<-[:HAS_DAY]-(iMonth:Month)-[:HAS_MONTH]-(iYear:Year)
                 OPTIONAL MATCH (x)-[:CREATED_ON]   ->(cDay:Day)<-[:HAS_DAY]-(cMonth:Month)-[:HAS_MONTH]-(cYear:Year)
                 OPTIONAL MATCH (x)-[:MODIFIED_ON]  ->(mDay:Day)<-[:HAS_DAY]-(mMonth:Month)-[:HAS_MONTH]-(mYear:Year)
@@ -83,10 +87,10 @@ public static class CultureExtensions
                 OPTIONAL MATCH (x)-[:HAS_STRAIN]->(strain:Strain)
                 OPTIONAL MATCH (x)-[:STORED_IN]->(location:Location)
                 OPTIONAL MATCH (x)-[:HAS_PARENT]->(parent)
-                OPTIONAL MATCH (x)<-[:HAS_PARENT]-(child)
                 OPTIONAL MATCH (x)-[:CREATED_USING]->(recipe:Recipe)
                 WITH 
                     x, 
+                    reduce(x = '', i IN children | x + i + ',') as childrenString,
                     datetime({{year: iYear.year, month: iMonth.month, day: iDay.day}}) as inoculatedDate,
                     datetime({{year: cYear.year, month: cMonth.month, day: cDay.day}}) as createdDate,
                     datetime({{year: mYear.year, month: mMonth.month, day: mDay.day}}) as modifiedDate,
@@ -97,8 +101,20 @@ public static class CultureExtensions
                     properties(strain) as strain,
                     properties(location) as location,
                     recipe,
-                    parent, 
-                    child
+                    parent
+                WITH    
+                    x,
+                    left(childrenString, size(childrenString)-1) as children,
+                    inoculatedDate,
+                    createdDate,
+                    modifiedDate,
+                    finishedDate,
+                    createdBy,
+                    modifiedBy,
+                    inoculatedBy,
+                    strain,
+                    location,
+                    parent
                 RETURN 
                     apoc.map.mergeList
                     ([
@@ -112,8 +128,7 @@ public static class CultureExtensions
                         {{Location:     location.Name}},
                         {{Parent:       properties(parent).Name}},
                         {{ParentType:   labels(parent)[0]}},
-                        {{Children:        properties(child).Name}},
-                        {{ChildType:    labels(child)[0]}},
+                        {{Children:     children}},
                         {{InoculatedOn: apoc.date.toISO8601(inoculatedDate.epochMillis, 'ms')}},
                         {{InoculatedBy: inoculatedBy.Name}},
                         {{CreatedOn:    apoc.date.toISO8601(createdDate.epochMillis, 'ms')}},
@@ -126,7 +141,8 @@ public static class CultureExtensions
                 ORDER BY
                     inoculatedDate.day   DESC,
                     inoculatedDate.month DESC,
-                    inoculatedDate.year  DESC
+                    inoculatedDate.year  DESC,
+                    properties(x).Name ASC
                 SKIP 
                     {skip}
                 LIMIT
