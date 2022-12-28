@@ -12,7 +12,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Fruit fruit);
         Task<string> GetByName(Fruit fruit);
         public Task<string> GetById(Fruit fruit);
-        public Task<string> GetAll(Fruit fruit);
+        public Task<string> GetAll(Fruit fruit, int? skip, int? limit);
         public Task Delete(Fruit fruit);
         public Task<string> Update(Fruit fruit);
     }

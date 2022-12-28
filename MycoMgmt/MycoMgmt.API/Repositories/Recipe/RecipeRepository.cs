@@ -38,9 +38,12 @@ public class RecipeRepository : IRecipeRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Recipe recipe)
+    public async Task<string> GetAll(Recipe recipe, int? skip, int? limit)
     {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAll(), "x");
+        skip  = skip ?? 0;
+        limit = limit ?? 0;
+        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAll(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
     

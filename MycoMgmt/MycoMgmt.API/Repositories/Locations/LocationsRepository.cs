@@ -59,9 +59,12 @@ namespace MycoMgmt.API.Repositories
                 _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", location.ElementId);
         }
         
-        public async Task<string> GetAll(Location location)
+        public async Task<string> GetAll(Location location, int? skip, int? limit)
         {
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(location.GetAll(), "x");
+            skip  = skip ?? 0;
+            limit = limit ?? 0;
+            
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(location.GetAll(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         

@@ -12,7 +12,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> Update(Location location);
         Task Delete(Location location);
         
-        Task<string> GetAll(Location location);
+        Task<string> GetAll(Location location, int? skip, int? limit);
         Task<string> SearchByName(Location location);
         Task<string> GetByName(Location location);
         Task<string> GetById(Location location);

@@ -41,9 +41,12 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(Strain strain)
+        public async Task<string> GetAll(Strain strain, int? skip, int? limit)
         {
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(strain.GetAll(), "x");
+            skip  = skip ?? 0;
+            limit = limit ?? 0;
+            
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(strain.GetAll(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         

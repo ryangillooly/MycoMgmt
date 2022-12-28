@@ -66,7 +66,7 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll() => Ok(await _locationsRepository.GetAll(new Location()));
+        public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _locationsRepository.GetAll(new Location(), skip, limit));
         
         [HttpGet("id/{elementId}")]
         public async Task<IActionResult> GetById(string elementId) => Ok(await _locationsRepository.GetById(new Location { ElementId = elementId }));

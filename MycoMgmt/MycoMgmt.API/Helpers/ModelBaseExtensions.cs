@@ -188,16 +188,26 @@ public static class ModelBaseExtensions
             ";
     }
 
-    public static string GetAll(this ModelBase node)
+    public static string GetAll(this ModelBase node, int? skip, int? limit)
     {
         return
             $@"
                 MATCH 
-                    (x:{node.Tags[0]}) 
+                    (x:{node.Tags[0]})
+                OPTIONAL MATCH 
+                    (x)-[r:INOCULATED_ON]->(d:Day)<-[rd:HAS_DAY]-(m:Month)-[:HAS_MONTH]-(y:Year)
+                WITH 
+                    x, y, m, d
                 RETURN 
                     x
                 ORDER BY
-                    x.Name ASC
+                    d.day   DESC,
+                    m.month DESC,
+                    y.year  DESC
+                SKIP 
+                    {skip}
+                LIMIT
+                    {limit}
             ";
     }
 }

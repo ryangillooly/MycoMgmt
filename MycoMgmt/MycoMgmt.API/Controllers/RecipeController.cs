@@ -118,7 +118,7 @@ public class RecipeController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _recipeRepository.GetAll(new Recipe()));
+    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _recipeRepository.GetAll(new Recipe(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _recipeRepository.GetById(new Recipe { ElementId = elementId }));

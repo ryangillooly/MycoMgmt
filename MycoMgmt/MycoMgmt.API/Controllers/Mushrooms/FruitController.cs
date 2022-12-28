@@ -154,7 +154,7 @@ public class FruitController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _fruitRepository.GetAll(new Fruit()));
+    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _fruitRepository.GetAll(new Fruit(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _fruitRepository.GetById(new Fruit { ElementId = elementId }));

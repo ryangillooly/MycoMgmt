@@ -10,7 +10,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(IamRole role);
         Task<string> GetByName(IamRole role);
         public Task<string> GetById(IamRole role);
-        public Task<string> GetAll(IamRole role);
+        public Task<string> GetAll(IamRole role, int? skip, int? limit);
         public Task<string> Create(IamRole role);
         public Task Delete(IamRole role);
         public Task<string> Update(IamRole role);

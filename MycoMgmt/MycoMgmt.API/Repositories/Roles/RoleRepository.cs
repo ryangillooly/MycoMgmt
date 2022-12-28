@@ -43,9 +43,12 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(IamRole role)
+        public async Task<string> GetAll(IamRole role, int? skip, int? limit)
         {
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAll(), "x");
+            skip  = skip ?? 0;
+            limit = limit ?? 0;
+            
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAll(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         
