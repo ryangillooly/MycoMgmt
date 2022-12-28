@@ -151,6 +151,96 @@ public static class MushroomExtensions
                 ";
     }
     
+    public static string? UpdateInoculatedRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.InoculatedBy is null
+                ? null
+                : $@"
+                MATCH 
+                    (x:{mushroom.Tags[0]})
+                WHERE
+                    elementId(x) = '{mushroom.ElementId}'
+                OPTIONAL MATCH
+                    (u)-[r:INOCULATED]->(x)
+                DELETE 
+                    r
+                WITH
+                    x
+                MATCH
+                    (u:User {{ Name: '{mushroom.InoculatedBy}' }})
+                CREATE
+                    (u)-[r:INOCULATED]->(x)
+                RETURN 
+                    r
+            ";
+    }
+
+    public static string? UpdateInoculatedOnRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.InoculatedOn is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.Tags[0]})
+                    WHERE
+                        elementId(x) = '{mushroom.ElementId}'
+                    OPTIONAL MATCH
+                        (x)-[r:INOCULATED_ON]->(d)
+                    DELETE 
+                        r
+                    WITH
+                        x
+                    MATCH
+                        (d:Day {{ day: {mushroom.InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.InoculatedOn.Value.Year} }})
+                    CREATE
+                        (x)-[r:INOCULATED_ON]->(d)
+                    RETURN 
+                        r
+                ";
+    }
+    
+    public static string? UpdateFinishedOnRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.FinishedOn is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.Tags[0]})
+                    WHERE
+                        elementId(x) = '{mushroom.ElementId}'
+                    OPTIONAL MATCH
+                        (x)-[r:FINISHED_ON]->(d)
+                    DELETE 
+                        r
+                    WITH
+                        x
+                    MATCH
+                        (d:Day {{ day: {mushroom.FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.FinishedOn.Value.Year} }})
+                    CREATE
+                        (x)-[r:FINISHED_ON]->(d)
+                    RETURN 
+                        r
+                ";
+    }
+    
+    public static string? CreateFinishedOnRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.FinishedOn is null
+                ? null
+                : $@"
+                        MATCH 
+                            (x:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
+                            (d:Day                {{ day:   {mushroom.FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.FinishedOn.Value.Year} }})
+                        CREATE
+                            (x)-[r:FINISHED_ON]->(d)
+                        RETURN r
+                  ";
+    }
+
     public static string? CreateRecipeRelationship(this Mushroom mushroom)
     {
         return
@@ -196,7 +286,37 @@ public static class MushroomExtensions
                       RETURN r
                   ";
     }
-
+    
+    public static string? CreateInoculatedOnRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.InoculatedOn is null
+                ? null
+                : $@"
+                        MATCH 
+                            (x:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
+                            (d:Day                {{ day:   {mushroom.InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.InoculatedOn.Value.Year} }})
+                        CREATE
+                            (x)-[r:INOCULATED_ON]->(d)
+                        RETURN r
+                  ";
+    }
+    
+    public static string? CreateInoculatedRelationship(this Mushroom mushroom)
+    {
+        return
+            mushroom.InoculatedBy is null
+                ? null
+                : $@"
+                      MATCH 
+                          (x:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}'         }}),
+                          (u:User               {{ Name: '{mushroom.InoculatedBy}' }})
+                      CREATE
+                          (u)-[r:INOCULATED]->(x)
+                      RETURN r
+                  ";
+    }
+    
     public static string? CreateChildRelationship(this Mushroom mushroom)
     {
         return 

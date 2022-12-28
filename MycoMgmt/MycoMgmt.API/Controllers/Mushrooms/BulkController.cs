@@ -31,6 +31,9 @@ public class BulkController : Controller
         string? childType,
         bool?   successful,
         bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  createdOn,
         string  createdBy,
         int?    count = 1
@@ -44,19 +47,22 @@ public class BulkController : Controller
         
         var bulk = new Bulk()
         {
-            Name       = name,
-            Strain     = strain,
-            Recipe     = recipe,
-            Location   = location,
-            Notes      = notes,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            Successful = successful,
-            Finished   = finished,
-            CreatedOn  = DateTime.Parse(createdOn),
-            CreatedBy  = createdBy
+            Name         = name,
+            Strain       = strain,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = DateTime.Parse(finishedOn!),
+            InoculatedOn = DateTime.Parse(inoculatedOn!),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
         };
         
         bulk.Tags.Add(bulk.IsSuccessful());
@@ -93,10 +99,14 @@ public class BulkController : Controller
         string? parentType,
         string? child,
         string? childType,
-        bool? successful,
-        bool? finished,
-        string modifiedOn,
-        string modifiedBy
+        bool?   successful,
+        bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
+        string  modifiedOn,
+        string  modifiedBy
+        
     )
     {
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
@@ -110,19 +120,22 @@ public class BulkController : Controller
         
         var bulk = new Bulk
         {
-            Name       = name,
-            Recipe     = recipe,
-            Strain     = strain,
-            Notes      = notes,
-            Location   = location,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            Successful = successful,
-            Finished   = finished,
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
+            Name         = name,
+            Recipe       = recipe,
+            Strain       = strain,
+            Notes        = notes,
+            Location     = location,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = DateTime.Parse(finishedOn!),
+            InoculatedOn = DateTime.Parse(inoculatedOn!),
+            InoculatedBy = inoculatedBy,
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
         };
         
         return Ok(await _bulkRepository.Update(bulk));

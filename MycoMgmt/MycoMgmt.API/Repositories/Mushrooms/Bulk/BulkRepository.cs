@@ -25,6 +25,60 @@ public class BulkRepository : IBulkRepository
         _neo4JDataAccess = neo4JDataAccess;
         _logger = logger;
     }
+    
+    public async Task<string> Create(Bulk bulk)
+    {
+        var queryList = new List<string?>
+        {
+            bulk.Create(),
+            bulk.CreateInoculatedRelationship(),
+            bulk.CreateInoculatedOnRelationship(),
+            bulk.CreateFinishedOnRelationship(),
+            bulk.CreateStrainRelationship(),
+            bulk.CreateLocationRelationship(),
+            bulk.CreateCreatedRelationship(),
+            bulk.CreateCreatedOnRelationship(),
+            bulk.CreateRecipeRelationship(),
+            bulk.CreateParentRelationship(),
+            bulk.CreateChildRelationship(),
+            bulk.CreateNodeLabels()
+        };
+
+        return await _neo4JDataAccess.RunTransaction(queryList);
+    }
+    
+    public async Task<string> Update(Bulk bulk)
+    {
+        var queryList = new List<string?>
+        {
+            bulk.UpdateName(),
+            bulk.UpdateNotes(),
+            bulk.UpdateInoculatedRelationship(),
+            bulk.UpdateInoculatedOnRelationship(),
+            bulk.UpdateFinishedOnRelationship(),
+            bulk.UpdateRecipeRelationship(),
+            bulk.UpdateLocationRelationship(),
+            bulk.UpdateParentRelationship(),
+            bulk.UpdateChildRelationship(),
+            bulk.UpdateModifiedOnRelationship(),
+            bulk.UpdateModifiedRelationship(),
+            bulk.UpdateStatus()
+        };
+
+        var results = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(results);
+    }
+    
+    public async Task Delete(Bulk bulk)
+    {
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(bulk.Delete());
+
+        if(delete.ElementId == bulk.ElementId)
+            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", bulk.ElementId);
+        else    
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", bulk.ElementId);
+        
+    }
 
     public async Task<string> SearchByName(Bulk bulk)
     {
@@ -49,53 +103,5 @@ public class BulkRepository : IBulkRepository
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(), "x");
         return JsonConvert.SerializeObject(result);
-    }
-    
-    public async Task<string> Create(Bulk bulk)
-    {
-        var queryList = new List<string?>
-        {
-            bulk.Create(),
-            bulk.CreateStrainRelationship(),
-            bulk.CreateLocationRelationship(),
-            bulk.CreateCreatedRelationship(),
-            bulk.CreateCreatedOnRelationship(),
-            bulk.CreateRecipeRelationship(),
-            bulk.CreateParentRelationship(),
-            bulk.CreateChildRelationship(),
-            bulk.CreateNodeLabels()
-        };
-
-        return await _neo4JDataAccess.RunTransaction(queryList);
-    }
-    
-    public async Task Delete(Bulk bulk)
-    {
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(bulk.Delete());
-
-        if(delete.ElementId == bulk.ElementId)
-            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", bulk.ElementId);
-        else    
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", bulk.ElementId);
-        
-    }
-        
-    public async Task<string> Update(Bulk bulk)
-    {
-        var queryList = new List<string?>
-        {
-            bulk.UpdateName(),
-            bulk.UpdateNotes(),
-            bulk.UpdateRecipeRelationship(),
-            bulk.UpdateLocationRelationship(),
-            bulk.UpdateParentRelationship(),
-            bulk.UpdateChildRelationship(),
-            bulk.UpdateModifiedOnRelationship(),
-            bulk.UpdateModifiedRelationship(),
-            bulk.UpdateStatus()
-        };
-
-        var results = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(results);
     }
 }
