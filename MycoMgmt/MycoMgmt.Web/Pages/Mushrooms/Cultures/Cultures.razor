@@ -1,0 +1,81 @@
+﻿@page "/table"
+@using System.Net.Http
+@using Microsoft.AspNetCore.Mvc
+@using MycoMgmt.Domain.Models.Mushrooms
+@using Newtonsoft.Json
+
+<h2>Cultures</h2>
+<button class="btn btn-primary" @onclick="PreviousPage">Previous</button>
+<button class="btn btn-primary" @onclick="NextPage">Next</button>
+<br/>
+<br/>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Inoculated By</th>
+            <th>Inoculated On</th>
+            <th>Created By</th>
+            <th>Created On</th>
+            <th>Location</th>
+            <th>Parent</th>
+            <th>ParentType</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Data)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.InoculatedBy</td>
+                <td>@item.InoculatedOn</td>
+                <td>@item.CreatedBy</td>
+                <td>@item.CreatedOn</td>
+                <td>@item.Location</td>
+                <td>@item.Parent</td>
+                <td>@item.ParentType</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@functions {
+    private int skip = 0;
+    private int limit = 5;
+    private int pageNumber;
+
+    private List<Culture> Data { get; set; } = new ();
+    
+    private HttpClient _httpClient;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = new HttpClient();
+        await LoadData(skip, limit);
+    }
+
+    private async Task PreviousPage()
+    {
+        if (skip > limit)
+        {
+            skip -= limit;
+            await LoadData(skip, limit);
+        }
+    }
+
+    private async Task NextPage()
+    {
+        skip += limit;
+        await LoadData(skip, limit);
+    }
+
+    private async Task LoadData(int skip, int limit)
+    {
+        var response = await _httpClient.GetAsync($"http://localhost:6002/cultures?skip={skip}&limit={limit}");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        
+        
+        Data = JsonConvert.DeserializeObject<List<Culture>>(responseContent);
+        var a = "";
+    }
+}

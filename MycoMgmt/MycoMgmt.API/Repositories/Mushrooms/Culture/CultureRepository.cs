@@ -108,7 +108,7 @@ public class CultureRepository : ICultureRepository
         skip  = skip ?? 0;
         limit = limit ?? 20;
         
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(skip, limit), "x");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(skip, limit), "result");
         return JsonConvert.SerializeObject(result);
     }
 }

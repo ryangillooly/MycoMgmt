@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.API", "MycoMgmt\My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Domain", "MycoMgmt\MycoMgmt.Domain\MycoMgmt.Domain.csproj", "{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Web", "MycoMgmt\MycoMgmt.Web\MycoMgmt.Web.csproj", "{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
