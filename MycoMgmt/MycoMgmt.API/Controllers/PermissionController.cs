@@ -1,49 +1,69 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.API.Repositories;
 using Neo4j.Driver;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("permissions")]
+    [Route("permission")]
     [ApiController]
     public class PermissionController : Controller
     {
         private readonly IPermissionRepository _permissionRepository;
         
-        public PermissionController(IPermissionRepository repo, IDriver driver)
+        public PermissionController(IPermissionRepository repo)
         {
             _permissionRepository = repo;
         }
         
-        [HttpPost("new")]
-        public async Task<string> NewPermission (string name)
+        [HttpPost]
+        public async Task<IActionResult> Create(string name)
         {
             var permission = new Permission()
             {
                 Name = name
             };
             
-            var result = await _permissionRepository.Add(permission);
-            return result;
+            return Created("", await _permissionRepository.Create(permission));
         }
         
-        [HttpPost("remove")]
-        public async Task<string> RemovePermission (string name)
+        
+        [HttpPut("{name}")]
+        public async Task<IActionResult> Update
+        (
+            string newName,
+            string modifiedBy,
+            string modifiedOn
+        )
         {
-            var permission = new Permission() { Name = name };
+            var permission = new Permission()
+            {
+                Name        = newName,
+                ModifiedOn  = DateTime.Parse(modifiedOn),
+                ModifiedBy  = modifiedBy
+            };
             
-            var result = await _permissionRepository.Remove(permission);
-            return result;
+            return Ok(await _permissionRepository.Update(permission));
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string elementId)
+        {
+            await _permissionRepository.Delete(new Permission { ElementId = elementId});
+            return NoContent();
         }
         
-        [HttpGet("all")]
-        public async Task<string> GetAllPermissions()
-        {
-            var node = await _permissionRepository.GetAll();
-            return JsonConvert.SerializeObject(node);
-        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => Ok(await _permissionRepository.GetAll(new Permission()));
+
+        [HttpGet("id/{elementId}")]
+        public async Task<IActionResult> GetById(string elementId) => Ok(await _permissionRepository.GetById(new Permission { ElementId = elementId }));
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name) => Ok(await _permissionRepository.GetByName(new Permission { Name = name }));
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> SearchByName(string name) => Ok(await _permissionRepository.SearchByName(new Permission { Name = name }));
     }
 }

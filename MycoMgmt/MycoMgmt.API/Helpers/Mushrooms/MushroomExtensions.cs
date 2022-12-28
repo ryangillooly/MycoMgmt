@@ -5,7 +5,7 @@ namespace MycoMgmt.API.Helpers;
 
 public static class MushroomExtensions
 {
-    public static string? UpdateParentRelationship(this Mushroom mushroom, string elementId)
+    public static string? UpdateParentRelationship(this Mushroom mushroom)
     {
         return
             mushroom.Parent is null
@@ -14,7 +14,7 @@ public static class MushroomExtensions
                     MATCH 
                         (c:{mushroom.Tags[0]})
                     WHERE
-                        elementId(c) = '{elementId}'
+                        elementId(c) = '{mushroom.ElementId}'
                     OPTIONAL MATCH
                         (c)-[r:HAS_PARENT]->(p)
                     DELETE
@@ -23,14 +23,14 @@ public static class MushroomExtensions
                         c
                     MATCH 
                         (p:{mushroom.ParentType} {{Name: '{mushroom.Parent}' }})
-                    MERGE 
+                    CREATE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
                         r
                 ";
     }
 
-    public static string? UpdateChildRelationship(this Mushroom mushroom, string elementId)
+    public static string? UpdateChildRelationship(this Mushroom mushroom)
     {
         return
             mushroom.Child is null
@@ -39,7 +39,7 @@ public static class MushroomExtensions
                     MATCH 
                         (p:{mushroom.Tags[0]})
                     WHERE
-                        elementId(p) = '{elementId}'
+                        elementId(p) = '{mushroom.ElementId}'
                     OPTIONAL MATCH
                         (c)-[r:HAS_PARENT]->(p)
                     DELETE
@@ -48,14 +48,14 @@ public static class MushroomExtensions
                         p
                     MATCH 
                         (c:{mushroom.ChildType} {{Name: '{mushroom.Child}' }})
-                    MERGE 
+                    CREATE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
                         r
                 ";
     }
 
-    public static string? UpdateStrainRelationship(this Mushroom mushroom, string elementId)
+    public static string? UpdateStrainRelationship(this Mushroom mushroom)
     {
         return
             mushroom.Strain is null
@@ -64,7 +64,7 @@ public static class MushroomExtensions
                     MATCH 
                         (x:{mushroom.Tags[0]})
                     WHERE
-                        elementId(x) = '{elementId}'
+                        elementId(x) = '{mushroom.ElementId}'
                     OPTIONAL MATCH
                         (x)-[r:HAS_STRAIN]->(:Strain)
                     DELETE 
@@ -73,14 +73,14 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (s:Strain {{ Name: '{mushroom.Strain}' }})
-                    MERGE
+                    CREATE
                         (x)-[r:HAS_STRAIN]->(s)
                     RETURN 
                         r
                 ";
     }
     
-    public static string? UpdateLocationRelationship(this Mushroom mushroom, string elementId)
+    public static string? UpdateLocationRelationship(this Mushroom mushroom)
     {
         return
             mushroom.Location is null
@@ -89,7 +89,7 @@ public static class MushroomExtensions
                     MATCH 
                         (x:{mushroom.Tags[0]})
                     WHERE
-                        elementId(x) = '{elementId}'
+                        elementId(x) = '{mushroom.ElementId}'
                     OPTIONAL MATCH
                         (x)-[r:STORED_IN]->(:Location)
                     DELETE 
@@ -98,14 +98,14 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (l:Location {{ Name: '{mushroom.Location}' }})
-                    MERGE
+                    CREATE
                         (x)-[r:STORED_IN]->(l) 
                     RETURN 
                         r
                 ";
     }
     
-    public static string? UpdateRecipeRelationship(this Mushroom mushroom, string elementId)
+    public static string? UpdateRecipeRelationship(this Mushroom mushroom)
     {
         return
             mushroom.Recipe is null
@@ -114,7 +114,7 @@ public static class MushroomExtensions
                     MATCH 
                         (c:{mushroom.Tags[0]})
                     WHERE
-                        elementId(c) = '{elementId}'
+                        elementId(c) = '{mushroom.ElementId}'
                     OPTIONAL MATCH
                         (c)-[r:CREATED_USING]->(:Recipe)
                     DELETE 
@@ -123,46 +123,14 @@ public static class MushroomExtensions
                         c
                     MATCH
                         (recipe:Recipe {{ Name: '{mushroom.Recipe}' }})
-                    MERGE
+                    CREATE
                         (c)-[r:CREATED_USING]->(recipe)
                     RETURN 
                         r
                 ";
     }
-
-    public static string? UpdateName(this Mushroom mushroom, string elementId)
-    {
-        return
-            mushroom.Name is null
-                ? null
-                : $@"
-                    MATCH 
-                        (x:{mushroom.Tags[0]}) 
-                    WHERE 
-                        elementId(x) = '{elementId}' 
-                    SET 
-                        x.Name = '{mushroom.Name}' 
-                    RETURN s 
-                  ";
-    }
     
-    public static string? UpdateNotes(this Mushroom mushroom, string elementId)
-    {
-        return
-            mushroom.Notes is null
-                ? null
-                : $@"
-                    MATCH 
-                        (x:{mushroom.Tags[0]}) 
-                    WHERE 
-                        elementId(x) = '{elementId}' 
-                    SET 
-                        x.Notes = '{mushroom.Notes}' 
-                    RETURN s 
-                  ";
-    }
-    
-    public static string? UpdateStatus(this Mushroom mushroom, string elementId)
+    public static string? UpdateStatus(this Mushroom mushroom)
     {
         return
             mushroom.Successful is null && mushroom.Finished is null
@@ -171,7 +139,7 @@ public static class MushroomExtensions
                     MATCH 
                         (x:{mushroom.Tags[0]})
                     WHERE 
-                        elementId(x) = '{elementId}'
+                        elementId(x) = '{mushroom.ElementId}'
                     REMOVE 
                         x :InProgress:Successful:Failed
                     WITH 
@@ -192,7 +160,7 @@ public static class MushroomExtensions
                     MATCH 
                         (c:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}'   }}),
                         (recipe:Recipe       {{ Name: '{mushroom.Recipe}' }})
-                    MERGE
+                    CREATE
                         (c)-[r:CREATED_USING]->(recipe)
                     RETURN 
                         r
@@ -208,7 +176,7 @@ public static class MushroomExtensions
                     MATCH 
                         (x:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}'   }}), 
                         (s:Strain             {{ Name: '{mushroom.Strain}' }})
-                    MERGE
+                    CREATE
                         (x)-[r:HAS_STRAIN]->(s)
                     RETURN r
                 ";
@@ -223,7 +191,7 @@ public static class MushroomExtensions
                       MATCH 
                           (c:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
                           (p:{mushroom.ParentType} {{ Name: '{mushroom.Parent}' }})
-                      MERGE
+                      CREATE
                           (c)-[r:HAS_PARENT]->(p)
                       RETURN r
                   ";
@@ -238,7 +206,7 @@ public static class MushroomExtensions
                     MATCH 
                         (p:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
                         (c:{mushroom.ChildType} {{ Name: '{mushroom.Child}' }})
-                    MERGE
+                    CREATE
                         (c)-[r:HAS_PARENT]->(p)
                     RETURN r
                 ";
@@ -253,13 +221,13 @@ public static class MushroomExtensions
                     MATCH 
                         (x:{mushroom.Tags[0]}  {{ Name: '{mushroom.Name}'     }}), 
                         (l:Location            {{ Name: '{mushroom.Location}' }})
-                    MERGE
+                    CREATE
                         (x)-[r:STORED_IN]->(l)
                     RETURN r
                 ";
     }
 
-    public static string CreateNodeLabels(this Mushroom mushroom)
+    public static string? CreateNodeLabels(this Mushroom mushroom)
     {
         return
             $@"
@@ -280,38 +248,4 @@ public static class MushroomExtensions
                 _ => "Failed"
         };
     }
-
-    public static string SearchByNameQuery(this Mushroom mushroom) =>
-        $@"
-            MATCH 
-                (x:{mushroom.Tags[0]}) 
-            WHERE 
-                toUpper(x.Name) CONTAINS toUpper('{ mushroom.Name }') 
-            RETURN 
-                x 
-            ORDER BY 
-                x.Name 
-            LIMIT 
-                100
-        ";
-    
-    public static string GetByNameQuery(this Mushroom mushroom) =>
-        $@"
-            MATCH 
-                (x:{mushroom.Tags[0]}) 
-            WHERE 
-                toUpper(x.Name) = toUpper('{ mushroom.Name }') 
-            RETURN 
-                x
-        ";
-    
-    public static string GetByIdQuery(this Mushroom mushroom) =>
-        $@"
-            MATCH 
-                (x:{mushroom.Tags[0]}) 
-            WHERE 
-                elementId(x) = '{mushroom.ElementId}'
-            RETURN 
-                x
-        ";
 }

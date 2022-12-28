@@ -12,6 +12,5 @@ namespace MycoMgmt.Domain.Models
         }
 
         public string? Url { get; set; }
-        public string? Notes { get; set; }
     }
 }

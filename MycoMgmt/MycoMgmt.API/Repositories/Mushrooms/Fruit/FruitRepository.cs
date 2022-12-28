@@ -26,65 +26,35 @@ public class FruitRepository : IFruitRepository
         _logger = logger;
     }
 
-    public async Task<string> SearchByName(string name)
+    public async Task<string> SearchByName(Fruit fruit)
     {
-        var query = $"MATCH (f:Fruit) WHERE toUpper(f.Name) CONTAINS toUpper('{ name }') RETURN f {{ Name: f.Name, Type: f.Type }} ORDER BY f.Name LIMIT 5";
-        var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "c");
-
-        return JsonConvert.SerializeObject(spawn);
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.SearchByNameQuery(), "x");
+        return JsonConvert.SerializeObject(result);
     }
 
-    public async Task<string> GetByName(string name)
+    public async Task<string> GetByName(Fruit fruit)
     {
-        var query = $"MATCH (f:Fruit) WHERE toUpper(f.Name) = toUpper('{ name }') RETURN f {{ Name: f.Name, Type: f.Type }} ORDER BY f.Name LIMIT 5";
-        var spawn = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "s");
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.GetByNameQuery(), "x");
 
-        return JsonConvert.SerializeObject(spawn);
+        return JsonConvert.SerializeObject(result);
     }
 
-    public async Task<string> GetById(string id)
+    public async Task<string> GetById(Fruit fruit)
     {
-        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{id}' RETURN f";
-
-        try
-        {
-            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(query);
-            return JsonConvert.SerializeObject(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            if (ex.Message != "The result is empty.") 
-                throw;
-                
-            return JsonConvert.SerializeObject(new { Message = $"No results were found for Fruit Id { id }" });
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(fruit.GetByIdQuery());
+        return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll()
+    public async Task<string> GetAll(Fruit fruit)
     {
-        const string query = "MATCH (f:Fruit) RETURN f ORDER BY f.Name ASC";
-        var spawn = await _neo4JDataAccess.ExecuteReadListAsync(query, "f");
-        return JsonConvert.SerializeObject(spawn);
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(), "x");
+        return JsonConvert.SerializeObject(result);
     }
 
-    public async Task<long> GetCount()
-    {
-        const string query = "Match (f:Fruit) RETURN count(f) as FruitCount";
-        var count = await _neo4JDataAccess.ExecuteReadScalarAsync<long>(query);
-        return count;
-    }
     
     public async Task<string> Create(Fruit fruit)
     {
-        if (fruit == null || string.IsNullOrWhiteSpace(fruit.Name))
-            throw new ArgumentNullException(nameof(fruit), "Fruit must not be null");
-
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
             fruit.Create(),
             fruit.CreateStrainRelationship(),
@@ -99,63 +69,31 @@ public class FruitRepository : IFruitRepository
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public async Task Delete(string elementId)
+    public async Task Delete(Fruit fruit)
     {
-        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{ elementId }' DETACH DELETE f RETURN f";
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
-
-        if(delete.ElementId != elementId)
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", elementId);
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(fruit.Delete());
         
-        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", elementId);
+        if(delete.ElementId == fruit.ElementId)
+            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", fruit.ElementId);
+        else
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", fruit.ElementId);
     }
         
-    public async Task<string> Update(string elementId, Fruit fruit)
-    {
-        var query = $"MATCH (f:Fruit) WHERE elementId(f) = '{elementId}' ";
-
-        DateTime.TryParse(fruit.ModifiedOn.ToString(), out var parsedDateTime);
-        
-        var queryList = new List<string>
+    public async Task<string> Update(Fruit fruit)
+    {        
+        var queryList = new List<string?>
         {
-            fruit.UpdateModifiedOnRelationship(elementId),
-            fruit.UpdateModifiedRelationship(elementId),
-            fruit.UpdateStatus(elementId)
+            fruit.UpdateName(),
+            fruit.UpdateRecipeRelationship(),
+            fruit.UpdateLocationRelationship(),
+            fruit.UpdateParentRelationship(),
+            fruit.UpdateChildRelationship(),
+            fruit.UpdateModifiedOnRelationship(),
+            fruit.UpdateModifiedRelationship(),
+            fruit.UpdateStatus()
         };
-        
-        // Update Name
-        if (!string.IsNullOrEmpty(fruit.Name))
-            queryList.Add(query + $"SET f.Name = '{fruit.Name}' RETURN f");
-        
 
-        /*
-         USE THIS TO LOOK AT REMOVING LABELS TO CHANGE TYPE
-         
-         MATCH (s:Spawn)
-        WHERE s.
-        FOREACH (label IN labels(n) |
-          REMOVE n:Successful)
-        SET n:LabelToKeep
-        RETURN n;
-         */
-        
-        
-        // Update Recipe
-        // TODO
-        
-        // Update Location
-        if (!string.IsNullOrEmpty(fruit.Location))
-            queryList.Add(fruit.UpdateLocationRelationship(elementId));
-        
-        // Update Parent
-        if (fruit.Parent != null)
-            queryList.Add(fruit.UpdateParentRelationship(elementId));
-        
-        // Update Child
-        if (fruit.Child != null)
-            queryList.Add(fruit.UpdateChildRelationship(elementId));
-
-        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
+        var results = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(results);
     }
 }

@@ -114,6 +114,7 @@ public class SpawnController : Controller
         
         var spawn = new Spawn()
         {
+            ElementId  = elementId,
             Name       = name,
             Recipe     = recipe,
             Location   = location,
@@ -130,35 +131,26 @@ public class SpawnController : Controller
             ModifiedBy = modifiedBy
         };
 
-        var result = await _spawnRepository.Update(elementId, spawn);
-
-        return Ok(result);
+        return Ok(await _spawnRepository.Update(spawn));
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _spawnRepository.GetAll();
-        return Ok(records);
-    }
-
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId) =>
-        Ok(await _spawnRepository.GetById(new Spawn { ElementId = elementId}));
-
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) =>
-        Ok(await _spawnRepository.GetByName(new Spawn { Name = name}));
-
-
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) =>
-        Ok(await _spawnRepository.SearchByName(new Spawn { Name = name}));
-
+    
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _spawnRepository.Delete(elementId);
+        await _spawnRepository.Delete(new Spawn { ElementId = elementId });
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _spawnRepository.GetAll(new Spawn()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _spawnRepository.GetById(new Spawn { ElementId = elementId}));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _spawnRepository.GetByName(new Spawn { Name = name}));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _spawnRepository.SearchByName(new Spawn { Name = name}));
 }

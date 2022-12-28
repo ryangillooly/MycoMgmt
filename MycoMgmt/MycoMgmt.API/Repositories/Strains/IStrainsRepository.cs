@@ -7,10 +7,12 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IStrainsRepository
     {
-        [HttpGet]
-        public Task<List<object>> GetAll();
-
-        [HttpPost]
-        Task<string> Add(Strain strain);
+        Task<string> SearchByName(Strain strain);
+        Task<string> GetByName(Strain strain);
+        public Task<string> GetById(Strain strain);
+        public Task<string> GetAll(Strain strain);
+        public Task<string> Create(Strain strain);
+        public Task Delete(Strain strain);
+        public Task<string> Update(Strain strain);
     }
 }

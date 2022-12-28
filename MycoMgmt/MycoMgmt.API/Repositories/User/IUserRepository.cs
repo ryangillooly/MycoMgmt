@@ -7,10 +7,12 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IUserRepository
     {
-        [HttpPost]
-        public Task<string> Add(User user);
-
-        [HttpGet]
-        Task<List<object>> GetAll();
+        Task<string> SearchByName(User user);
+        Task<string> GetByName(User user);
+        public Task<string> GetById(User user);
+        public Task<string> GetAll(User user);
+        public Task<string> Create(User user);
+        public Task Delete(User culture);
+        public Task<string> Update(User user);
     }
 }

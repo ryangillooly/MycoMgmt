@@ -9,8 +9,12 @@ namespace MycoMgmt.API.Repositories
     {
         Task<string> Create(Location location);
 
-        Task<string> Update(Location location, string elementId);
+        Task<string> Update(Location location);
+        Task Delete(Location location);
         
-        public Task<List<object>> GetAll();
+        Task<string> GetAll(Location location);
+        Task<string> SearchByName(Location location);
+        Task<string> GetByName(Location location);
+        Task<string> GetById(Location location);
     }
 }

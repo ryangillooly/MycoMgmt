@@ -12,8 +12,8 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Spawn spawn);
         Task<string> GetByName(Spawn spawn);
         public Task<string> GetById(Spawn spawn);
-        public Task<string> GetAll();
-        public Task Delete(string elementId);
-        public Task<string> Update(string elementId, Spawn spawn);
+        public Task<string> GetAll(Spawn spawn);
+        public Task Delete(Spawn spawn);
+        public Task<string> Update(Spawn spawn);
     }
 }

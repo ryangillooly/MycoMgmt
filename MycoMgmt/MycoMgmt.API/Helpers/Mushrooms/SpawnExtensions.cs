@@ -22,21 +22,4 @@ public static class SpawnExtensions
 
         return query;
     }
-    
-    public static string? UpdateType(this Spawn spawn, string elementId)
-    {
-        return
-            spawn.Type is null
-                ? null
-                : $@"
-                    MATCH 
-                        (x:{spawn.Tags[0]}) 
-                    WHERE 
-                        elementId(x) = '{elementId}' 
-                    SET 
-                        x.Name = '{spawn.Name}' 
-                    RETURN s 
-                  ";
-    }
-    
 }

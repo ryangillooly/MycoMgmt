@@ -40,7 +40,7 @@ public static class CultureExtensions
                 ";
     }
     
-    public static string? UpdateVendorRelationship(this Culture culture, string elementId)
+    public static string? UpdateVendorRelationship(this Culture culture)
     {
         return
             culture.Vendor is null
@@ -49,7 +49,7 @@ public static class CultureExtensions
                     MATCH 
                         (x:{culture.Tags[0]})
                     WHERE
-                        elementId(x) = '{elementId}'
+                        elementId(x) = '{culture.ElementId}'
                     OPTIONAL MATCH
                         (x)-[r:PURCHASED_FROM]->(v)
                     DELETE 

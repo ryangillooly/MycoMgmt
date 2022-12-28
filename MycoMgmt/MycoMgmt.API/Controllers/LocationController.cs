@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -30,56 +27,55 @@ namespace MycoMgmt.API.Controllers
         {
             var location = new Location()
             {
-                Name       = name,
-                CreatedOn  = DateTime.Parse(createdOn),
-                CreatedBy  = createdBy
+                Name            = name,
+                AgentConfigured = agentConfigured,
+                CreatedOn       = DateTime.Parse(createdOn),
+                CreatedBy       = createdBy
             };
-
-            if (agentConfigured != null)
-                location.AgentConfigured = agentConfigured;
-
-            var resultList = new List<string>
-            {
-                await _locationsRepository.Create(location)
-            };   
             
-            return Created("", string.Join(",", resultList));
+            return Created("", await _locationsRepository.Create(location));
         }
         
         [HttpPut("{elementId}")]
-    public async Task<IActionResult> Update
-    (
-        string  elementId,
-        string? name,
-        bool?   agentConfigured,
-        string  modifiedOn,
-        string  modifiedBy
-    )
-    {
-        var location = new Location
+        public async Task<IActionResult> Update
+        (
+            string  elementId,
+            string? name,
+            bool?   agentConfigured,
+            string  modifiedOn,
+            string  modifiedBy
+        )
         {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
-        };
-        
+            var location = new Location
+            {
+                ElementId       = elementId,
+                Name            = name,
+                AgentConfigured = agentConfigured,
+                ModifiedOn      = DateTime.Parse(modifiedOn),
+                ModifiedBy      = modifiedBy
+            };
+            
+            return Ok(await _locationsRepository.Update(location));
+        }
 
-        if (name != null)
-            location.Name = name;
-        
-        if (agentConfigured != null)
-            location.AgentConfigured = agentConfigured;
-        
-        
-        var result = await _locationsRepository.Update(location, elementId);
-
-        return Ok(result);
-    }
+        [HttpDelete("{elementId}")]
+        public async Task<IActionResult> Delete(string elementId)
+        {
+            await _locationsRepository.Delete(new Location { ElementId = elementId });
+            return NoContent();
+        }
         
         [HttpGet]
-        public async Task<string> GetAllLocations(string name)
-        {
-            var node = await _locationsRepository.GetAll();
-            return (node is null ? null : JsonConvert.SerializeObject(node)) ?? string.Empty;
-        }
+        public async Task<IActionResult> GetAll() => Ok(await _locationsRepository.GetAll(new Location()));
+        
+        [HttpGet("id/{elementId}")]
+        public async Task<IActionResult> GetById(string elementId) => Ok(await _locationsRepository.GetById(new Location { ElementId = elementId }));
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name) => Ok(await _locationsRepository.GetByName(new Location { Name = name }));
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> SearchByName(string name) => Ok(await _locationsRepository.SearchByName(new Location { Name = name }));
+
     }
 }

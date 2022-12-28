@@ -18,15 +18,17 @@ public static class RecipeExtensions
         if (recipe.Steps != null)
             additionalData += $",Steps: '{recipe.Steps.ToNumberedStringList()}'";
         
-        var query = $@"CREATE 
-                                (
-                                    x:{recipe.Tags[0]} {{ 
-                                                         Name: '{recipe.Name}',
-                                                         Type: '{recipe.Type}'
-                                                         {additionalData} 
-                                                      }}
-                                )
-                            RETURN x";
+        var query = $@"
+                            CREATE 
+                            (
+                                x:{recipe.Tags[0]} {{ 
+                                                     Name: '{recipe.Name}',
+                                                     Type: '{recipe.Type}'
+                                                     {additionalData} 
+                                                  }}
+                            )
+                            RETURN x
+                            ";
 
         return query;
     }
@@ -48,7 +50,7 @@ public static class RecipeExtensions
                   ";
     }
     
-    public static string? UpdateIngredientRelationship(this Recipe recipe, string elementId)
+    public static string? UpdateIngredientRelationship(this Recipe recipe)
     {
         return
             recipe.Ingredients is null
@@ -57,7 +59,7 @@ public static class RecipeExtensions
                     MATCH 
                         (recipe:{recipe.Tags[0]})
                     WHERE
-                        elementId(recipe) = '{elementId}'
+                        elementId(recipe) = '{recipe.ElementId}'
                     OPTIONAL MATCH
                         (recipe)-[r:CREATED_USING]->(i)
                     DELETE
@@ -72,6 +74,40 @@ public static class RecipeExtensions
                         (recipe)-[r:CREATED_USING]->(i)
                     RETURN
                         r  
+                  ";
+    }
+    
+    public static string? UpdateSteps(this Recipe recipe)
+    {
+        return
+            recipe.Steps is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{recipe.Tags[0]}) 
+                    WHERE 
+                        elementId(x) = '{recipe.ElementId}' 
+                    SET 
+                        x.Steps = '{recipe.Steps.ToNumberedStringList()}' 
+                    RETURN 
+                        x
+                  ";
+    }
+    
+    public static string? UpdateDescription(this Recipe recipe)
+    {
+        return
+            recipe.Description is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{recipe.Tags[0]}) 
+                    WHERE 
+                        elementId(x) = '{recipe.ElementId}' 
+                    SET 
+                        x.Description = '{recipe.Description}' 
+                    RETURN 
+                        x
                   ";
     }
 

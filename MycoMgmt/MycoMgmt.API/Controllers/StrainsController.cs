@@ -1,11 +1,7 @@
-﻿#nullable enable
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models;
 using Neo4j.Driver;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -15,48 +11,68 @@ namespace MycoMgmt.API.Controllers
     {
         private readonly IStrainsRepository _strainsRepository;
         
-        public StrainsController(IStrainsRepository repo, IDriver driver)
+        public StrainsController(IStrainsRepository repo)
         {
             _strainsRepository = repo;
         }
         
-        [HttpPost("new")]
-        public async Task<string> NewStrain
+        [HttpPost]
+        public async Task<IActionResult> Create
         (
             string name, 
             string? effects,
-            string? createdOn,
-            string? createdBy,
-            string? modifiedOn,
-            string? modifiedBy
+            string  createdOn,
+            string  createdBy
         )
         {
-            var strain = new Strain() { Name = name };
-
-            if (effects != null)
-                strain.Effects = effects;
-
-            if (createdOn != null)
-                strain.CreatedOn = DateTime.Parse(createdOn);
+            var strain = new Strain
+            {
+                Name      = name,
+                Effects   = effects,
+                CreatedBy = createdBy,
+                CreatedOn = DateTime.Parse(createdOn)
+            };
             
-            if(createdBy != null)
-                strain.CreatedBy = createdBy;
-            
-            if (modifiedOn != null)
-                strain.ModifiedOn = DateTime.Parse(modifiedOn);
-            
-            if(modifiedBy != null)
-                strain.ModifiedBy = modifiedBy;
-
-            var result = await _strainsRepository.Add(strain);
-            return result;
+            return Created("", await _strainsRepository.Create(strain));
         }
         
-        [HttpGet("all")]
-        public async Task<string> GetAllLocations()
+        [HttpPut]
+        public async Task<IActionResult> Update
+        (
+            string? name, 
+            string? effects,
+            string  modifiedOn,
+            string  modifiedBy
+        )
         {
-            var node = await _strainsRepository.GetAll();
-            return JsonConvert.SerializeObject(node);
+            var strain = new Strain
+            {
+                Name       = name,
+                Effects    = effects,
+                ModifiedBy = modifiedBy,
+                ModifiedOn = DateTime.Parse(modifiedOn)
+            };
+            
+            return Created("", await _strainsRepository.Update(strain));
         }
+        
+        [HttpDelete("{elementId}")]
+        public async Task<IActionResult> Delete(string elementId)
+        {
+            await _strainsRepository.Delete(new Strain { ElementId = elementId });
+            return NoContent();
+        }
+    
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => Ok(await _strainsRepository.GetAll(new Strain()));
+
+        [HttpGet("id/{elementId}")]
+        public async Task<IActionResult> GetById(string elementId) => Ok(await _strainsRepository.GetById(new Strain { ElementId = elementId }));
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name) => Ok(await _strainsRepository.GetByName(new Strain { Name = name }));
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> SearchByName(string name) => Ok(await _strainsRepository.SearchByName(new Strain { Name = name }));
     }
 }

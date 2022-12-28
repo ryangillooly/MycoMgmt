@@ -106,12 +106,6 @@ public class CultureController : Controller
         string  modifiedBy
     )
     {
-        var culture = new Culture
-        {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
-        };
-        
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
@@ -120,67 +114,46 @@ public class CultureController : Controller
         
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-        
-        if (name       != null) culture.Name       = name;
-        if (strain     != null) culture.Strain     = strain;
-        if (type       != null) culture.Type       = type;
-        if (notes      != null) culture.Notes      = notes;
-        if (recipe     != null) culture.Recipe     = recipe;
-        if (location   != null) culture.Location   = location;
-        if (vendor     != null) culture.Vendor     = vendor;
-        if (successful != null) culture.Successful = successful.Value;
-        if (finished   != null) culture.Finished   = finished;
-        
-        if (parent != null && parentType != null)
-        {
-            culture.Parent     = parent;
-            culture.ParentType = parentType;
-        }
-        
-        if (child != null && childType != null)
-        {
-            culture.Child     = child;
-            culture.ChildType = childType;
-        }
-        
-        var result = await _cultureRepository.Update(elementId, culture);
 
-        return Ok(result);
+        var culture = new Culture
+        {
+            ElementId  = elementId,
+            Name       = name,
+            Strain     = strain,
+            Type       = type,
+            Notes      = notes,
+            Recipe     = recipe,
+            Location   = location,
+            Vendor     = vendor,
+            Successful = successful!.Value,
+            Finished   = finished,
+            Parent     = parent,
+            ParentType = parentType,
+            Child      = child,
+            ChildType  = childType,
+            ModifiedOn = DateTime.Parse(modifiedOn),
+            ModifiedBy = modifiedBy
+        };
+        
+        return Ok(await _cultureRepository.Update(culture));
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _cultureRepository.GetAll();
-        return Ok(records);
-    }
-
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId)
-    {
-        var results = await _cultureRepository.GetById(elementId);
-        return Ok(results);
-    }
-
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
-    {
-        var results = await _cultureRepository.GetByName(name);
-        return Ok(results);
-    }
-
-
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name)
-    {
-        var results = await _cultureRepository.SearchByName(name);
-        return Ok(results);
-    }
-
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _cultureRepository.Delete(elementId);
+        await _cultureRepository.Delete(new Culture { ElementId = elementId });
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _cultureRepository.GetAll(new Culture()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _cultureRepository.GetById(new Culture { ElementId = elementId }));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _cultureRepository.GetByName(new Culture { Name = name }));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _cultureRepository.SearchByName(new Culture { Name = name }));
 }

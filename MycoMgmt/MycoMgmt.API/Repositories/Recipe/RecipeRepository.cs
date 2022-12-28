@@ -19,12 +19,37 @@ public class RecipeRepository : IRecipeRepository
         _logger = logger;
     }
 
+    public async Task<string> SearchByName(Recipe recipe)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(recipe.SearchByNameQuery(), "x");
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetByName(Recipe recipe)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(recipe.GetByNameQuery(), "x");
+
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetById(Recipe recipe)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(recipe.GetByIdQuery());
+        return JsonConvert.SerializeObject(result);
+    }
+    
+    public async Task<string> GetAll(Recipe recipe)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAll(), "x");
+        return JsonConvert.SerializeObject(result);
+    }
+    
     public async Task<string> Create(Recipe recipe)
     {
         if (recipe == null || string.IsNullOrWhiteSpace(recipe.Name))
             throw new ArgumentNullException(nameof(recipe), "Recipe must not be null");
 
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
             recipe.Create(),
             recipe.CreateIngredientRelationship(),
@@ -35,54 +60,31 @@ public class RecipeRepository : IRecipeRepository
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public async Task Delete(string elementId)
+    public async Task Delete(Recipe recipe)
     {
-        var query = $"MATCH (r:Recipe) WHERE elementId(r) = '{ elementId }' DETACH DELETE r RETURN r";
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(recipe.Delete());
 
-        if(delete.ElementId != elementId)
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", elementId);
+        if(delete.ElementId != recipe.ElementId)
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", recipe.ElementId);
         
-        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", elementId);
+        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", recipe.ElementId);
     }
         
-    public async Task<string> Update(string elementId, Recipe recipe)
+    public async Task<string> Update(Recipe recipe)
     {
-        var query = $"MATCH (r:Recipe) WHERE elementId(r) = '{elementId}' ";
-
-        DateTime.TryParse(recipe.ModifiedOn.ToString(), out var parsedDateTime);
-        
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
-            recipe.UpdateModifiedOnRelationship(elementId),
-            recipe.UpdateModifiedRelationship(elementId)
+            recipe.UpdateName(),
+            recipe.UpdateType(),
+            recipe.UpdateSteps(),
+            recipe.UpdateDescription(),
+            recipe.UpdateNotes(),
+            recipe.UpdateIngredientRelationship(),
+            recipe.UpdateModifiedOnRelationship(),
+            recipe.UpdateModifiedRelationship()
         };
         
-        // Update Name
-        if (!string.IsNullOrEmpty(recipe.Name))
-            queryList.Add(query + $"SET r.Name = '{recipe.Name}' RETURN r");
-
-        // Update Type
-        if (!string.IsNullOrEmpty(recipe.Type))
-            queryList.Add(query + $"SET r.Type = '{recipe.Type}' RETURN r");
-
-        // Update Ingredients
-        if(recipe.Ingredients != null)
-            queryList.Add(recipe.UpdateIngredientRelationship(elementId));
-        
-        // Update Steps
-        if(recipe.Steps != null)
-            queryList.Add(query + $"SET r.Steps = '{recipe.Steps.ToNumberedStringList()}'");
-
-        // Update Description
-        if(!string.IsNullOrEmpty(recipe.Description))
-            queryList.Add(query + $"SET r.Description = '{recipe.Description}' RETURN r");
-      
-        // Update Notes
-        if(!string.IsNullOrEmpty(recipe.Notes))
-            queryList.Add(query + $"SET r.Notes = '{recipe.Notes}' RETURN r");
-        
-        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(spawnData, Formatting.Indented);
+        var results = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(results);
     }
 }

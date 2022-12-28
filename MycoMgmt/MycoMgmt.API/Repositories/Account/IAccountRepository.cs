@@ -8,12 +8,13 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IAccountRepository
     {
+        Task<string> SearchByName(Account account);
+        Task<string> GetByName(Account account);
+        public Task<string> GetById(Account account);
+        public Task<string> GetAll(Account account);
         public Task<string> Create(Account account);
+        public Task<string> Delete(Account account);
+        public Task<string> Update(Account account);
         
-        public Task<string> Delete(string elementId);
-        
-        public Task<string> Update(Account account, string elementId);
-        
-        public Task<string> GetAll();
     }
 }

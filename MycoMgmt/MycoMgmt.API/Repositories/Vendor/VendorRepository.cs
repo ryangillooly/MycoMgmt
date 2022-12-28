@@ -23,52 +23,64 @@ namespace MycoMgmt.API.Repositories
         
         public async Task<string> Create(Vendor vendor)
         {
-            if (vendor == null || string.IsNullOrWhiteSpace(vendor.Name))
-                throw new ArgumentNullException(nameof(vendor), "Vendor must not be null");
-
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
                 vendor.Create(),
                 vendor.CreateCreatedOnRelationship(),
                 vendor.CreateCreatedRelationship()
             };
                 
-            var result = await _neo4JDataAccess.RunTransaction(queryList);
-            return result;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public async Task<string> Delete(long id)
+        public async Task Delete(Vendor vendor)
         {
-            var query = new List<string>{ $"MATCH (v:Vendor) WHERE ID(v) = { id } DETACH DELETE v RETURN v" };
-            var vendor = await _neo4JDataAccess.RunTransaction(query);
-
-            return JsonConvert.SerializeObject(vendor);
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(vendor.Delete());
+        
+            if(delete.ElementId == vendor.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", vendor.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", vendor.ElementId);
         }
 
-        public async Task<string> Update(Vendor vendor, string elementId)
+        public async Task<string> Update(Vendor vendor)
         {
-            var query = $"MATCH (v:Vendor) WHERE elementId(v) = '{elementId}' ";
-
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
-                vendor.UpdateModifiedOnRelationship(elementId),
-                vendor.UpdateModifiedRelationship(elementId)
+                vendor.UpdateName(),
+                vendor.UpdateNotes(),
+                vendor.UpdateUrl(),
+                vendor.UpdateModifiedOnRelationship(),
+                vendor.UpdateModifiedRelationship()
             };
             
-            // Update Name
-            if (!string.IsNullOrEmpty(vendor.Name))
-                queryList.Add(query + $"SET v.Name = '{vendor.Name}' RETURN v");
-            
-            // Update Notes
-            if (!string.IsNullOrEmpty(vendor.Notes))
-                queryList.Add(query + $"SET v.Notes = '{vendor.Notes}' RETURN v");
-            
-            // Update Url
-            if (!string.IsNullOrEmpty(vendor.Url))
-                queryList.Add(query + $"SET v.Url = '{vendor.Url}' RETURN v");
-            
-            var vendors = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(vendors);
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
+        }
+        
+        public async Task<string> SearchByName(Vendor vendor)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(vendor.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetByName(Vendor vendor)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(vendor.GetByNameQuery(), "x");
+
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetById(Vendor vendor)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(vendor.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(Vendor vendor)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(vendor.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

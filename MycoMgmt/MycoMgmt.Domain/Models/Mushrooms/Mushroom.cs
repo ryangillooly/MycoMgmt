@@ -11,6 +11,5 @@
         public bool? Successful { get; set; }
         public bool? Finished { get; set; }
         public string? Recipe { get; set; }
-        public string? Notes { get; set; }
     }
 }

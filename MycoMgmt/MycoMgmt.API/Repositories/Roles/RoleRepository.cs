@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.UserManagement;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories
@@ -22,75 +24,65 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(IamRole role)
+        public async Task<string> SearchByName(IamRole role)
         {
-            if (role == null || string.IsNullOrWhiteSpace(role.Name))
-                throw new ArgumentNullException(nameof(role), "Role must not be null");
-
-            return await PersistToDatabase(role);
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(role.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
         }
 
-        private async Task<string> PersistToDatabase(IamRole role)
+        public async Task<string> GetByName(IamRole role)
         {
-            try
-            {
-                var queryList = CreateQueryList(role);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(role.GetByNameQuery(), "x");
 
-                return JsonConvert.SerializeObject(new { Message = $"A Role already exists with the name {role.Name}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+            return JsonConvert.SerializeObject(result);
         }
 
-        private static List<string> CreateQueryList(IamRole role)
+        public async Task<string> GetById(IamRole role)
         {
-            var queryList = new List<string>
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(role.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(IamRole role)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+        
+        public async Task<string> Create(IamRole role)
+        {
+            var queryList = new List<string?>
             {
-                $@"
-                        MERGE 
-                        (
-                            r:IAMRole
-                            {{
-                                Name: '{role.Name}'
-                            }}        
-                        ) 
-                        RETURN r;
-                    "
+                role.Create(),
+                role.CreatePermissionRelationship(),
+                role.CreateCreatedRelationship(),
+                role.CreateCreatedOnRelationship(),
             };
 
-            if (role.Permissions == null) 
-                return queryList;
-            
-            foreach (var permission in role.Permissions)
-            {
-                queryList.Add($@"
-                            MATCH 
-                                (r:IAMRole {{ Name: '{role.Name}' }}),
-                                (p:Permission {{ Name: '{permission}' }})
-                            MERGE
-                                (r)-[rel:HAS]->(p)
-                            RETURN rel
-                        ");
-            }
-
-            return queryList;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
-
-        public async Task<List<object>> GetAll()
+        
+        public async Task Delete(IamRole role)
         {
-            const string query = @"MATCH (r:IAMRole) RETURN r { Name: r.Name } ORDER BY r.Name";
-            var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "r");
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(role.Delete());
+        
+            if(delete.ElementId == role.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", role.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", role.ElementId);
+        }
+        
+        public async Task<string> Update(IamRole role)
+        {
+            var queryList = new List<string?>
+            {
+                role.UpdateName(),
+                role.UpdatePermissions(),
+                role.UpdateModifiedRelationship(),
+                role.UpdateModifiedOnRelationship()
+            };
 
-            return users;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
     }
 }

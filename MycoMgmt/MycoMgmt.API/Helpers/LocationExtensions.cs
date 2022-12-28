@@ -22,4 +22,21 @@ public static class LocationExtensions
 
         return query;
     }
+
+    public static string? UpdateAgentConfigured(this Location location)
+    {
+        return
+            location.AgentConfigured is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{location.Tags[0]}) 
+                    WHERE 
+                        elementId(x) = '{location.ElementId}' 
+                    SET 
+                        x.AgentConfigured = '{location.AgentConfigured}' 
+                    RETURN 
+                        x 
+                  ";
+    }
 }

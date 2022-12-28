@@ -24,12 +24,34 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
+        public async Task<string> SearchByName(Account account)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetByName(Account account)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.GetByNameQuery(), "x");
+
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetById(Account account)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(account.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(Account account)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(account.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+        
         public async Task<string> Create(Account account)
         {
-            if (account == null || string.IsNullOrWhiteSpace(account.Name))
-                throw new ArgumentNullException(nameof(account), "Account must not be null");
-
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
                 account.Create(),
                 account.CreateCreatedRelationship(),
@@ -40,33 +62,23 @@ namespace MycoMgmt.API.Repositories
             return result;
         }
         
-        public async Task<string> Delete(string elementId)
+        public async Task<string> Delete(Account account)
         {
-            var query = new List<string>{ $"MATCH (a:Account) WHERE elementId(a) = '{elementId}' DETACH DELETE a RETURN a" };
-            var accounts = await _neo4JDataAccess.RunTransaction(query);
-
+            var accounts = await _neo4JDataAccess.RunTransaction(new List<string?> { account.Delete() });
             return JsonConvert.SerializeObject(accounts);
         }
 
-        public async Task<string> Update(Account account, string elementId)
+        public async Task<string> Update(Account account)
         {
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
-                $"MATCH (a:Account) WHERE elementId(a) = '{elementId}' SET a.Name = '{account.Name}' RETURN a",
-                account.UpdateModifiedOnRelationship(elementId),
-                account.UpdateModifiedRelationship(elementId)
+                account.UpdateName(),
+                account.UpdateModifiedOnRelationship(),
+                account.UpdateModifiedRelationship()
             };
 
             var cultures = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(cultures, Formatting.Indented);
-        }
-
-        public async Task<string> GetAll()
-        {
-            const string query = "MATCH (a:Account) RETURN a ORDER BY a.Name";
-            var accounts = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "a");
-
-            return JsonConvert.SerializeObject(accounts);
+            return JsonConvert.SerializeObject(cultures);
         }
     }
 }

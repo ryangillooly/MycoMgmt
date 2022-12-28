@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.UserManagement;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -20,7 +16,7 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpPost]
-        public async Task<string> Create 
+        public async Task<IActionResult> Create 
         (
             string  name, 
             string? url,
@@ -32,18 +28,14 @@ namespace MycoMgmt.API.Controllers
             var vendor = new Vendor()
             {
                 Name       = name,
+                Notes      = notes,
+                Url        = url,
                 CreatedOn  = DateTime.Parse(createdOn),
                 CreatedBy  = createdBy
             };
 
-            if (!string.IsNullOrEmpty(url))
-                vendor.Url = url;
-
-            if (!string.IsNullOrEmpty(notes))
-                vendor.Notes = notes;
-                
-            var result = await _vendorRepository.Create(vendor);
-            return result;
+            var results = await _vendorRepository.Create(vendor);
+            return Created("", results);
         } 
         
         [HttpPut("{elementId}")]
@@ -60,22 +52,33 @@ namespace MycoMgmt.API.Controllers
             var vendor = new Vendor()
             {
                 Name       = name,
+                Url        = url,
+                Notes      = notes, 
                 CreatedOn  = DateTime.Parse(modifiedOn),
                 CreatedBy  = modifiedBy
             };
+            
+            return Ok(await _vendorRepository.Update(vendor));
+        }
 
-            if (!string.IsNullOrEmpty(url))
-                vendor.Url = url;
-
-            if (!string.IsNullOrEmpty(notes))
-                vendor.Notes = notes;
-
-            var result = await _vendorRepository.Update(vendor, elementId);
-
-            return Ok(result);
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string elementId)
+        {
+            await _vendorRepository.Delete(new Vendor { ElementId = elementId });
+            return NoContent();
         }
         
-        [HttpDelete("{id}")]
-        public async Task<string> Delete (long id) => await _vendorRepository.Delete(id);
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => Ok(await _vendorRepository.GetAll(new Vendor()));
+
+        [HttpGet("id/{elementId}")]
+        public async Task<IActionResult> GetById(string elementId) => Ok(await _vendorRepository.GetById(new Vendor { ElementId = elementId }));
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name) => Ok(await _vendorRepository.GetByName(new Vendor { Name = name }));
+
+        [HttpGet("search/name/{name}")]
+        public async Task<IActionResult> SearchByName(string name) => Ok(await _vendorRepository.SearchByName(new Vendor { Name = name }));
+
     }
 }

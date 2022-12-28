@@ -25,4 +25,21 @@ public static class VendorExtensions
 
         return query;
     }
+    
+    public static string? UpdateUrl(this Vendor vendor)
+    {
+        return
+            vendor.Url is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{vendor.Tags[0]})
+                    WHERE 
+                        elementId(x) = '{vendor.ElementId}'                  
+                    SET 
+                        x.Url = '{vendor.Url}'
+                    RETURN 
+                        x
+                ";
+    }
 }

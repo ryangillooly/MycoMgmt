@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.API.DataStores.Neo4J;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.UserManagement;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+#pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.API.Repositories
@@ -22,108 +24,70 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
-        public async Task<string> Add(User user)
+        public async Task<string> SearchByName(User user)
         {
-            if (user == null || string.IsNullOrWhiteSpace(user.Name))
-                throw new ArgumentNullException(nameof(user), "User cannot not be null");
-
-            return await PersistToDatabase(user);
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(user.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<List<object>> GetAll()
+        public async Task<string> GetByName(User user)
         {
-            const string query = @"MATCH (u:User) RETURN u ORDER BY u.Name";
-            var users = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "u");
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(user.GetByNameQuery(), "x");
 
-            return users;
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetById(User user)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(user.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
+        }
+    
+        public async Task<string> GetAll(User user)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(user.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
         }
         
-        private async Task<string> PersistToDatabase(User user)
+        public async Task Delete(User user)
         {
-            try
-            {
-                var queryList = CreateQueryList(user);
-                var result = await _neo4JDataAccess.RunTransaction(queryList);
-                return result;
-            }
-            catch (ClientException ex)
-            {
-                if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
-                    throw;
-
-                return JsonConvert.SerializeObject(new { Message = $"A User already exists with the name {user.Name}" });
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(user.Delete());
+        
+            if(delete.ElementId == user.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", user.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", user.ElementId);
         }
-
-        private static List<string> CreateQueryList(User user)
+        
+        public async Task<string> Update(User user)
         {
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
-                $@"
-                        MERGE (u:User {{ Name: '{user.Name}' }}) 
-                        RETURN u;
-                    ",
-                $@"
-                        MATCH 
-                            (u:User    {{ Name: '{user.Name}'    }}),
-                            (a:Account {{ Name: '{user.Account}' }})
-                        MERGE
-                            (a)-[r:HAS]->(u)
-                        RETURN r
-                    ",
-                $@"
-                        MATCH 
-                            (u:User {{ Name: '{user.Name}'    }}),
-                            (d:Day  {{ day: {user.CreatedOn.Day} }})<-[:HAS_DAY]-(:Month {{ month: {user.CreatedOn.Month} }})<-[:HAS_MONTH]-(:Year {{ year: {user.CreatedOn.Year} }})
-                        MERGE
-                            (u)-[r:CREATED_ON]->(d)
-                        RETURN r
-                    ",
-                $@"
-                        MATCH 
-                            (nu:User {{ Name: '{user.Name}'      }}),
-                            (cb:User {{ Name: '{user.CreatedBy}' }})
-                        MERGE
-                            (cb)-[r:CREATED]->(nu)
-                        RETURN r
-                    "
+                user.UpdateName(),
+                user.UpdateAccountRelationship(),
+                user.UpdateRoleRelationship(),
+                user.UpdatePermissionRelationship(),
+                user.UpdateModifiedOnRelationship(),
+                user.UpdateModifiedRelationship(),
+            };
+        
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
+        }
+        
+        public async Task<string> Create(User user)
+        {
+            var queryList = new List<string?>
+            {
+                user.Create(),
+                user.CreateAccountRelationship(),
+                user.CreateRoleRelationship(),
+                user.CreatePermissionRelationship(),
+                user.CreateCreatedRelationship(),
+                user.CreateCreatedOnRelationship()
             };
 
-            if (user.Permissions != null)
-            {
-                foreach (var permission in user.Permissions)
-                {
-                    queryList.Add($@"
-                            MATCH
-                                (u:User       {{ Name: '{user.Name}'  }}),
-                                (p:Permission {{ Name: '{permission}' }})
-                            MERGE
-                                (u)-[r:HAS]->(p)
-                            RETURN r
-                        ");
-                }
-            }
-
-            if (user.Roles != null)
-            {
-                foreach (var role in user.Roles)
-                {
-                    queryList.Add($@"
-                            MATCH
-                                (u:User    {{ Name: '{user.Name}' }}),
-                                (r:IAMRole {{ Name: '{role}' }})
-                            MERGE
-                                (u)-[rel:HAS]->(r)
-                            RETURN r
-                        ");
-                }
-            }
-
-            return queryList;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
     }
 }

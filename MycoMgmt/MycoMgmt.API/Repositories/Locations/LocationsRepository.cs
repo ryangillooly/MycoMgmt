@@ -25,48 +25,63 @@ namespace MycoMgmt.API.Repositories
         
         public async Task<string> Create(Location location)
         {
-            if (location == null || string.IsNullOrWhiteSpace(location.Name))
-                throw new ArgumentNullException(nameof(location), "Location must not be null");
-            
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
                 location.Create(),
                 location.CreateCreatedRelationship(),
                 location.CreateCreatedOnRelationship()
             };
             
-            var result = await _neo4JDataAccess.RunTransaction(queryList);
-            return result;
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
 
-        public async Task<string> Update(Location location, string elementId)
+        public async Task<string> Update(Location location)
         {
-            var query = $"MATCH (l:Location) WHERE elementId(l) = '{elementId}' ";
-
-            var queryList = new List<string>
+            var queryList = new List<string?>
             {
-                location.UpdateModifiedOnRelationship(elementId),
-                location.UpdateModifiedRelationship(elementId)
+                location.UpdateModifiedOnRelationship(),
+                location.UpdateModifiedRelationship(),
+                location.UpdateName(),
+                location.UpdateAgentConfigured()
             };
-        
-            // Update Name
-            if (!string.IsNullOrEmpty(location.Name))
-                queryList.Add(query + $"SET l.Name = '{location.Name}' RETURN l");
             
-            // Update AgentConfigured
-            if (location.AgentConfigured != null)
-                queryList.Add(query + $"SET l.AgentConfigured = '{location.AgentConfigured}' RETURN l");
-            
-            var cultures = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(cultures, Formatting.Indented);
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
         }
         
-        public async Task<List<object>> GetAll()
+        public async Task Delete(Location location)
         {
-            const string query = @"MATCH (l:Location) RETURN l { Name: l.Name } ORDER BY l.Name";
-            var locations = await _neo4JDataAccess.ExecuteReadDictionaryAsync(query, "l");
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(location.Delete());
+        
+            if(delete.ElementId == location.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", location.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", location.ElementId);
+        }
+        
+        public async Task<string> GetAll(Location location)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(location.GetAll(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
+        
+        public async Task<string> SearchByName(Location location)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(location.SearchByNameQuery(), "x");
+            return JsonConvert.SerializeObject(result);
+        }
 
-            return locations;
+        public async Task<string> GetByName(Location location)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(location.GetByNameQuery(), "x");
+
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetById(Location location)
+        {
+            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(location.GetByIdQuery());
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

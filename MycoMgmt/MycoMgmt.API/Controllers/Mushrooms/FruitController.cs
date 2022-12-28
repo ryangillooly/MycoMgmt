@@ -37,52 +37,34 @@ public class FruitController : Controller
         int?    count = 1
     )
     {
-        var fruit = new Fruit()
-        {
-            Name      = name,
-            Strain    = strain,
-            Finished  = finished,
-            CreatedOn = DateTime.Parse(createdOn),
-            CreatedBy = createdBy
-        };
-
-        if (wetWeight != null)
-            fruit.WetWeight = wetWeight.Value;
-        
-        if (dryWeight != null)
-            fruit.DryWeight = dryWeight.Value;
-        
-        if (location != null)
-            fruit.Location = location;
-
-        if (notes != null)
-            fruit.Notes = notes;
-
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
             throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
-        
-        if (parent != null && parentType != null)
-        {
-            fruit.Parent     = parent;
-            fruit.ParentType = parentType;
-        }
-        
-        if (child != null && childType != null)
-        {
-            fruit.Child     = child;
-            fruit.ChildType = childType;
-        }
 
-        if (successful != null)
-            fruit.Successful = successful.Value;
-
+        var fruit = new Fruit()
+        {
+            Name       = name,
+            WetWeight  = wetWeight,
+            DryWeight  = dryWeight,
+            Location   = location,
+            Notes      = notes,
+            Parent     = parent,
+            ParentType = parentType,
+            Child      = child,
+            ChildType  = childType,
+            Strain     = strain,
+            Successful = successful,
+            Finished   = finished,
+            CreatedOn  = DateTime.Parse(createdOn),
+            CreatedBy  = createdBy
+        };
+        
         fruit.Tags.Add(fruit.IsSuccessful());
 
         var resultList = new List<string>();
-        var bulkName = fruit.Name;
+        var fruitName = fruit.Name;
 
         if (count == 1)
         {
@@ -92,7 +74,7 @@ public class FruitController : Controller
         {
             for (var i = 1; i <= count; i++)
             {
-                fruit.Name = bulkName + "-" + i.ToString("D2");
+                fruit.Name = fruitName + "-" + i.ToString("D2");
                 resultList.Add(await _fruitRepository.Create(fruit));
             }
         }
@@ -120,12 +102,6 @@ public class FruitController : Controller
         string   modifiedBy
     )
     {
-        var fruit = new Fruit()
-        {
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
-        };
-        
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
@@ -135,80 +111,44 @@ public class FruitController : Controller
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
 
-        if (wetWeight != null)
-            fruit.WetWeight = wetWeight.Value;
-        
-        if (dryWeight != null)
-            fruit.DryWeight = dryWeight.Value;
-        
-        if (name != null)
-            fruit.Name = name;
-
-        if (strain != null)
-            fruit.Strain = strain;
-        
-        if (notes != null)
-            fruit.Notes = notes;
-
-        if (location != null)
-            fruit.Location = location;
-
-        if (parent != null && parentType != null)
+        var fruit = new Fruit()
         {
-            fruit.Parent     = parent;
-            fruit.ParentType = parentType;
-        }
+            Name       = name,
+            WetWeight  = wetWeight,
+            DryWeight  = dryWeight,
+            Strain     = strain,
+            Notes      = notes,
+            Location   = location,
+            Parent     = parent,
+            ParentType = parentType,
+            Child      = child,
+            ChildType  = childType,
+            Successful = successful,
+            Finished   = finished,
+            ModifiedOn = DateTime.Parse(modifiedOn),
+            ModifiedBy = modifiedBy
+        };
         
-        if (child != null && childType != null)
-        {
-            fruit.Child     = child;
-            fruit.ChildType = childType;
-        }
-
-        if (successful != null)
-            fruit.Successful = successful.Value;
-
-        if (finished != null)
-            fruit.Finished = finished;
-
-        var result = await _fruitRepository.Update(elementId, fruit);
-
-        return Ok(result);
+        return Ok(await _fruitRepository.Update(fruit));
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _fruitRepository.GetAll();
-        return Ok(records);
-    }
-
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId)
-    {
-        var results = await _fruitRepository.GetById(elementId);
-        return Ok(results);
-    }
-
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
-    {
-        var results = await _fruitRepository.GetByName(name);
-        return Ok(results);
-    }
-
-
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name)
-    {
-        var results = await _fruitRepository.SearchByName(name);
-        return Ok(results);
-    }
-
+    
     [HttpDelete("{elementId}")]
     public async Task<IActionResult> Delete(string elementId)
     {
-        await _fruitRepository.Delete(elementId);
+        await _fruitRepository.Delete(new Fruit { ElementId = elementId });
         return NoContent();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _fruitRepository.GetAll(new Fruit()));
+
+    [HttpGet("id/{elementId}")]
+    public async Task<IActionResult> GetById(string elementId) => Ok(await _fruitRepository.GetById(new Fruit { ElementId = elementId }));
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await _fruitRepository.GetByName(new Fruit { Name = name }));
+
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name) => Ok(await _fruitRepository.SearchByName(new Fruit { Name = name }));
 }

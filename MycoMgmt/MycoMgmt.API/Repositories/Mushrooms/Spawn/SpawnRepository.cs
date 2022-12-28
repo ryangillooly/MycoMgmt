@@ -38,17 +38,15 @@ public class SpawnRepository : ISpawnRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll()
+    public async Task<string> GetAll(Spawn spawn)
     {
-        const string query = "MATCH (s:Spawn) RETURN s ORDER BY s.Name ASC";
-        var spawn = await _neo4JDataAccess.ExecuteReadListAsync(query, "s");
-        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(), "x");
         return JsonConvert.SerializeObject(spawn);
     }
     
     public async Task<string> Create(Spawn spawn)
     {
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
             spawn.Create(),
             spawn.CreateStrainRelationship(),
@@ -64,34 +62,33 @@ public class SpawnRepository : ISpawnRepository
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public async Task<string> Update(string elementId, Spawn spawn)
+    public async Task<string> Update(Spawn spawn)
     {
-        var queryList = new List<string>
+        var queryList = new List<string?>
         {
-            spawn.UpdateModifiedOnRelationship(elementId),
-            spawn.UpdateModifiedRelationship(elementId),
-            spawn.UpdateStatus(elementId),
-            spawn.UpdateName(elementId),
-            spawn.UpdateNotes(elementId),
-            spawn.UpdateType(elementId),
-            spawn.UpdateRecipeRelationship(elementId),
-            spawn.UpdateLocationRelationship(elementId),
-            spawn.UpdateParentRelationship(elementId),
-            spawn.UpdateChildRelationship(elementId)
+            spawn.UpdateModifiedOnRelationship(),
+            spawn.UpdateModifiedRelationship(),
+            spawn.UpdateStatus(),
+            spawn.UpdateName(),
+            spawn.UpdateNotes(),
+            spawn.UpdateType(),
+            spawn.UpdateRecipeRelationship(),
+            spawn.UpdateLocationRelationship(),
+            spawn.UpdateParentRelationship(),
+            spawn.UpdateChildRelationship()
         };
         
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData);
     }
     
-    public async Task Delete(string elementId)
+    public async Task Delete(Spawn spawn)
     {
-        var query = $"MATCH (s:Spawn) WHERE elementId(s) = '{ elementId }' DETACH DELETE s RETURN s";
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(query);
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(spawn.Delete());
 
-        if(delete.ElementId != elementId)
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", elementId);
-        
-        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", elementId);
+        if(delete.ElementId == spawn.ElementId)
+            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", spawn.ElementId);
+        else
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", spawn.ElementId);
     }
 }

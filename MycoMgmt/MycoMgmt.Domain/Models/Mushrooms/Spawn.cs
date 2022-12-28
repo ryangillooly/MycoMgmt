@@ -8,6 +8,5 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         {
             Tags.Add(EntityTypes.Spawn.ToString());
         }
-        public string Type { get; set; }
     }
 }

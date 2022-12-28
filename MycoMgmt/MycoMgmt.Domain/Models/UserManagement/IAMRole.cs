@@ -7,12 +7,12 @@ using System.Formats.Asn1;
 
 namespace MycoMgmt.Domain.Models.UserManagement
 {
-    public class IamRole : ModelBase
+    public class IamRole : Security
     {
         public IamRole()
         {
             Tags.Add(EntityTypes.IamRole.ToString());
         }
-        public List<string> Permissions { get; set; }
+        
     }
 }
