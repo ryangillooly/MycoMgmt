@@ -103,9 +103,12 @@ public class CultureRepository : ICultureRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Culture culture)
+    public async Task<string> GetAll(Culture culture, int? skip, int? limit)
     {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(), "x");
+        skip  = skip ?? 0;
+        limit = limit ?? 20;
+        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
 }

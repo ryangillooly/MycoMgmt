@@ -99,9 +99,12 @@ public class BulkRepository : IBulkRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Bulk bulk)
+    public async Task<string> GetAll(Bulk bulk, int? skip, int? limit)
     {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(), "x");
+        skip  = skip ?? 0;
+        limit = limit ?? 0;
+        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
 }

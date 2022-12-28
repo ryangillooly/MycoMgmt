@@ -150,7 +150,7 @@ public class BulkController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _bulkRepository.GetAll(new Bulk()));
+    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _bulkRepository.GetAll(new Bulk(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _bulkRepository.GetById(new Bulk { ElementId = elementId }));

@@ -158,7 +158,7 @@ public class CultureController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _cultureRepository.GetAll(new Culture()));
+    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _cultureRepository.GetAll(new Culture(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _cultureRepository.GetById(new Culture { ElementId = elementId }));

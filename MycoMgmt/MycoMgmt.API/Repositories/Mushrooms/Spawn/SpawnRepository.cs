@@ -92,9 +92,12 @@ public class SpawnRepository : ISpawnRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Spawn spawn)
+    public async Task<string> GetAll(Spawn spawn, int? skip, int? limit)
     {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(), "x");
+        skip  = skip ?? 0;
+        limit = limit ?? 0;
+        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(skip, limit), "x");
         return JsonConvert.SerializeObject(spawn);
     }
     

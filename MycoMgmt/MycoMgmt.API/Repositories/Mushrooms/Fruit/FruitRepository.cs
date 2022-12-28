@@ -97,9 +97,12 @@ public class FruitRepository : IFruitRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Fruit fruit)
+    public async Task<string> GetAll(Fruit fruit, int? skip, int? limit)
     {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(), "x");
+        skip  = skip ?? 0;
+        limit = limit ?? 0;
+        
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
 }
