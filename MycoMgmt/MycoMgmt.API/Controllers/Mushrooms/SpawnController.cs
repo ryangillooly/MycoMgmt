@@ -32,6 +32,9 @@ public class SpawnController : Controller
         string? childType,
         bool?   successful,
         bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  createdOn,
         string  createdBy,
         int?    count = 1
@@ -45,20 +48,23 @@ public class SpawnController : Controller
 
         var spawn = new Spawn()
         {
-            Name       = name,
-            Recipe     = recipe,
-            Location   = location,
-            Notes      = notes,
-            Type       = type,
-            Strain     = strain,
-            Finished   = finished,
-            Successful = successful,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            CreatedOn  = DateTime.Parse(createdOn),
-            CreatedBy  = createdBy
+            Name         = name,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Type         = type,
+            Strain       = strain,
+            Successful   = successful,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
         };
         
         spawn.Tags.Add(spawn.IsSuccessful());
@@ -99,6 +105,9 @@ public class SpawnController : Controller
         string? childType,
         bool?   successful,
         bool?   finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  modifiedOn,
         string  modifiedBy
     )
@@ -114,21 +123,24 @@ public class SpawnController : Controller
         
         var spawn = new Spawn()
         {
-            ElementId  = elementId,
-            Name       = name,
-            Recipe     = recipe,
-            Location   = location,
-            Notes      = notes,
-            Type       = type,
-            Strain     = strain,
-            Finished   = finished,
-            Successful = successful,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
+            ElementId    = elementId,
+            Name         = name,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Type         = type,
+            Strain       = strain,
+            Successful   = successful,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
         };
 
         return Ok(await _spawnRepository.Update(spawn));

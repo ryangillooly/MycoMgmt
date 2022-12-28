@@ -20,21 +20,24 @@ public class FruitController : Controller
     [HttpPost]
     public async Task<IActionResult> Create
     (
-        string  name,
-        string  strain,
-        string? notes,
+        string   name,
+        string   strain,
+        string?  notes,
         decimal? wetWeight,
         decimal? dryWeight,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        bool?   successful,
-        bool    finished,
-        string  createdOn,
-        string  createdBy,
-        int?    count = 1
+        string?  location,
+        string?  parent,
+        string?  parentType,
+        string?  child,
+        string?  childType,
+        bool?    successful,
+        bool     finished,
+        string?  finishedOn,
+        string?  inoculatedOn,
+        string?  inoculatedBy,
+        string   createdOn,
+        string   createdBy,
+        int?     count = 1
     )
     {
         if((parent == null && parentType != null ) || (parent != null && parentType == null))
@@ -45,20 +48,23 @@ public class FruitController : Controller
 
         var fruit = new Fruit()
         {
-            Name       = name,
-            WetWeight  = wetWeight,
-            DryWeight  = dryWeight,
-            Location   = location,
-            Notes      = notes,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            Strain     = strain,
-            Successful = successful,
-            Finished   = finished,
-            CreatedOn  = DateTime.Parse(createdOn),
-            CreatedBy  = createdBy
+            Name         = name,
+            WetWeight    = wetWeight,
+            DryWeight    = dryWeight,
+            Location     = location,
+            Notes        = notes,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Strain       = strain,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
         };
         
         fruit.Tags.Add(fruit.IsSuccessful());
@@ -98,6 +104,9 @@ public class FruitController : Controller
         string?  childType,
         bool?    successful,
         bool?    finished,
+        string?  finishedOn,
+        string?  inoculatedOn,
+        string?  inoculatedBy,
         string   modifiedOn,
         string   modifiedBy
     )
@@ -113,20 +122,24 @@ public class FruitController : Controller
 
         var fruit = new Fruit()
         {
-            Name       = name,
-            WetWeight  = wetWeight,
-            DryWeight  = dryWeight,
-            Strain     = strain,
-            Notes      = notes,
-            Location   = location,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            Successful = successful,
-            Finished   = finished,
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
+            ElementId    = elementId,
+            Name         = name,
+            WetWeight    = wetWeight,
+            DryWeight    = dryWeight,
+            Strain       = strain,
+            Notes        = notes,
+            Location     = location,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Successful   = successful,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
         };
         
         return Ok(await _fruitRepository.Update(fruit));

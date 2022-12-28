@@ -33,6 +33,9 @@ public class CultureController : Controller
         string? vendor,
         bool?   successful,
         bool    finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  createdOn,
         string  createdBy,
         int?    count = 1
@@ -46,21 +49,24 @@ public class CultureController : Controller
         
         var culture = new Culture()
         {
-            Name       = name,
-            Type       = type.Replace(" ",""),
-            Recipe     = recipe,
-            Location   = location,
-            Vendor     = vendor,
-            Notes      = notes,
-            Successful = successful,
-            Strain     = strain,
-            Finished   = finished,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            CreatedOn  = DateTime.Parse(createdOn),
-            CreatedBy  = createdBy
+            Name         = name,
+            Type         = type.Replace(" ",""),
+            Recipe       = recipe,
+            Location     = location,
+            Vendor       = vendor,
+            Notes        = notes,
+            Successful   = successful,
+            Strain       = strain,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
         };
         
         culture.Tags.Add(culture.IsSuccessful());
@@ -102,6 +108,9 @@ public class CultureController : Controller
         string? vendor,
         bool?   successful,
         bool?   finished,
+        string? finishedOn,
+        string? inoculatedOn,
+        string? inoculatedBy,
         string  modifiedOn,
         string  modifiedBy
     )
@@ -117,22 +126,25 @@ public class CultureController : Controller
 
         var culture = new Culture
         {
-            ElementId  = elementId,
-            Name       = name,
-            Strain     = strain,
-            Type       = type,
-            Notes      = notes,
-            Recipe     = recipe,
-            Location   = location,
-            Vendor     = vendor,
-            Successful = successful!.Value,
-            Finished   = finished,
-            Parent     = parent,
-            ParentType = parentType,
-            Child      = child,
-            ChildType  = childType,
-            ModifiedOn = DateTime.Parse(modifiedOn),
-            ModifiedBy = modifiedBy
+            ElementId    = elementId,
+            Name         = name,
+            Strain       = strain,
+            Type         = type,
+            Notes        = notes,
+            Recipe       = recipe,
+            Location     = location,
+            Vendor       = vendor,
+            Successful   = successful,
+            Parent       = parent,
+            ParentType   = parentType,
+            Child        = child,
+            ChildType    = childType,
+            InoculatedBy = inoculatedBy,
+            Finished     = finished,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            ModifiedOn   = DateTime.Parse(modifiedOn),
+            ModifiedBy   = modifiedBy
         };
         
         return Ok(await _cultureRepository.Update(culture));

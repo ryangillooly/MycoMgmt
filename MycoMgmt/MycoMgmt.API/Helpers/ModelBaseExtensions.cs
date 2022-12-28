@@ -21,7 +21,7 @@ public static class ModelBaseExtensions
                                 x
                             MATCH
                                 (d:Day {{ day: {parsedDateTime.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {parsedDateTime.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {parsedDateTime.Year} }})
-                            CREATE
+                            MERGE
                                 (x)-[r:MODIFIED_ON]->(d)
                             RETURN 
                                 r
@@ -44,7 +44,7 @@ public static class ModelBaseExtensions
                     r
                 WITH
                     x
-                CREATE
+                MATCH
                     (u:User {{ Name: '{mushroom.ModifiedBy}'}} )
                 MERGE 
                     (u)-[r:MODIFIED]->(x)

@@ -23,7 +23,7 @@ public static class MushroomExtensions
                         c
                     MATCH 
                         (p:{mushroom.ParentType} {{Name: '{mushroom.Parent}' }})
-                    CREATE 
+                    MERGE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
                         r
@@ -48,7 +48,7 @@ public static class MushroomExtensions
                         p
                     MATCH 
                         (c:{mushroom.ChildType} {{Name: '{mushroom.Child}' }})
-                    CREATE 
+                    MERGE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
                         r
@@ -73,7 +73,7 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (s:Strain {{ Name: '{mushroom.Strain}' }})
-                    CREATE
+                    MERGE
                         (x)-[r:HAS_STRAIN]->(s)
                     RETURN 
                         r
@@ -98,7 +98,7 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (l:Location {{ Name: '{mushroom.Location}' }})
-                    CREATE
+                    MERGE
                         (x)-[r:STORED_IN]->(l) 
                     RETURN 
                         r
@@ -123,7 +123,7 @@ public static class MushroomExtensions
                         c
                     MATCH
                         (recipe:Recipe {{ Name: '{mushroom.Recipe}' }})
-                    CREATE
+                    MERGE
                         (c)-[r:CREATED_USING]->(recipe)
                     RETURN 
                         r
@@ -157,23 +157,23 @@ public static class MushroomExtensions
             mushroom.InoculatedBy is null
                 ? null
                 : $@"
-                MATCH 
-                    (x:{mushroom.Tags[0]})
-                WHERE
-                    elementId(x) = '{mushroom.ElementId}'
-                OPTIONAL MATCH
-                    (u)-[r:INOCULATED]->(x)
-                DELETE 
-                    r
-                WITH
-                    x
-                MATCH
-                    (u:User {{ Name: '{mushroom.InoculatedBy}' }})
-                CREATE
-                    (u)-[r:INOCULATED]->(x)
-                RETURN 
-                    r
-            ";
+                    MATCH 
+                        (x:{mushroom.Tags[0]})
+                    WHERE
+                        elementId(x) = '{mushroom.ElementId}'
+                    OPTIONAL MATCH
+                        (u:User)-[r:INOCULATED]->(x)
+                    DELETE 
+                        r
+                    WITH
+                        x
+                    MATCH
+                        (u:User {{ Name: '{mushroom.InoculatedBy}' }})
+                    MERGE
+                        (u)-[r:INOCULATED]->(x)
+                    RETURN 
+                        r
+                ";
     }
 
     public static string? UpdateInoculatedOnRelationship(this Mushroom mushroom)
@@ -194,7 +194,7 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (d:Day {{ day: {mushroom.InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.InoculatedOn.Value.Year} }})
-                    CREATE
+                    MERGE
                         (x)-[r:INOCULATED_ON]->(d)
                     RETURN 
                         r
@@ -219,7 +219,7 @@ public static class MushroomExtensions
                         x
                     MATCH
                         (d:Day {{ day: {mushroom.FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.FinishedOn.Value.Year} }})
-                    CREATE
+                    MERGE
                         (x)-[r:FINISHED_ON]->(d)
                     RETURN 
                         r

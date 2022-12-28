@@ -27,36 +27,14 @@ public class CultureRepository : ICultureRepository
         _logger = logger;
     }
 
-    public async Task<string> SearchByName(Culture culture)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.SearchByNameQuery(), "x");
-        return JsonConvert.SerializeObject(result);
-    }
-
-    public async Task<string> GetByName(Culture culture)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.GetByNameQuery(), "x");
-
-        return JsonConvert.SerializeObject(result);
-    }
-
-    public async Task<string> GetById(Culture culture)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(culture.GetByIdQuery());
-        return JsonConvert.SerializeObject(result);
-    }
-    
-    public async Task<string> GetAll(Culture culture)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(), "x");
-        return JsonConvert.SerializeObject(result);
-    }
-    
     public async Task<string> Create(Culture culture)
     {
         var queryList = new List<string?>
         {
             culture.Create(),
+            culture.CreateInoculatedRelationship(),
+            culture.CreateInoculatedOnRelationship(),
+            culture.CreateFinishedOnRelationship(),
             culture.CreateStrainRelationship(),
             culture.CreateLocationRelationship(),
             culture.CreateCreatedRelationship(),
@@ -89,6 +67,9 @@ public class CultureRepository : ICultureRepository
             culture.UpdateName(),
             culture.UpdateNotes(),
             culture.UpdateType(),
+            culture.UpdateInoculatedRelationship(),
+            culture.UpdateInoculatedOnRelationship(),
+            culture.UpdateFinishedOnRelationship(),
             culture.UpdateRecipeRelationship(),
             culture.UpdateStrainRelationship(),
             culture.UpdateLocationRelationship(),
@@ -101,5 +82,30 @@ public class CultureRepository : ICultureRepository
         
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
+    }
+    
+    public async Task<string> SearchByName(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.SearchByNameQuery(), "x");
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetByName(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.GetByNameQuery(), "x");
+
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetById(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(culture.GetByIdQuery());
+        return JsonConvert.SerializeObject(result);
+    }
+    
+    public async Task<string> GetAll(Culture culture)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(), "x");
+        return JsonConvert.SerializeObject(result);
     }
 }

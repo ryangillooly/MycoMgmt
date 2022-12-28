@@ -26,37 +26,15 @@ public class FruitRepository : IFruitRepository
         _logger = logger;
     }
 
-    public async Task<string> SearchByName(Fruit fruit)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.SearchByNameQuery(), "x");
-        return JsonConvert.SerializeObject(result);
-    }
-
-    public async Task<string> GetByName(Fruit fruit)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.GetByNameQuery(), "x");
-
-        return JsonConvert.SerializeObject(result);
-    }
-
-    public async Task<string> GetById(Fruit fruit)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(fruit.GetByIdQuery());
-        return JsonConvert.SerializeObject(result);
-    }
-    
-    public async Task<string> GetAll(Fruit fruit)
-    {
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(), "x");
-        return JsonConvert.SerializeObject(result);
-    }
-
     
     public async Task<string> Create(Fruit fruit)
     {
         var queryList = new List<string?>
         {
             fruit.Create(),
+            fruit.CreateInoculatedRelationship(),
+            fruit.CreateInoculatedOnRelationship(),
+            fruit.CreateFinishedOnRelationship(),
             fruit.CreateStrainRelationship(),
             fruit.CreateLocationRelationship(),
             fruit.CreateCreatedRelationship(),
@@ -84,6 +62,9 @@ public class FruitRepository : IFruitRepository
         var queryList = new List<string?>
         {
             fruit.UpdateName(),
+            fruit.UpdateInoculatedRelationship(),
+            fruit.UpdateInoculatedOnRelationship(),
+            fruit.UpdateFinishedOnRelationship(),
             fruit.UpdateRecipeRelationship(),
             fruit.UpdateLocationRelationship(),
             fruit.UpdateParentRelationship(),
@@ -95,5 +76,30 @@ public class FruitRepository : IFruitRepository
 
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
+    }
+    
+    public async Task<string> SearchByName(Fruit fruit)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.SearchByNameQuery(), "x");
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetByName(Fruit fruit)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.GetByNameQuery(), "x");
+
+        return JsonConvert.SerializeObject(result);
+    }
+
+    public async Task<string> GetById(Fruit fruit)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(fruit.GetByIdQuery());
+        return JsonConvert.SerializeObject(result);
+    }
+    
+    public async Task<string> GetAll(Fruit fruit)
+    {
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(), "x");
+        return JsonConvert.SerializeObject(result);
     }
 }

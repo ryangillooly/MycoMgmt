@@ -58,8 +58,8 @@ public class BulkController : Controller
             ChildType    = childType,
             Successful   = successful,
             Finished     = finished,
-            FinishedOn   = DateTime.Parse(finishedOn!),
-            InoculatedOn = DateTime.Parse(inoculatedOn!),
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
             InoculatedBy = inoculatedBy,
             CreatedOn    = DateTime.Parse(createdOn),
             CreatedBy    = createdBy
@@ -100,7 +100,7 @@ public class BulkController : Controller
         string? child,
         string? childType,
         bool?   successful,
-        bool    finished,
+        bool?   finished,
         string? finishedOn,
         string? inoculatedOn,
         string? inoculatedBy,
@@ -120,6 +120,7 @@ public class BulkController : Controller
         
         var bulk = new Bulk
         {
+            ElementId    = elementId,
             Name         = name,
             Recipe       = recipe,
             Strain       = strain,
@@ -131,8 +132,8 @@ public class BulkController : Controller
             ChildType    = childType,
             Successful   = successful,
             Finished     = finished,
-            FinishedOn   = DateTime.Parse(finishedOn!),
-            InoculatedOn = DateTime.Parse(inoculatedOn!),
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
             InoculatedBy = inoculatedBy,
             ModifiedOn   = DateTime.Parse(modifiedOn),
             ModifiedBy   = modifiedBy

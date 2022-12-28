@@ -19,6 +19,60 @@ public class SpawnRepository : ISpawnRepository
         _neo4JDataAccess = neo4JDataAccess;
         _logger = logger;
     }
+    
+    public async Task<string> Create(Spawn spawn)
+    {
+        var queryList = new List<string?>
+        {
+            spawn.Create(),
+            spawn.CreateInoculatedRelationship(),
+            spawn.CreateInoculatedOnRelationship(),
+            spawn.CreateFinishedOnRelationship(),
+            spawn.CreateStrainRelationship(),
+            spawn.CreateLocationRelationship(),
+            spawn.CreateCreatedRelationship(),
+            spawn.CreateCreatedOnRelationship(),
+            spawn.CreateParentRelationship(),
+            spawn.CreateChildRelationship(),
+            spawn.CreateRecipeRelationship(),
+            spawn.CreateNodeLabels()
+        };
+
+        return await _neo4JDataAccess.RunTransaction(queryList);
+    }
+    
+    public async Task<string> Update(Spawn spawn)
+    {
+        var queryList = new List<string?>
+        {
+            spawn.UpdateName(),
+            spawn.UpdateStatus(),
+            spawn.UpdateNotes(),
+            spawn.UpdateType(),
+            spawn.UpdateInoculatedRelationship(),
+            spawn.UpdateInoculatedOnRelationship(),
+            spawn.UpdateFinishedOnRelationship(),
+            spawn.UpdateModifiedOnRelationship(),
+            spawn.UpdateModifiedRelationship(),
+            spawn.UpdateRecipeRelationship(),
+            spawn.UpdateLocationRelationship(),
+            spawn.UpdateParentRelationship(),
+            spawn.UpdateChildRelationship()
+        };
+        
+        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(spawnData);
+    }
+    
+    public async Task Delete(Spawn spawn)
+    {
+        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(spawn.Delete());
+
+        if(delete.ElementId == spawn.ElementId)
+            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", spawn.ElementId);
+        else
+            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", spawn.ElementId);
+    }
 
     public async Task<string> SearchByName(Spawn spawn)
     {
@@ -44,51 +98,4 @@ public class SpawnRepository : ISpawnRepository
         return JsonConvert.SerializeObject(spawn);
     }
     
-    public async Task<string> Create(Spawn spawn)
-    {
-        var queryList = new List<string?>
-        {
-            spawn.Create(),
-            spawn.CreateStrainRelationship(),
-            spawn.CreateLocationRelationship(),
-            spawn.CreateCreatedRelationship(),
-            spawn.CreateCreatedOnRelationship(),
-            spawn.CreateParentRelationship(),
-            spawn.CreateChildRelationship(),
-            spawn.CreateRecipeRelationship(),
-            spawn.CreateNodeLabels()
-        };
-
-        return await _neo4JDataAccess.RunTransaction(queryList);
-    }
-    
-    public async Task<string> Update(Spawn spawn)
-    {
-        var queryList = new List<string?>
-        {
-            spawn.UpdateModifiedOnRelationship(),
-            spawn.UpdateModifiedRelationship(),
-            spawn.UpdateStatus(),
-            spawn.UpdateName(),
-            spawn.UpdateNotes(),
-            spawn.UpdateType(),
-            spawn.UpdateRecipeRelationship(),
-            spawn.UpdateLocationRelationship(),
-            spawn.UpdateParentRelationship(),
-            spawn.UpdateChildRelationship()
-        };
-        
-        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(spawnData);
-    }
-    
-    public async Task Delete(Spawn spawn)
-    {
-        var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(spawn.Delete());
-
-        if(delete.ElementId == spawn.ElementId)
-            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", spawn.ElementId);
-        else
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", spawn.ElementId);
-    }
 }
