@@ -63,7 +63,6 @@ public class CultureRepository : ICultureRepository
     {
         var queryList = new List<string?>
         {
-            culture.UpdateStatus(),
             culture.UpdateName(),
             culture.UpdateNotes(),
             culture.UpdateType(),
@@ -78,6 +77,8 @@ public class CultureRepository : ICultureRepository
             culture.UpdateVendorRelationship(),
             culture.UpdateModifiedOnRelationship(),
             culture.UpdateModifiedRelationship(),
+            culture.UpdateStatus(),
+            culture.UpdateStatusLabel(),
         };
         
         var results = await _neo4JDataAccess.RunTransaction(queryList);
@@ -106,7 +107,7 @@ public class CultureRepository : ICultureRepository
     public async Task<string> GetAll(Culture culture, int? skip, int? limit)
     {
         skip  = skip ?? 0;
-        limit = limit ?? 20;
+        limit = limit ?? 10;
         
         var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(skip, limit), "result");
         return JsonConvert.SerializeObject(result);

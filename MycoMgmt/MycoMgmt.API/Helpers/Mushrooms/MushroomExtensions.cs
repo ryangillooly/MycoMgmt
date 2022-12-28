@@ -130,7 +130,7 @@ public static class MushroomExtensions
                 ";
     }
     
-    public static string? UpdateStatus(this Mushroom mushroom)
+    public static string? UpdateStatusLabel(this Mushroom mushroom)
     {
         return
             mushroom.Successful is null && mushroom.Finished is null
@@ -146,6 +146,23 @@ public static class MushroomExtensions
                         x                    
                     SET 
                         x:{mushroom.IsSuccessful()}
+                    RETURN 
+                        x
+                ";
+    }
+    
+    public static string? UpdateStatus(this Mushroom mushroom)
+    {
+        return
+            mushroom.Successful is null && mushroom.Finished is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.EntityType})
+                    WHERE 
+                        elementId(x) = '{mushroom.ElementId}'
+                    SET 
+                        x {{ Status: '{mushroom.IsSuccessful()}' }}
                     RETURN 
                         x
                 ";

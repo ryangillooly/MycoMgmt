@@ -1,3 +1,4 @@
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.Helpers;
@@ -14,7 +15,9 @@ public static class SpawnExtensions
         var query = $@"CREATE 
                                 (
                                     x:{spawn.Tags[0]} {{ 
-                                                         Name: '{spawn.Name}' 
+                                                         Name:       '{spawn.Name}',
+                                                         EntityType: '{spawn.EntityType}',
+                                                         Status:     '{spawn.IsSuccessful()}'
                                                          {additionalData} 
                                                       }}
                                 )

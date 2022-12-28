@@ -1,5 +1,5 @@
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Neo4j.Driver;
 
 namespace MycoMgmt.Helpers;
 
@@ -15,7 +15,9 @@ public static class BulkExtensions
         var query = $@"CREATE 
                                 (
                                     x:{bulk.Tags[0]} {{ 
-                                                         Name: '{bulk.Name}' 
+                                                         Name:       '{bulk.Name}',
+                                                         EntityType: '{bulk.EntityType}',
+                                                         Status:     '{bulk.IsSuccessful()}'
                                                          {notes} 
                                                      }}
                                 )

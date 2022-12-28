@@ -1,10 +1,10 @@
-﻿@page "/culturelist"
+﻿@page "/fruitlist"
 @using System.Net.Http
 @using Microsoft.AspNetCore.Mvc
 @using MycoMgmt.Domain.Models.Mushrooms
 @using Newtonsoft.Json
 
-<h2>Cultures</h2>
+<h2>Fruits</h2>
 
 <button class="btn btn-primary" @onclick="PreviousPage">Previous</button>
 <button class="btn btn-primary" @onclick="NextPage">Next</button>
@@ -16,13 +16,13 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Inoculated By</th>
-            <th>Inoculated On</th>
-            <th>Created By</th>
-            <th>Created On</th>
+            <th>Strain</th>
             <th>Location</th>
             <th>Parent</th>
-            <th>ParentType</th>
+            <th>Harvested On</th>
+            <th>Created By</th>
+            <th>Created On</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -30,13 +30,13 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.InoculatedBy</td>
-                <td>@item.InoculatedOn</td>
+                <td>@item.Strain</td>
+                <td>@item.Location</td>
+                <td>@item.Parent (@item.ParentType)</td>
+                <td>@item.FinishedOn</td>
                 <td>@item.CreatedBy</td>
                 <td>@item.CreatedOn</td>
-                <td>@item.Location</td>
-                <td>@item.Parent</td>
-                <td>@item.ParentType</td>
+                <td>@item.Status</td>
             </tr>
         }
     </tbody>
@@ -74,11 +74,9 @@
 
     private async Task LoadData(int skip, int limit)
     {
-        var response = await _httpClient.GetAsync($"http://localhost:6002/cultures?skip={skip}&limit={limit}");
+        var response = await _httpClient.GetAsync($"http://localhost:6002/fruit?skip={skip}&limit={limit}");
         var responseContent = await response.Content.ReadAsStringAsync();
-        
-        
         Data = JsonConvert.DeserializeObject<List<Culture>>(responseContent);
-        var a = "";
+        string? a = "";
     }
 }

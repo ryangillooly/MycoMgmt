@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,6 +11,8 @@ using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 #pragma warning disable CS8604
 
 // ReSharper disable once CheckNamespace
@@ -71,7 +74,8 @@ public class FruitRepository : IFruitRepository
             fruit.UpdateChildRelationship(),
             fruit.UpdateModifiedOnRelationship(),
             fruit.UpdateModifiedRelationship(),
-            fruit.UpdateStatus()
+            fruit.UpdateStatus(),
+            fruit.UpdateStatusLabel()
         };
 
         var results = await _neo4JDataAccess.RunTransaction(queryList);
@@ -100,9 +104,32 @@ public class FruitRepository : IFruitRepository
     public async Task<string> GetAll(Fruit fruit, int? skip, int? limit)
     {
         skip  = skip ?? 0;
-        limit = limit ?? 0;
+        limit = limit ?? 10;
         
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(skip, limit), "x");
-        return JsonConvert.SerializeObject(result);
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(skip, limit), "result");
+        var dedupeResult = result.OfType<Dictionary<string, object>>().Distinct(new DictionaryEqualityComparer("ElementId")).ToList();
+        return JsonConvert.SerializeObject(dedupeResult);
+    }
+}
+
+public class DictionaryEqualityComparer : IEqualityComparer<Dictionary<string, object>>
+{
+    private readonly string _key;
+
+    public DictionaryEqualityComparer(string key)
+    {
+        _key = key;
+    }
+
+    public bool Equals(Dictionary<string, object> x, Dictionary<string, object> y)
+    {
+        // Compare the values of the specified key for both dictionaries
+        return x[_key].Equals(y[_key]);
+    }
+
+    public int GetHashCode(Dictionary<string, object> obj)
+    {
+        // Generate a hash code for the value of the specified key
+        return obj[_key].GetHashCode();
     }
 }

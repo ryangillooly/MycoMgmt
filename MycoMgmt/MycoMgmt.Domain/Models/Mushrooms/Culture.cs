@@ -8,7 +8,9 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {
         public Culture()
         {
-            Tags.Add(EntityTypes.Culture.ToString());
+            var entityType = EntityTypes.Culture.ToString();
+            Tags.Add(entityType);
+            EntityType = entityType;
         }
         public string? Vendor { get; set; }
     }
