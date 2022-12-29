@@ -155,7 +155,7 @@ public class SpawnController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _spawnRepository.GetAll(new Spawn(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _spawnRepository.GetAll(new Spawn(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _spawnRepository.GetById(new Spawn { ElementId = elementId}));

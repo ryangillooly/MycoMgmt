@@ -24,6 +24,29 @@ namespace MycoMgmt.API.Repositories
             _logger = logger;
         }
         
+        public async Task<string> Create(User user)
+        {
+            var queryList = user.CreateQueryList();
+            return await _neo4JDataAccess.RunTransaction(queryList);
+        }
+        
+        public async Task<string> Update(User user)
+        {
+            var queryList = user.UpdateQueryList();
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
+        }
+        
+        public async Task Delete(User user)
+        {
+            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(user.Delete());
+        
+            if(delete.ElementId == user.ElementId)
+                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", user.ElementId);
+            else
+                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", user.ElementId);
+        }
+        
         public async Task<string> SearchByName(User user)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(user.SearchByNameQuery(), "x");
@@ -43,54 +66,10 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(User user, int? skip, int? limit)
+        public async Task<string> GetAll(User user, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
-            
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(user.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(user.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
-        }
-        
-        public async Task Delete(User user)
-        {
-            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(user.Delete());
-        
-            if(delete.ElementId == user.ElementId)
-                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", user.ElementId);
-            else
-                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", user.ElementId);
-        }
-        
-        public async Task<string> Update(User user)
-        {
-            var queryList = new List<string?>
-            {
-                user.UpdateName(),
-                user.UpdateAccountRelationship(),
-                user.UpdateRoleRelationship(),
-                user.UpdatePermissionRelationship(),
-                user.UpdateModifiedOnRelationship(),
-                user.UpdateModifiedRelationship(),
-            };
-        
-            var results = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(results);
-        }
-        
-        public async Task<string> Create(User user)
-        {
-            var queryList = new List<string?>
-            {
-                user.Create(),
-                user.CreateAccountRelationship(),
-                user.CreateRoleRelationship(),
-                user.CreatePermissionRelationship(),
-                user.CreateCreatedRelationship(),
-                user.CreateCreatedOnRelationship()
-            };
-
-            return await _neo4JDataAccess.RunTransaction(queryList);
         }
     }
 }

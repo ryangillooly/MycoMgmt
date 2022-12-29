@@ -66,7 +66,7 @@ namespace MycoMgmt.API.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _roleRepository.GetAll(new IamRole(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _roleRepository.GetAll(new IamRole(), skip, limit));
         [HttpGet("id/{elementId}")]
         public async Task<IActionResult> GetById(string elementId) => Ok(await _roleRepository.GetById(new IamRole { ElementId = elementId }));
 

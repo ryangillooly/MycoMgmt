@@ -8,7 +8,7 @@ namespace MycoMgmt.Domain.Models
     {
         public Ingredient()
         {
-            Tags.Add(EntityTypes.Ingredient.ToString());
+            Tags.Add(GetType().Name);
         }
     }
 }

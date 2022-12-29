@@ -30,9 +30,10 @@ public class CultureController : Controller
         string? parentType,
         string? child,
         string? childType,
-        string? vendor,
         bool?   successful,
         bool    finished,
+        bool?   purchased,
+        string? vendor,
         string? finishedOn,
         string? inoculatedOn,
         string? inoculatedBy,
@@ -41,25 +42,29 @@ public class CultureController : Controller
         int?    count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
+        if((parent is null && parentType is not null ) || (parent is not null && parentType is null))
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
-        if((child == null && childType != null ) || (child != null && childType == null))
+        if((child is null && childType is not null ) || (child is not null && childType is null))
             throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
         
-        var culture = new Culture()
+        if(purchased is null or false && vendor is not null )
+            throw new ValidationException("You cannot supply a Vendor if the item was not Purchased.");
+        
+        var culture = new Culture
         {
             Name         = name,
             Type         = type,
             Recipe       = recipe,
             Location     = location,
-            Vendor       = vendor,
             Notes        = notes,
             Strain       = strain,
             Parent       = parent,
             ParentType   = parentType,
             Children     = child,
             ChildType    = childType,
+            Vendor       = vendor,
+            Purchased    = purchased, 
             Finished     = finished,
             Successful   = successful,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
@@ -70,8 +75,6 @@ public class CultureController : Controller
         };
 
         culture.Status = culture.IsSuccessful();
-        culture.Tags.Add(culture.Status);
-        culture.Tags.Add($"`{culture.Type}`");
 
         var resultList = new List<string>();
         var cultureName = culture.Name;
@@ -159,7 +162,7 @@ public class CultureController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _cultureRepository.GetAll(new Culture(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await _cultureRepository.GetAll(new Culture(), skip, limit));
 
     [HttpGet("id/{elementId}")]
     public async Task<IActionResult> GetById(string elementId) => Ok(await _cultureRepository.GetById(new Culture { ElementId = elementId }));

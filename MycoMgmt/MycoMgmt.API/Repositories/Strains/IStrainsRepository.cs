@@ -10,7 +10,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Strain strain);
         Task<string> GetByName(Strain strain);
         public Task<string> GetById(Strain strain);
-        public Task<string> GetAll(Strain strain, int? skip, int? limit);
+        public Task<string> GetAll(Strain strain, int skip, int limit);
         public Task<string> Create(Strain strain);
         public Task Delete(Strain strain);
         public Task<string> Update(Strain strain);

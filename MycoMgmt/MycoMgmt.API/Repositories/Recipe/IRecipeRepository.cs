@@ -10,6 +10,6 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Recipe recipe);
         Task<string> GetByName(Recipe recipe);
         public Task<string> GetById(Recipe recipe);
-        public Task<string> GetAll(Recipe recipe, int? skip, int? limit);
+        public Task<string> GetAll(Recipe recipe, int skip, int limit);
     }
 }

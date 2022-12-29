@@ -7,7 +7,7 @@ namespace MycoMgmt.Domain.Models.UserManagement
     {
         public Account()
         {
-            Tags.Add(EntityTypes.Account.ToString());
+            Tags.Add(GetType().Name);
         }
     }
 }

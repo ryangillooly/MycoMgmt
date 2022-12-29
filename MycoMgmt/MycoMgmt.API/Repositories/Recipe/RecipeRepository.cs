@@ -38,28 +38,15 @@ public class RecipeRepository : IRecipeRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Recipe recipe, int? skip, int? limit)
+    public async Task<string> GetAll(Recipe recipe, int skip, int limit)
     {
-        skip  = skip ?? 0;
-        limit = limit ?? 0;
-        
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAll(skip, limit), "x");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAllQuery(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
     
     public async Task<string> Create(Recipe recipe)
     {
-        if (recipe == null || string.IsNullOrWhiteSpace(recipe.Name))
-            throw new ArgumentNullException(nameof(recipe), "Recipe must not be null");
-
-        var queryList = new List<string?>
-        {
-            recipe.Create(),
-            recipe.CreateIngredientRelationship(),
-            recipe.CreateCreatedRelationship(),
-            recipe.CreateCreatedOnRelationship()
-        };
-        
+        var queryList = recipe.CreateQueryList();        
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -75,18 +62,7 @@ public class RecipeRepository : IRecipeRepository
         
     public async Task<string> Update(Recipe recipe)
     {
-        var queryList = new List<string?>
-        {
-            recipe.UpdateName(),
-            recipe.UpdateType(),
-            recipe.UpdateSteps(),
-            recipe.UpdateDescription(),
-            recipe.UpdateNotes(),
-            recipe.UpdateIngredientRelationship(),
-            recipe.UpdateModifiedOnRelationship(),
-            recipe.UpdateModifiedRelationship()
-        };
-        
+        var queryList = recipe.UpdateQueryList();   
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
     }

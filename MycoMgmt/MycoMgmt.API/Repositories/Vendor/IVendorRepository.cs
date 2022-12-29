@@ -16,6 +16,6 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Vendor vendor);
         Task<string> GetByName(Vendor vendor);
         public Task<string> GetById(Vendor vendor);
-        public Task<string> GetAll(Vendor vendor, int? skip, int? limit);
+        public Task<string> GetAll(Vendor vendor, int skip, int limit);
     }
 }

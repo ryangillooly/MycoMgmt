@@ -49,15 +49,6 @@
                 {
                     <td>@item.Parent (@item.ParentType)</td>
                 }
-                
-                @if (item.InoculatedOn is null || item.InoculatedOn.Value.Year == 1)
-                {
-                    <td></td>
-                }
-                else
-                {
-                    <td>@DateTime.Parse(item.InoculatedOn.ToString())</td>
-                }
                 <td>@item.InoculatedOn</td>
                 <td>@item.InoculatedBy</td>
             </tr>
