@@ -99,7 +99,7 @@ public class SpawnRepository : ISpawnRepository
         limit = limit ?? 10;
         
         var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(skip, limit), "result");
-        return JsonConvert.SerializeObject(spawn);
+        return JsonConvert.SerializeObject(result);
     }
     
 }

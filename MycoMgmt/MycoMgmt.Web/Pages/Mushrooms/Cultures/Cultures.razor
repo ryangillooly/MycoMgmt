@@ -1,14 +1,16 @@
 ﻿@page "/culturelist"
-@using System.Net.Http
-@using Microsoft.AspNetCore.Mvc
 @using MycoMgmt.Domain.Models.Mushrooms
 @using Newtonsoft.Json
 
 <h2>Cultures</h2>
 
-<button class="btn btn-primary" @onclick="PreviousPage">Previous</button>
-<button class="btn btn-primary" @onclick="NextPage">Next</button>
+<button class="btn btn-primary @previousButton" @onclick="PreviousPage">Previous</button>
+<button class="btn btn-primary @nextButton" @onclick="NextPage">Next</button>
 
+<br/>
+<br/>
+
+<i><b>Page @pageNumber (@resultCount results)</b></i>
 <br/>
 <br/>
 
@@ -16,40 +18,57 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Inoculated By</th>
-            <th>Inoculated On</th>
-            <th>Created By</th>
-            <th>Created On</th>
+            <th>Strain</th>
             <th>Location</th>
             <th>Parent</th>
-            <th>ParentType</th>
+            <th>Innoculated On</th>
+            <th>Created By</th>
+            <th>Created On</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Data)
         {
             <tr>
-                <td>@item.Name</td>
-                <td>@item.InoculatedBy</td>
-                <td>@item.InoculatedOn</td>
+                <td>@item.Name (@item.EntityType)</td>
+                <td>@item.Strain</td>
+                <td>@item.Location</td>
+                @if (item.Parent is null)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@item.Parent (@item.ParentType)</td>
+                }
+                
+                @if (item.InoculatedOn is null || item.InoculatedOn.Value.Year == 1)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@DateTime.Parse(item.InoculatedOn.ToString())</td>
+                }
                 <td>@item.CreatedBy</td>
                 <td>@item.CreatedOn</td>
-                <td>@item.Location</td>
-                <td>@item.Parent</td>
-                <td>@item.ParentType</td>
+                <td>@item.Status</td>
             </tr>
         }
     </tbody>
 </table>
 
 @functions {
-    private int skip = 0;
-    private int limit = 5;
-    private int pageNumber;
+    private static int skip = 0;
+    private static int limit = 10;
+    public int pageNumber = 1;
+    public static int resultCount;
+    public string previousButton = "disabled";
+    public static string nextButton;
 
-    private List<Culture> Data { get; set; } = new ();
-    
-    private HttpClient _httpClient;
+    private static List<Culture> Data { get; set; } = new ();
+    private static HttpClient _httpClient;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,26 +78,45 @@
 
     private async Task PreviousPage()
     {
-        if (skip > limit)
+        switch (pageNumber)
         {
-            skip -= limit;
-            await LoadData(skip, limit);
+            case 1:
+                return;
+            case 2:
+                previousButton = "disabled";
+                break;
+        }
+
+        skip -= limit;
+        pageNumber--;
+        await LoadData(skip, limit);
+        
+        if (resultCount == 0)
+        {
+            previousButton = "";
         }
     }
 
     private async Task NextPage()
     {
+        if (resultCount < limit) return;
+        if (pageNumber == 1) previousButton = "";  
+        
         skip += limit;
+        pageNumber++;
         await LoadData(skip, limit);
     }
 
-    private async Task LoadData(int skip, int limit)
+    private static async Task LoadData(int skip, int limit)
     {
         var response = await _httpClient.GetAsync($"http://localhost:6002/cultures?skip={skip}&limit={limit}");
         var responseContent = await response.Content.ReadAsStringAsync();
-        
-        
         Data = JsonConvert.DeserializeObject<List<Culture>>(responseContent);
-        var a = "";
+        resultCount = Data.Count;
+
+        if (resultCount < limit)
+            nextButton = "disabled";
+        else
+            nextButton = "";
     }
 }
