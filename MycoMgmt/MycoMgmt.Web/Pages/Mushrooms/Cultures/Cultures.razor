@@ -9,7 +9,6 @@
 
 <br/>
 <br/>
-
 <i><b>Page @pageNumber (@resultCount results)</b></i>
 <br/>
 <br/>
@@ -24,13 +23,13 @@
     <thead>
         <tr>
             <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
             <th>Strain</th>
             <th>Location</th>
             <th>Parent</th>
             <th>Innoculated On</th>
-            <th>Created By</th>
-            <th>Created On</th>
-            <th>Status</th>
+            <th>Innoculated By</th>
         </tr>
     </thead>
     <tbody>
@@ -38,6 +37,8 @@
         {
             <tr>
                 <td><b><u><a href="/spawn/{id]">@item.Name (@item.EntityType)</a></u></b></td>
+                <td>@item.Type</td>
+                <td>@item.Status</td>
                 <td>@item.Strain</td>
                 <td>@item.Location</td>
                 @if (item.Parent is null)
@@ -57,9 +58,8 @@
                 {
                     <td>@DateTime.Parse(item.InoculatedOn.ToString())</td>
                 }
-                <td>@item.CreatedBy</td>
-                <td>@item.CreatedOn</td>
-                <td>@item.Status</td>
+                <td>@item.InoculatedOn</td>
+                <td>@item.InoculatedBy</td>
             </tr>
         }
     </tbody>
@@ -132,7 +132,7 @@
 
     private static async Task LoadData(int skip, int limit)
     {
-        var response = await _httpClient.GetAsync($"http://localhost:6002/cultures?skip={skip}&limit={limit}");
+        var response = await _httpClient.GetAsync($"http://localhost:6002/culture?skip={skip}&limit={limit}");
         var responseContent = await response.Content.ReadAsStringAsync();
         Data = JsonConvert.DeserializeObject<List<Culture>>(responseContent);
         resultCount = Data.Count;

@@ -113,18 +113,18 @@ public static class ModelBaseExtensions
                   ";
     }
     
-    public static string? UpdateNotes(this ModelBase nodes)
+    public static string? UpdateNotes(this ModelBase node)
     {
         return
-            nodes.Notes is null
+            node.Notes is null
                 ? null
                 : $@"
                     MATCH 
-                        (x:{nodes.Tags[0]}) 
+                        (x:{node.Tags[0]}) 
                     WHERE 
-                        elementId(x) = '{nodes.ElementId}' 
+                        elementId(x) = '{node.ElementId}' 
                     SET 
-                        x.Notes = '{nodes.Notes}' 
+                        x.Notes = '{node.Notes}' 
                     RETURN s 
                   ";
     }

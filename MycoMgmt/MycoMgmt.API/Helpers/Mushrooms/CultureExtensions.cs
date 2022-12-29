@@ -14,12 +14,14 @@ public static class CultureExtensions
         
         var query = $@"CREATE 
                                 (
-                                    x:{culture.Tags[0]} {{ 
-                                                         Name:       '{culture.Name}',
-                                                         EntityType: '{culture.EntityType}',
-                                                         Status:     '{culture.IsSuccessful()}'
-                                                         {additionalData} 
-                                                      }}
+                                    x:{culture.Tags[0]} 
+                                    {{ 
+                                        Name:       '{culture.Name}',
+                                        EntityType: '{culture.EntityType}',
+                                        Type:       '{culture.Type}',
+                                        Status:     '{culture.IsSuccessful()}'
+                                        {additionalData} 
+                                     }}
                                 )
                             RETURN x";
 
@@ -121,8 +123,9 @@ public static class CultureExtensions
                     apoc.map.mergeList
                     ([
                         {{ElementId:    elementId(x)}},
-                        {{Name:         properties(x).Name}},
                         {{EntityType:   properties(x).EntityType}},
+                        {{Type:         properties(x).Type}},
+                        {{Name:         properties(x).Name}},
                         {{Notes:        properties(x).Notes}},
                         {{Strain:       strain}},
                         {{Status:       properties(x).Status}},

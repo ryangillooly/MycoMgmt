@@ -6,7 +6,7 @@ using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("cultures")]
+[Route("culture")]
 [ApiController]
 public class CultureController : Controller
 {
@@ -50,27 +50,28 @@ public class CultureController : Controller
         var culture = new Culture()
         {
             Name         = name,
-            Type         = type.Replace(" ",""),
+            Type         = type,
             Recipe       = recipe,
             Location     = location,
             Vendor       = vendor,
             Notes        = notes,
-            Successful   = successful,
             Strain       = strain,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
             Finished     = finished,
+            Successful   = successful,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
             InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
             InoculatedBy = inoculatedBy,
             CreatedOn    = DateTime.Parse(createdOn),
             CreatedBy    = createdBy
         };
-        
-        culture.Tags.Add(culture.IsSuccessful());
-        culture.Tags.Add(culture.Type);
+
+        culture.Status = culture.IsSuccessful();
+        culture.Tags.Add(culture.Status);
+        culture.Tags.Add($"`{culture.Type}`");
 
         var resultList = new List<string>();
         var cultureName = culture.Name;
@@ -137,7 +138,7 @@ public class CultureController : Controller
             Successful   = successful,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
             InoculatedBy = inoculatedBy,
             Finished     = finished,
