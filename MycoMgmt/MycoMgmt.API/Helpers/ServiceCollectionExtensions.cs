@@ -1,11 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MycoMgmt.API.DataStores;
-using MycoMgmt.API.DataStores.Neo4J;
+﻿using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.DataStores.Neo4J;
-using MycoMgmt.Domain.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers

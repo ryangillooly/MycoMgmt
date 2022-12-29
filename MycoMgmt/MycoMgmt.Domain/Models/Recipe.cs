@@ -1,6 +1,4 @@
-﻿using MycoMgmt.Domain.Helpers;
-
-namespace MycoMgmt.Domain.Models
+﻿namespace MycoMgmt.Domain.Models
 {
     public class Recipe : ModelBase
     {
@@ -13,7 +11,7 @@ namespace MycoMgmt.Domain.Models
         public List<string>? Steps { get; set; }
         public List<string>? Ingredients { get; set; }
 
-        
+
         // Create
         public override string CreateNode()
         {
@@ -26,7 +24,7 @@ namespace MycoMgmt.Domain.Models
                 additionalData += $",Description: '{Description}'";
         
             if (Steps != null)
-                additionalData += $",Steps: '{Steps.ToNumberedStringList()}'";
+                additionalData += $",Steps: '{StepsToNumberedStringList()}'";
         
             var query = $@"
                             CREATE 
@@ -42,6 +40,23 @@ namespace MycoMgmt.Domain.Models
 
             return query;
         }
+        private string? CreateIngredientRelationship()
+        {
+            return
+                Ingredients is null
+                    ? null
+                    : $@"
+                          MATCH 
+                              (recipe:{EntityType} {{ Name: '{Name}' }}), 
+                              (i:Ingredient)
+                          WHERE
+                              i.Name IN ['{string.Join("','", Ingredients)}']
+                          MERGE
+                              (recipe)-[r:CREATED_USING]->(i)
+                          RETURN r
+                      ";
+        }
+
         
         public override List<string> CreateQueryList()
         {
@@ -114,7 +129,7 @@ namespace MycoMgmt.Domain.Models
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 
-                            x.Steps = '{Steps.ToNumberedStringList()}' 
+                            x.Steps = '{StepsToNumberedStringList()}' 
                         RETURN 
                             x
                       ";
@@ -213,21 +228,6 @@ namespace MycoMgmt.Domain.Models
              return query;
         }
 
-        private string? CreateIngredientRelationship()
-        {
-            return
-                Ingredients is null
-                    ? null
-                    : $@"
-                          MATCH 
-                              (recipe:{EntityType} {{ Name: '{Name}' }}), 
-                              (i:Ingredient)
-                          WHERE
-                              i.Name IN ['{string.Join("','", Ingredients)}']
-                          MERGE
-                              (recipe)-[r:CREATED_USING]->(i)
-                          RETURN r
-                      ";
-        }
+        public string StepsToNumberedStringList() => Steps is null ? null : string.Join(", ", Steps.Select((item, index) => $"{index + 1}.{item}"));
     }
 }
