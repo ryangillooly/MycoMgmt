@@ -7,7 +7,9 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {
         public Bulk()
         {
-            Tags.Add(EntityTypes.Bulk.ToString());
+            var entityType = EntityTypes.Bulk.ToString();
+            Tags.Add(entityType);
+            EntityType = entityType;
         }
     }
 }

@@ -6,7 +6,9 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {   
         public Spawn()
         {
-            Tags.Add(EntityTypes.Spawn.ToString());
+            var entityType = EntityTypes.Spawn.ToString();
+            Tags.Add(entityType);
+            EntityType = entityType;
         }
     }
 }

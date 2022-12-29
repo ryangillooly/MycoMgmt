@@ -6,8 +6,9 @@
         public string? Location { get; set; }
         public string? Parent { get; set; }
         public string? ParentType { get; set; }
-        public string? Child { get; set; }
+        public string? Children { get; set; }
         public string? ChildType { get; set; }
+        public string? Status { get; set; }
         public bool? Successful { get; set; }
         public bool? Finished { get; set; }
         public DateTime? FinishedOn { get; set; }

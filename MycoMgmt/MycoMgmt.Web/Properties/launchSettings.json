@@ -8,19 +8,21 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "MycoMgmt.Web": {
       "commandName": "Project",
+      "jsWebView2Debugging": true,
+      "hotReloadEnabled": true,
+      "hotReloadProfile": "aspnetcore",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:8001;http://localhost:8000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "Watch": {
+        "commandName": "Executable",
+        "workingDirectory": "$(ProjectDir)",
+        "executablePath": "dotnet.exe",
+        "commandLineArgs": "watch run debug --launch-profile Debug"
       }
     }
   }

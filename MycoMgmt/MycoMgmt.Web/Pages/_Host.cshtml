@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Data
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @namespace MycoMgmt.Web.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -33,5 +34,18 @@
 </div>
 
 <script src="_framework/blazor.server.js"></script>
+<script>
+ function updateRecordLimit()
+ {
+      // Select the textbox element
+      var textbox = document.getElementById("textbox");
+    
+      textbox.addEventListener("click", function() 
+      {
+        var limit = prompt("Enter new record count:", int.Parse(textbox.value));
+        textbox.value = limit;
+      });
+  }
+</script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace MycoMgmt.Domain.Models.Mushrooms
 {
@@ -6,7 +7,9 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {
         public Fruit()
         {
-            Tags.Add(EntityTypes.Fruit.ToString());
+            var entityType = EntityTypes.Fruit.ToString();
+            Tags.Add(entityType);
+            EntityType = entityType;
         }
         
         public decimal? WetWeight { get; set; }

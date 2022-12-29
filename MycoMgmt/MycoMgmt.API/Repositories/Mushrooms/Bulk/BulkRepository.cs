@@ -62,7 +62,8 @@ public class BulkRepository : IBulkRepository
             bulk.UpdateChildRelationship(),
             bulk.UpdateModifiedOnRelationship(),
             bulk.UpdateModifiedRelationship(),
-            bulk.UpdateStatus()
+            bulk.UpdateStatus(),
+            bulk.UpdateStatusLabel()
         };
 
         var results = await _neo4JDataAccess.RunTransaction(queryList);
@@ -102,9 +103,9 @@ public class BulkRepository : IBulkRepository
     public async Task<string> GetAll(Bulk bulk, int? skip, int? limit)
     {
         skip  = skip ?? 0;
-        limit = limit ?? 0;
+        limit = limit ?? 10;
         
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(skip, limit), "x");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(skip, limit), "result");
         return JsonConvert.SerializeObject(result);
     }
 }

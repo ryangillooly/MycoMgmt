@@ -33,7 +33,7 @@ public static class MushroomExtensions
     public static string? UpdateChildRelationship(this Mushroom mushroom)
     {
         return
-            mushroom.Child is null
+            mushroom.Children is null
                 ? null
                 : $@"
                     MATCH 
@@ -47,7 +47,7 @@ public static class MushroomExtensions
                     WITH
                         p
                     MATCH 
-                        (c:{mushroom.ChildType} {{Name: '{mushroom.Child}' }})
+                        (c:{mushroom.ChildType} {{Name: '{mushroom.Children}' }})
                     MERGE 
                         (c)-[r:HAS_PARENT]->(p) 
                     RETURN 
@@ -130,7 +130,7 @@ public static class MushroomExtensions
                 ";
     }
     
-    public static string? UpdateStatus(this Mushroom mushroom)
+    public static string? UpdateStatusLabel(this Mushroom mushroom)
     {
         return
             mushroom.Successful is null && mushroom.Finished is null
@@ -146,6 +146,23 @@ public static class MushroomExtensions
                         x                    
                     SET 
                         x:{mushroom.IsSuccessful()}
+                    RETURN 
+                        x
+                ";
+    }
+    
+    public static string? UpdateStatus(this Mushroom mushroom)
+    {
+        return
+            mushroom.Successful is null && mushroom.Finished is null
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{mushroom.EntityType})
+                    WHERE 
+                        elementId(x) = '{mushroom.ElementId}'
+                    SET 
+                        x {{ Status: '{mushroom.IsSuccessful()}' }}
                     RETURN 
                         x
                 ";
@@ -320,12 +337,12 @@ public static class MushroomExtensions
     public static string? CreateChildRelationship(this Mushroom mushroom)
     {
         return 
-            mushroom.Child is null 
+            mushroom.Children is null 
                 ? null 
                 : $@"
                     MATCH 
                         (p:{mushroom.Tags[0]} {{ Name: '{mushroom.Name}' }}), 
-                        (c:{mushroom.ChildType} {{ Name: '{mushroom.Child}' }})
+                        (c:{mushroom.ChildType} {{ Name: '{mushroom.Children}' }})
                     CREATE
                         (c)-[r:HAS_PARENT]->(p)
                     RETURN r

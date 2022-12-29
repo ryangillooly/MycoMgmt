@@ -46,7 +46,6 @@ public class SpawnRepository : ISpawnRepository
         var queryList = new List<string?>
         {
             spawn.UpdateName(),
-            spawn.UpdateStatus(),
             spawn.UpdateNotes(),
             spawn.UpdateType(),
             spawn.UpdateInoculatedRelationship(),
@@ -57,7 +56,9 @@ public class SpawnRepository : ISpawnRepository
             spawn.UpdateRecipeRelationship(),
             spawn.UpdateLocationRelationship(),
             spawn.UpdateParentRelationship(),
-            spawn.UpdateChildRelationship()
+            spawn.UpdateChildRelationship(),
+            spawn.UpdateStatus(),
+            spawn.UpdateStatusLabel(),
         };
         
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
@@ -95,10 +96,10 @@ public class SpawnRepository : ISpawnRepository
     public async Task<string> GetAll(Spawn spawn, int? skip, int? limit)
     {
         skip  = skip ?? 0;
-        limit = limit ?? 0;
+        limit = limit ?? 10;
         
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(skip, limit), "x");
-        return JsonConvert.SerializeObject(spawn);
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(skip, limit), "result");
+        return JsonConvert.SerializeObject(result);
     }
     
 }

@@ -45,7 +45,7 @@ public class CultureController : Controller
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
         
         var culture = new Culture()
         {
@@ -59,7 +59,7 @@ public class CultureController : Controller
             Strain       = strain,
             Parent       = parent,
             ParentType   = parentType,
-            Child        = child,
+            Children        = child,
             ChildType    = childType,
             Finished     = finished,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
@@ -119,7 +119,7 @@ public class CultureController : Controller
             throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
         
         if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Child parameter has been provided, then the ChildType must also be provided");
+            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
         
         if (finished == null && successful != null)
             throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
@@ -137,7 +137,7 @@ public class CultureController : Controller
             Successful   = successful,
             Parent       = parent,
             ParentType   = parentType,
-            Child        = child,
+            Children        = child,
             ChildType    = childType,
             InoculatedBy = inoculatedBy,
             Finished     = finished,
