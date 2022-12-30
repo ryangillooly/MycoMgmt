@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.API.Helpers;
 using MycoMgmt.Domain.Models.Mushrooms;
+using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -11,10 +13,12 @@ namespace MycoMgmt.API.Controllers;
 public class CultureController : Controller
 {
     private readonly ICultureRepository _cultureRepository;
+    private readonly ILogger<CultureController> _logger;
 
-    public CultureController(ICultureRepository repo)
+    public CultureController(ICultureRepository repo, ILogger<CultureController> logger)
     {
         _cultureRepository = repo;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -76,7 +80,7 @@ public class CultureController : Controller
 
         culture.Status = culture.IsSuccessful();
 
-        var resultList = new List<string>();
+        var resultList = new List<List<IEntity>>();
         var cultureName = culture.Name;
         
         if (count == 1)
@@ -91,7 +95,8 @@ public class CultureController : Controller
                 resultList.Add(await _cultureRepository.Create(culture));
             }
         }
-
+        
+        _logger.LogInformation("New Culture Created {cultureName} ({elementId})", culture.Name, culture.ElementId);
         return Created("", string.Join(",", resultList));
     }
 

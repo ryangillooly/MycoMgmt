@@ -19,10 +19,12 @@ public class CultureRepository : ICultureRepository
         _logger = logger;
     }
 
-    public async Task<string> Create(Culture culture)
+    public async Task<List<IEntity>> Create(Culture culture)
     {
         var queryList = culture.CreateQueryList();
-        return await _neo4JDataAccess.RunTransaction(queryList);
+        var result = await _neo4JDataAccess.RunTransaction2(queryList);
+        
+        return result;
     }
     public async Task<string> Update(Culture culture)
     {
