@@ -46,12 +46,25 @@ public class IndexModel : PageModel
     public async Task OnPostAsync()
     {
         // Get the values of the form inputs
-        string name = Request.Form["name"];
-        string type = Request.Form["type"];
-        string strain = Request.Form["strain"];
-        string createdOn = Request.Form["createdOn"];
-        string createdBy = Request.Form["createdBy"];
-        string count = Request.Form["count"];
+        string? name = Request.Form["name"];
+        string? type = Request.Form["type"];
+        string? strain = Request.Form["strain"];
+        string? recipe = Request.Form["recipe"];
+        string? notes = Request.Form["notes"];
+        string? location = Request.Form["location"];
+        string? parent = Request.Form["parent"];
+        string? parentType = Request.Form["parentType"];
+        string? child = Request.Form["child"];
+        string? childType = Request.Form["childType"];
+        string? successful = Request.Form["successful"];
+        string? purchased = Request.Form["purchased"];
+        string? finished = Request.Form["finished"];
+        string? finishedOn = Request.Form["finishedOn"];
+        string? innoculatedOn = Request.Form["innoculatedOn"];
+        string? innoculatedBy = Request.Form["innoculatedBy"];
+        string? createdOn = Request.Form["createdOn"];
+        string? createdBy = Request.Form["createdBy"];
+        string? count = Request.Form["count"];
 
         // Create a new object using the form input values
         var culture = new Culture { Name = name, Type = type, Strain = strain, CreatedOn = DateTime.Parse(createdOn), CreatedBy = createdBy};
@@ -59,8 +72,32 @@ public class IndexModel : PageModel
         // Use the HttpClientFactory to create a new HttpClient
         var client = _clientFactory.CreateClient();
 
+        var paramString = "";
         var param = $@"name={name}&type={type}&strain={strain}&createdon={createdOn}&createdby={createdBy}&count={count}";
-        var requestUrl = $"http://localhost:6002/culture?{param}";
+
+        if (name is not null and not "") paramString += $"name={name}&";
+        if (type is not null and not "") paramString += $"type={type}&";
+        if (strain is not null and not "") paramString += $"strain={strain}&";
+        if (recipe is not null and not "") paramString += $"recipe={recipe}&";
+        if (notes is not null and not "") paramString += $"notes={notes}&";
+        if (location is not null and not "") paramString += $"location={location}&";
+        if (parent is not null and not "") paramString += $"parent={parent}&";
+        if (parentType is not null and not "") paramString += $"parentType={parentType}&";
+        if (child is not null and not "") paramString += $"child={child}&";
+        if (childType is not null and not "") paramString += $"childType={childType}&";
+        if (successful is not null and not "") paramString += $"successful=true&";
+        if (finished is not null and not "") paramString += $"finished=true&";
+        if (purchased is not null and not "") paramString += $"purchased=true&";
+        if (finishedOn is not null and not "") paramString += $"finishedOn={finishedOn}&";
+        if (innoculatedOn is not null and not "") paramString += $"inoculatedOn={innoculatedOn}&";
+        if (innoculatedBy is not null and not "") paramString += $"inoculatedBy={innoculatedBy}&";
+        if (createdOn is not null and not "") paramString += $"createdOn={createdOn}&";
+        if (createdBy is not null and not "") paramString += $"createdBy={createdBy}&";
+        if (count is not null and not "") paramString += $"count={count}&";
+
+        paramString = paramString.TrimEnd('&');
+        
+        var requestUrl = $"http://localhost:6002/culture?{paramString}";
         var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
         
         // request.Content = new StringContent(JsonConvert.SerializeObject(culture), Encoding.UTF8, "application/json");
