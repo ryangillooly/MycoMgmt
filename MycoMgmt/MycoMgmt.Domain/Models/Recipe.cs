@@ -10,8 +10,7 @@
         public string? Description { get; set; }
         public List<string>? Steps { get; set; }
         public List<string>? Ingredients { get; set; }
-
-
+        
         // Create
         public override string CreateNode()
         {
@@ -56,8 +55,6 @@
                           RETURN r
                       ";
         }
-
-        
         public override List<string> CreateQueryList()
         {
             var queryList = new List<string>
@@ -90,7 +87,6 @@
             queryList.RemoveAll(item => item is null);
             return queryList;
         }
-        
         private string? UpdateIngredientRelationship()
         {
             return
@@ -117,7 +113,6 @@
                             r  
                       ";
         }
-        
         private string? UpdateSteps()
         {
             return
@@ -134,7 +129,6 @@
                             x
                       ";
         }
-        
         private string? UpdateDescription()
         {
             return
@@ -151,8 +145,7 @@
                             x
                       ";
         }
-        
-        
+
         // Read
         public override string GetAllQuery(int skip, int limit)
         {
@@ -227,7 +220,6 @@
 
              return query;
         }
-
-        public string StepsToNumberedStringList() => Steps is null ? null : string.Join(", ", Steps.Select((item, index) => $"{index + 1}.{item}"));
+        private string StepsToNumberedStringList() => Steps is null ? null : string.Join(", ", Steps.Select((item, index) => $"{index + 1}.{item}"));
     }
 }
