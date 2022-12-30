@@ -13,6 +13,6 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Permission permission);
         Task<string> GetByName(Permission permission);
         public Task<string> GetById(Permission permission);
-        public Task<string> GetAll(Permission permission, int? skip, int? limit);
+        public Task<string> GetAll(Permission permission, int skip, int limit);
     }
 }

@@ -72,7 +72,7 @@ namespace MycoMgmt.API.Controllers
         }
     
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _userRepository.GetAll(new User(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _userRepository.GetAll(new User(), skip, limit));
 
         [HttpGet("id/{elementId}")]
         public async Task<IActionResult> GetById(string elementId) => Ok(await _userRepository.GetById(new User { ElementId = elementId }));

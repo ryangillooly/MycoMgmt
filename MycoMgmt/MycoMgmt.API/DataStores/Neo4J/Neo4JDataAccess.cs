@@ -99,7 +99,61 @@ public class Neo4JDataAccess : INeo4JDataAccess
             throw;
         }
     }
-        
+    
+    public async Task<List<IEntity>> RunTransaction2(List<string?> queryList)
+    {
+        try
+        {
+            queryList.RemoveAll(item => item is null);
+            
+            var result = await _session.ExecuteWriteAsync(async tx =>
+            {
+                var returnList = new List<IEntity>();
+                
+                foreach(var query in queryList)
+                {
+                    var res   = await tx.RunAsync(query);
+                    var scalarObj = await res.ToListAsync();
+                    
+                    foreach (var record in scalarObj)
+                    {
+                        foreach (var node in record.Values.Values)
+                        {
+                            returnList.Add(node.As<IEntity>());
+                        }                        
+                    }
+                }
+
+                return returnList;
+            });
+            
+            return result;
+        }
+        catch (ClientException ex)
+        {
+            if (!Regex.IsMatch(ex.Message, @"Node\(\d+\) already exists with *"))
+                throw;
+
+            //return JsonConvert.SerializeObject(new { Message = ex.Message });
+            _logger.LogWarning(ex.Message);
+            throw;
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message != "The result is empty.") 
+                throw;
+            
+            //return JsonConvert.SerializeObject(new { Message = $"No results were provided by the database" });
+            _logger.LogWarning(ex.Message);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "There was a problem while executing database query");
+            throw;
+        }
+    }
+    
     public async Task<string> RunTransaction(List<string?> queryList)
     {
         try

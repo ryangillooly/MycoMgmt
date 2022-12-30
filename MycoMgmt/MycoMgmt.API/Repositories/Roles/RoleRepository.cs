@@ -43,25 +43,17 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(IamRole role, int? skip, int? limit)
+        public async Task<string> GetAll(IamRole role, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
+
             
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> Create(IamRole role)
         {
-            var queryList = new List<string?>
-            {
-                role.Create(),
-                role.CreatePermissionRelationship(),
-                role.CreateCreatedRelationship(),
-                role.CreateCreatedOnRelationship(),
-            };
-
+            var queryList = role.CreateQueryList();      
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
@@ -77,14 +69,7 @@ namespace MycoMgmt.API.Repositories
         
         public async Task<string> Update(IamRole role)
         {
-            var queryList = new List<string?>
-            {
-                role.UpdateName(),
-                role.UpdatePermissions(),
-                role.UpdateModifiedRelationship(),
-                role.UpdateModifiedOnRelationship()
-            };
-
+            var queryList = role.UpdateQueryList();      
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
     }

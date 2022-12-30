@@ -11,7 +11,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(Account account);
         Task<string> GetByName(Account account);
         public Task<string> GetById(Account account);
-        public Task<string> GetAll(Account account, int? skip, int? limit);
+        public Task<string> GetAll(Account account, int skip, int limit);
         public Task<string> Create(Account account);
         public Task<string> Delete(Account account);
         public Task<string> Update(Account account);

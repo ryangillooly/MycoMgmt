@@ -25,26 +25,13 @@ namespace MycoMgmt.API.Repositories
         
         public async Task<string> Create(Location location)
         {
-            var queryList = new List<string?>
-            {
-                location.Create(),
-                location.CreateCreatedRelationship(),
-                location.CreateCreatedOnRelationship()
-            };
-            
+            var queryList = location.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
 
         public async Task<string> Update(Location location)
         {
-            var queryList = new List<string?>
-            {
-                location.UpdateModifiedOnRelationship(),
-                location.UpdateModifiedRelationship(),
-                location.UpdateName(),
-                location.UpdateAgentConfigured()
-            };
-            
+            var queryList = location.UpdateQueryList();            
             var results = await _neo4JDataAccess.RunTransaction(queryList);
             return JsonConvert.SerializeObject(results);
         }
@@ -59,12 +46,9 @@ namespace MycoMgmt.API.Repositories
                 _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", location.ElementId);
         }
         
-        public async Task<string> GetAll(Location location, int? skip, int? limit)
+        public async Task<string> GetAll(Location location, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
-            
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(location.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(location.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         

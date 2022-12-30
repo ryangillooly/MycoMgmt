@@ -10,7 +10,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> SearchByName(User user);
         Task<string> GetByName(User user);
         public Task<string> GetById(User user);
-        public Task<string> GetAll(User user, int? skip, int? limit);
+        public Task<string> GetAll(User user, int skip, int limit);
         public Task<string> Create(User user);
         public Task Delete(User culture);
         public Task<string> Update(User user);

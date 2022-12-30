@@ -42,36 +42,23 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(Permission permission, int? skip, int? limit)
+        public async Task<string> GetAll(Permission permission, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
+
             
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(permission.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(permission.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> Create(Permission permission)
         {
-            var queryList = new List<string?>
-            {
-                permission.Create(),
-                permission.CreateCreatedRelationship(),
-                permission.CreateCreatedOnRelationship()
-            };
-
+            var queryList = permission.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
         public async Task<string> Update(Permission permission)
         {
-            var queryList = new List<string?>
-            {
-                permission.UpdateName(),
-                permission.UpdateModifiedRelationship(),
-                permission.UpdateModifiedOnRelationship()
-            };
-
+            var queryList = permission.UpdateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         

@@ -42,25 +42,16 @@ namespace MycoMgmt.API.Repositories
             var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(account.GetByIdQuery());
             return JsonConvert.SerializeObject(result);
         }
-    
-        public async Task<string> GetAll(Account account, int? skip, int? limit)
+
+        public async Task<string> GetAll(Account account, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
-            
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(account.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(account.GetAllQuery(skip, limit), "result");
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> Create(Account account)
         {
-            var queryList = new List<string?>
-            {
-                account.Create(),
-                account.CreateCreatedRelationship(),
-                account.CreateCreatedOnRelationship()
-            };
-            
+            var queryList = account.CreateQueryList();
             var result = await _neo4JDataAccess.RunTransaction(queryList);
             return result;
         }
@@ -73,13 +64,7 @@ namespace MycoMgmt.API.Repositories
 
         public async Task<string> Update(Account account)
         {
-            var queryList = new List<string?>
-            {
-                account.UpdateName(),
-                account.UpdateModifiedOnRelationship(),
-                account.UpdateModifiedRelationship()
-            };
-
+            var queryList = account.UpdateQueryList();
             var cultures = await _neo4JDataAccess.RunTransaction(queryList);
             return JsonConvert.SerializeObject(cultures);
         }

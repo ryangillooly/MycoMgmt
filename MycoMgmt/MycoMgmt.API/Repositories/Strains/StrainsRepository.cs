@@ -41,37 +41,21 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(Strain strain, int? skip, int? limit)
+        public async Task<string> GetAll(Strain strain, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
-            
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(strain.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(strain.GetAllQuery(skip, limit), "result");
             return JsonConvert.SerializeObject(result);
         }
         
         public async Task<string> Create(Strain strain)
         {
-            var queryList = new List<string?>
-            {
-                strain.Create(),
-                strain.CreateCreatedRelationship(),
-                strain.CreateCreatedOnRelationship()
-            };
-
+            var queryList = strain.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
         public async Task<string> Update(Strain strain)
         {
-            var queryList = new List<string?>
-            {
-                strain.UpdateName(),
-                strain.UpdateEffects(),
-                strain.UpdateModifiedRelationship(),
-                strain.UpdateModifiedOnRelationship()
-            };
-
+            var queryList = strain.UpdateQueryList();
             var results = await _neo4JDataAccess.RunTransaction(queryList);
             return JsonConvert.SerializeObject(results);
         }

@@ -61,7 +61,7 @@ namespace MycoMgmt.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _accountRepository.GetAll(new Account(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _accountRepository.GetAll(new Account(), skip, limit));
 
         [HttpGet("id/{elementId}")]
         public async Task<IActionResult> GetById(string elementId) => Ok(await _accountRepository.GetById(new Account { ElementId = elementId}));

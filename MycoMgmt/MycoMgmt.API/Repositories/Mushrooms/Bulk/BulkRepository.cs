@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using MycoMgmt.API.Helpers;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 #pragma warning disable CS8604
@@ -28,44 +27,13 @@ public class BulkRepository : IBulkRepository
     
     public async Task<string> Create(Bulk bulk)
     {
-        var queryList = new List<string?>
-        {
-            bulk.Create(),
-            bulk.CreateInoculatedRelationship(),
-            bulk.CreateInoculatedOnRelationship(),
-            bulk.CreateFinishedOnRelationship(),
-            bulk.CreateStrainRelationship(),
-            bulk.CreateLocationRelationship(),
-            bulk.CreateCreatedRelationship(),
-            bulk.CreateCreatedOnRelationship(),
-            bulk.CreateRecipeRelationship(),
-            bulk.CreateParentRelationship(),
-            bulk.CreateChildRelationship(),
-            bulk.CreateNodeLabels()
-        };
-
+        var queryList = bulk.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
     public async Task<string> Update(Bulk bulk)
     {
-        var queryList = new List<string?>
-        {
-            bulk.UpdateName(),
-            bulk.UpdateNotes(),
-            bulk.UpdateInoculatedRelationship(),
-            bulk.UpdateInoculatedOnRelationship(),
-            bulk.UpdateFinishedOnRelationship(),
-            bulk.UpdateRecipeRelationship(),
-            bulk.UpdateLocationRelationship(),
-            bulk.UpdateParentRelationship(),
-            bulk.UpdateChildRelationship(),
-            bulk.UpdateModifiedOnRelationship(),
-            bulk.UpdateModifiedRelationship(),
-            bulk.UpdateStatus(),
-            bulk.UpdateStatusLabel()
-        };
-
+        var queryList = bulk.UpdateQueryList();
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
     }
@@ -100,12 +68,9 @@ public class BulkRepository : IBulkRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Bulk bulk, int? skip, int? limit)
+    public async Task<string> GetAll(Bulk bulk, int skip, int limit)
     {
-        skip  = skip ?? 0;
-        limit = limit ?? 10;
-        
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAll(skip, limit), "result");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAllQuery(skip, limit), "result");
         return JsonConvert.SerializeObject(result);
     }
 }

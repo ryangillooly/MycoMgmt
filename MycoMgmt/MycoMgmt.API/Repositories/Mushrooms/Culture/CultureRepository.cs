@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Logging;
 using MycoMgmt.API.Helpers;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 #pragma warning disable CS8604
@@ -27,26 +19,18 @@ public class CultureRepository : ICultureRepository
         _logger = logger;
     }
 
-    public async Task<string> Create(Culture culture)
+    public async Task<List<IEntity>> Create(Culture culture)
     {
-        var queryList = new List<string?>
-        {
-            culture.Create(),
-            culture.CreateInoculatedRelationship(),
-            culture.CreateInoculatedOnRelationship(),
-            culture.CreateFinishedOnRelationship(),
-            culture.CreateStrainRelationship(),
-            culture.CreateLocationRelationship(),
-            culture.CreateCreatedRelationship(),
-            culture.CreateCreatedOnRelationship(),
-            culture.CreateParentRelationship(),
-            culture.CreateRecipeRelationship(),
-            culture.CreateChildRelationship(),
-            culture.CreateNodeLabels(),
-            culture.CreateVendorRelationship()
-        };
-
-        return await _neo4JDataAccess.RunTransaction(queryList);
+        var queryList = culture.CreateQueryList();
+        var result = await _neo4JDataAccess.RunTransaction2(queryList);
+        
+        return result;
+    }
+    public async Task<string> Update(Culture culture)
+    {
+        var queryList = culture.UpdateQueryList();
+        var results = await _neo4JDataAccess.RunTransaction(queryList);
+        return JsonConvert.SerializeObject(results);
     }
     
     public async Task Delete(Culture culture)
@@ -58,33 +42,7 @@ public class CultureRepository : ICultureRepository
         else
             _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", culture.ElementId);
     }
-        
-    public async Task<string> Update(Culture culture)
-    {
-        var queryList = new List<string?>
-        {
-            culture.UpdateName(),
-            culture.UpdateNotes(),
-            culture.UpdateType(),
-            culture.UpdateInoculatedRelationship(),
-            culture.UpdateInoculatedOnRelationship(),
-            culture.UpdateFinishedOnRelationship(),
-            culture.UpdateRecipeRelationship(),
-            culture.UpdateStrainRelationship(),
-            culture.UpdateLocationRelationship(),
-            culture.UpdateParentRelationship(),
-            culture.UpdateChildRelationship(),
-            culture.UpdateVendorRelationship(),
-            culture.UpdateModifiedOnRelationship(),
-            culture.UpdateModifiedRelationship(),
-            culture.UpdateStatus(),
-            culture.UpdateStatusLabel(),
-        };
-        
-        var results = await _neo4JDataAccess.RunTransaction(queryList);
-        return JsonConvert.SerializeObject(results);
-    }
-    
+
     public async Task<string> SearchByName(Culture culture)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(culture.SearchByNameQuery(), "x");
@@ -104,12 +62,9 @@ public class CultureRepository : ICultureRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Culture culture, int? skip, int? limit)
+    public async Task<string> GetAll(Culture culture, int skip, int limit)
     {
-        skip  = skip ?? 0;
-        limit = limit ?? 10;
-        
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAll(skip, limit), "result");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(culture.GetAllQuery(skip, limit), "result");
         return JsonConvert.SerializeObject(result);
     }
 }

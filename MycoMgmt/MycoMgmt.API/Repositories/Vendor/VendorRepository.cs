@@ -23,14 +23,15 @@ namespace MycoMgmt.API.Repositories
         
         public async Task<string> Create(Vendor vendor)
         {
-            var queryList = new List<string?>
-            {
-                vendor.Create(),
-                vendor.CreateCreatedOnRelationship(),
-                vendor.CreateCreatedRelationship()
-            };
-                
+            var queryList = vendor.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
+        }
+        
+        public async Task<string> Update(Vendor vendor)
+        {
+            var queryList = vendor.UpdateQueryList();
+            var results = await _neo4JDataAccess.RunTransaction(queryList);
+            return JsonConvert.SerializeObject(results);
         }
         
         public async Task Delete(Vendor vendor)
@@ -43,21 +44,6 @@ namespace MycoMgmt.API.Repositories
                 _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", vendor.ElementId);
         }
 
-        public async Task<string> Update(Vendor vendor)
-        {
-            var queryList = new List<string?>
-            {
-                vendor.UpdateName(),
-                vendor.UpdateNotes(),
-                vendor.UpdateUrl(),
-                vendor.UpdateModifiedOnRelationship(),
-                vendor.UpdateModifiedRelationship()
-            };
-            
-            var results = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(results);
-        }
-        
         public async Task<string> SearchByName(Vendor vendor)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(vendor.SearchByNameQuery(), "x");
@@ -77,12 +63,11 @@ namespace MycoMgmt.API.Repositories
             return JsonConvert.SerializeObject(result);
         }
     
-        public async Task<string> GetAll(Vendor vendor, int? skip, int? limit)
+        public async Task<string> GetAll(Vendor vendor, int skip, int limit)
         {
-            skip  = skip ?? 0;
-            limit = limit ?? 0;
+
             
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(vendor.GetAll(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(vendor.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
     }

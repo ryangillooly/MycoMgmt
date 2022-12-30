@@ -5,7 +5,7 @@ using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("strains")]
+    [Route("strain")]
     [ApiController]
     public class StrainsController : Controller
     {
@@ -64,7 +64,7 @@ namespace MycoMgmt.API.Controllers
         }
     
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? skip, int? limit) => Ok(await _strainsRepository.GetAll(new Strain(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _strainsRepository.GetAll(new Strain(), skip, limit));
 
         [HttpGet("id/{elementId}")]
         public async Task<IActionResult> GetById(string elementId) => Ok(await _strainsRepository.GetById(new Strain { ElementId = elementId }));

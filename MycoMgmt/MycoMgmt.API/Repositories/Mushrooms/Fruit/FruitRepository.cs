@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using MycoMgmt.API.Helpers;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -32,21 +31,7 @@ public class FruitRepository : IFruitRepository
     
     public async Task<string> Create(Fruit fruit)
     {
-        var queryList = new List<string?>
-        {
-            fruit.Create(),
-            fruit.CreateInoculatedRelationship(),
-            fruit.CreateInoculatedOnRelationship(),
-            fruit.CreateFinishedOnRelationship(),
-            fruit.CreateStrainRelationship(),
-            fruit.CreateLocationRelationship(),
-            fruit.CreateCreatedRelationship(),
-            fruit.CreateCreatedOnRelationship(),
-            fruit.CreateParentRelationship(),
-            fruit.CreateChildRelationship(),
-            fruit.CreateNodeLabels()
-        };
-
+        var queryList = fruit.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
@@ -61,23 +46,8 @@ public class FruitRepository : IFruitRepository
     }
         
     public async Task<string> Update(Fruit fruit)
-    {        
-        var queryList = new List<string?>
-        {
-            fruit.UpdateName(),
-            fruit.UpdateInoculatedRelationship(),
-            fruit.UpdateInoculatedOnRelationship(),
-            fruit.UpdateFinishedOnRelationship(),
-            fruit.UpdateRecipeRelationship(),
-            fruit.UpdateLocationRelationship(),
-            fruit.UpdateParentRelationship(),
-            fruit.UpdateChildRelationship(),
-            fruit.UpdateModifiedOnRelationship(),
-            fruit.UpdateModifiedRelationship(),
-            fruit.UpdateStatus(),
-            fruit.UpdateStatusLabel()
-        };
-
+    {
+        var queryList = fruit.CreateQueryList();
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
     }
@@ -91,7 +61,6 @@ public class FruitRepository : IFruitRepository
     public async Task<string> GetByName(Fruit fruit)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.GetByNameQuery(), "x");
-
         return JsonConvert.SerializeObject(result);
     }
 
@@ -101,12 +70,9 @@ public class FruitRepository : IFruitRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Fruit fruit, int? skip, int? limit)
+    public async Task<string> GetAll(Fruit fruit, int skip, int limit)
     {
-        skip  = skip ?? 0;
-        limit = limit ?? 10;
-        
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAll(skip, limit), "result");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAllQuery(skip, limit), "result");
         var dedupeResult = result.OfType<Dictionary<string, object>>().Distinct(new DictionaryEqualityComparer("ElementId")).ToList();
         return JsonConvert.SerializeObject(dedupeResult);
     }

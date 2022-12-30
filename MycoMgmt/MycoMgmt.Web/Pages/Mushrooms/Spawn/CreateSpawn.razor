@@ -1,8 +1,8 @@
-﻿@page "/bulklist"
+﻿@page "/spawn/new"
 @using MycoMgmt.Domain.Models.Mushrooms
 @using Newtonsoft.Json
 
-<h2>Bulk</h2>
+<h2>Spawn</h2>
 
 <button class="btn btn-primary @previousButton" @onclick="PreviousPage">Previous</button>
 <button class="btn btn-primary @nextButton" @onclick="NextPage">Next</button>
@@ -132,7 +132,7 @@
 
     private static async Task LoadData(int skip, int limit)
     {
-        var response = await _httpClient.GetAsync($"http://localhost:6002/bulk?skip={skip}&limit={limit}");
+        var response = await _httpClient.GetAsync($"http://localhost:6002/spawn?skip={skip}&limit={limit}");
         var responseContent = await response.Content.ReadAsStringAsync();
         Data = JsonConvert.DeserializeObject<List<Culture>>(responseContent);
         resultCount = Data.Count;

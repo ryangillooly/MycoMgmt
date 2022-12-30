@@ -1,7 +1,6 @@
 using MycoMgmt.API.Helpers;
 using MycoMgmt.API.DataStores.Neo4J;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Helpers;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 #pragma warning disable CS8604
@@ -22,45 +21,13 @@ public class SpawnRepository : ISpawnRepository
     
     public async Task<string> Create(Spawn spawn)
     {
-        var queryList = new List<string?>
-        {
-            spawn.Create(),
-            spawn.CreateInoculatedRelationship(),
-            spawn.CreateInoculatedOnRelationship(),
-            spawn.CreateFinishedOnRelationship(),
-            spawn.CreateStrainRelationship(),
-            spawn.CreateLocationRelationship(),
-            spawn.CreateCreatedRelationship(),
-            spawn.CreateCreatedOnRelationship(),
-            spawn.CreateParentRelationship(),
-            spawn.CreateChildRelationship(),
-            spawn.CreateRecipeRelationship(),
-            spawn.CreateNodeLabels()
-        };
-
+        var queryList = spawn.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
     public async Task<string> Update(Spawn spawn)
     {
-        var queryList = new List<string?>
-        {
-            spawn.UpdateName(),
-            spawn.UpdateNotes(),
-            spawn.UpdateType(),
-            spawn.UpdateInoculatedRelationship(),
-            spawn.UpdateInoculatedOnRelationship(),
-            spawn.UpdateFinishedOnRelationship(),
-            spawn.UpdateModifiedOnRelationship(),
-            spawn.UpdateModifiedRelationship(),
-            spawn.UpdateRecipeRelationship(),
-            spawn.UpdateLocationRelationship(),
-            spawn.UpdateParentRelationship(),
-            spawn.UpdateChildRelationship(),
-            spawn.UpdateStatus(),
-            spawn.UpdateStatusLabel(),
-        };
-        
+        var queryList = spawn.UpdateQueryList();
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData);
     }
@@ -93,12 +60,9 @@ public class SpawnRepository : ISpawnRepository
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Spawn spawn, int? skip, int? limit)
+    public async Task<string> GetAll(Spawn spawn, int skip, int limit)
     {
-        skip  = skip ?? 0;
-        limit = limit ?? 10;
-        
-        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAll(skip, limit), "result");
+        var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAllQuery(skip, limit), "result");
         return JsonConvert.SerializeObject(result);
     }
     
