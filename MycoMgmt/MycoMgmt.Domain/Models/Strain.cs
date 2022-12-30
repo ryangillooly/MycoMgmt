@@ -64,5 +64,8 @@ namespace MycoMgmt.Domain.Models
                             x
                       ";
         }
+        
+        public override string GetAllQuery(int skip = 0, int limit = 0) =>
+            "MATCH (s:Strain) WHERE s.Name IS NOT NULL RETURN s.Name as result";
     }
 }

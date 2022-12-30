@@ -5,7 +5,7 @@ using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("strains")]
+    [Route("strain")]
     [ApiController]
     public class StrainsController : Controller
     {
