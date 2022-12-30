@@ -80,24 +80,38 @@ public class CultureController : Controller
 
         culture.Status = culture.IsSuccessful();
 
-        var resultList = new List<List<IEntity>>();
+        var resultList = new List<IEntity>();
         var cultureName = culture.Name;
         
         if (count == 1)
         {
-            resultList.Add(await _cultureRepository.Create(culture));   
+            var results = await _cultureRepository.Create(culture);
+            resultList = resultList.Concat(results).ToList();
         }
         else
         {
             for (var i = 1; i <= count; i++)
             {
                 culture.Name = cultureName + "-" + i.ToString("D2");
-                resultList.Add(await _cultureRepository.Create(culture));
+                var results = await _cultureRepository.Create(culture);
+                resultList = resultList.Concat(results).ToList();
             }
         }
+
+        var nodeList = resultList
+                                            .Where(entity => entity is INode)
+                                            .Select(item => new 
+                                           {
+                                               Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
+                                               ElementId = (string? )item.ElementId
+                                           })
+                                           .ToList();
         
-        _logger.LogInformation("New Culture Created {cultureName} ({elementId})", culture.Name, culture.ElementId);
-        return Created("", string.Join(",", resultList));
+        var result = JsonConvert.SerializeObject(nodeList);
+        
+         _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
+         
+        return Created("", result);
     }
 
     [HttpPut("{elementId}")]

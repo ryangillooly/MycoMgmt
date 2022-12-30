@@ -47,7 +47,6 @@ namespace MycoMgmt.Domain.Models
                 $@"
                     MATCH (x:{Tags[0]} {{ Name: '{Name}' }})
                     SET x:{string.Join(":", Tags)}
-                    RETURN x
                 ";
         }
         public virtual List<string?> CreateQueryList()
