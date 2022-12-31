@@ -19,16 +19,16 @@ public class SpawnRepository : ISpawnRepository
         _logger = logger;
     }
     
-    public async Task<string> Create(Spawn spawn)
+    public async Task<List<IEntity>> Create(Spawn spawn)
     {
         var queryList = spawn.CreateQueryList();
-        return await _neo4JDataAccess.RunTransaction(queryList);
+        return await _neo4JDataAccess.RunTransaction2(queryList);
     }
     
     public async Task<string> Update(Spawn spawn)
     {
         var queryList = spawn.UpdateQueryList();
-        var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
+        var spawnData = await _neo4JDataAccess.RunTransaction2(queryList);
         return JsonConvert.SerializeObject(spawnData);
     }
     

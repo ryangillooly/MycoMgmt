@@ -12,6 +12,8 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             EntityType = GetType().Name;
         }
         
+        public DateTime? HarvestedOn { get; set; }
+        public string? HarvestedBy { get; set; }
         public decimal? WetWeight { get; set; }
         public decimal? DryWeight { get; set; }
         
@@ -43,6 +45,87 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 
             return query;
         }
+        
+        public virtual string? CreateHarvestedRelationship()
+        {
+            return
+                HarvestedBy is null
+                    ? null
+                    : $@"
+                          MATCH 
+                              (x:{EntityType} {{ Name: '{Name}' }}),
+                              (u:User {{ Name: '{InoculatedBy}' }})
+                          CREATE
+                              (u)-[r:HARVESTED]->(x)
+                          RETURN r
+                      ";
+        }
+        
+        public virtual string? CreateHarvestedOnRelationship()
+        {
+            return
+                HarvestedOn is null
+                    ? null
+                    : $@"
+                            MATCH 
+                                (x:{EntityType} {{ Name: '{Name}' }}), 
+                                (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
+                            CREATE
+                                (x)-[r:HARVESTED_ON]->(d)
+                            RETURN r
+                      ";
+        }
+        
+        public virtual string? UpdateHarvestedRelationship()
+        {
+            return
+                HarvestedBy is null
+                    ? null
+                    : $@"
+                            MATCH 
+                                (x:{EntityType})
+                            WHERE
+                                elementId(x) = '{ElementId}'
+                            OPTIONAL MATCH
+                                (u:User)-[r:HARVESTED]->(x)
+                            DELETE 
+                                r
+                            WITH
+                                x
+                            MATCH
+                                (u:User {{ Name: '{InoculatedBy}' }})
+                            MERGE
+                                (u)-[r:HARVESTED]->(x)
+                            RETURN 
+                                r
+                        ";
+        }
+        
+        public virtual string? UpdateHarvestedOnRelationship()
+        {
+            return
+                HarvestedOn is null
+                    ? null
+                    : $@"
+                            MATCH 
+                                (x:{EntityType})
+                            WHERE
+                                elementId(x) = '{ElementId}'
+                            OPTIONAL MATCH
+                                (x)-[r:HARVESTED_ON]->(d)
+                            DELETE 
+                                r
+                            WITH
+                                x
+                            MATCH
+                                (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
+                            MERGE
+                                (x)-[r:HARVESTED_ON]->(d)
+                            RETURN 
+                                r
+                        ";
+        }
+        
         public override List<string> CreateQueryList()
         {
             var queryList = new List<string>
@@ -50,6 +133,8 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 CreateNode(),
                 CreateInoculatedRelationship(),
                 CreateInoculatedOnRelationship(),
+                CreateHarvestedRelationship(),
+                CreateHarvestedOnRelationship(),
                 CreateFinishedOnRelationship(),
                 CreateStrainRelationship(),
                 CreateLocationRelationship(),
@@ -57,6 +142,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 CreateCreatedOnRelationship(),
                 CreateParentRelationship(),
                 CreateChildRelationship(),
+                CreateVendorRelationship(),
                 CreateNodeLabels()
             };
 
@@ -72,6 +158,8 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 UpdateName(),
                 UpdateInoculatedRelationship(),
                 UpdateInoculatedOnRelationship(),
+                UpdateHarvestedRelationship(),
+                UpdateHarvestedOnRelationship(),
                 UpdateFinishedOnRelationship(),
                 UpdateRecipeRelationship(),
                 UpdateLocationRelationship(),
@@ -79,6 +167,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 UpdateChildRelationship(),
                 UpdateModifiedOnRelationship(),
                 UpdateModifiedRelationship(),
+                UpdateVendorRelationship(),
                 UpdateStatus(),
                 UpdateStatusLabel()
             };

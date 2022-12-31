@@ -8,7 +8,7 @@ namespace MycoMgmt.API.Repositories
 {
     public interface IFruitRepository
     {
-        public Task<string> Create(Fruit fruit);
+        public Task<List<IEntity>> Create(Fruit fruit);
         Task<string> SearchByName(Fruit fruit);
         Task<string> GetByName(Fruit fruit);
         public Task<string> GetById(Fruit fruit);

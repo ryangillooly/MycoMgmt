@@ -8,7 +8,7 @@ namespace MycoMgmt.API.Repositories
 {
     public interface ISpawnRepository
     {
-        public Task<string> Create(Spawn spawn);
+        public Task<List<IEntity>> Create(Spawn spawn);
         Task<string> SearchByName(Spawn spawn);
         Task<string> GetByName(Spawn spawn);
         public Task<string> GetById(Spawn spawn);

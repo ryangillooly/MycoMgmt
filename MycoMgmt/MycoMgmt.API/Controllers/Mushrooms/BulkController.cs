@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.API.Helpers;
+using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -11,10 +13,12 @@ namespace MycoMgmt.API.Controllers;
 public class BulkController : Controller
 {
     private readonly IBulkRepository _bulkRepository;
+    private readonly ILogger<SpawnController> _logger;
 
-    public BulkController(IBulkRepository repo)
+    public BulkController(IBulkRepository repo, ILogger<SpawnController> logger)
     {
         _bulkRepository = repo;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -29,6 +33,7 @@ public class BulkController : Controller
         string? parentType,
         string? child,
         string? childType,
+        string? vendor,
         bool?   successful,
         bool    finished,
         string? finishedOn,
@@ -54,8 +59,9 @@ public class BulkController : Controller
             Notes        = notes,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
+            Vendor       = vendor,
             Successful   = successful,
             Finished     = finished,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
@@ -67,23 +73,39 @@ public class BulkController : Controller
         
         bulk.Tags.Add(bulk.IsSuccessful());
 
-        var resultList = new List<string>();
+        var resultList = new List<IEntity>();
         var bulkName = bulk.Name;
         
         if (count == 1)
         {
-            resultList.Add(await _bulkRepository.Create(bulk));   
+            var results = await _bulkRepository.Create(bulk);
+            resultList = resultList.Concat(results).ToList();
         }
         else
         {
             for (var i = 1; i <= count; i++)
             {
                 bulk.Name = bulkName + "-" + i.ToString("D2");
-                resultList.Add(await _bulkRepository.Create(bulk));
+                var results = await _bulkRepository.Create(bulk);
+                resultList = resultList.Concat(results).ToList();
             }
         }
+        
+        var nodeList = resultList
+            .Where(entity => entity is INode)
+            .Select(item => new 
+            {
+                Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
+                ElementId = (string? )item.ElementId
+            })
+            .ToList();
+        
+        var result = JsonConvert.SerializeObject(nodeList);
+        
+        _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
 
-        return Created("", string.Join(",", resultList));
+
+        return Created("", string.Join(",", result));
     }
 
     [HttpPut("{elementId}")]
@@ -99,6 +121,7 @@ public class BulkController : Controller
         string? parentType,
         string? child,
         string? childType,
+        string? vendor,
         bool?   successful,
         bool?   finished,
         string? finishedOn,
@@ -128,8 +151,9 @@ public class BulkController : Controller
             Location     = location,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
+            Vendor       = vendor, 
             Successful   = successful,
             Finished     = finished,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),

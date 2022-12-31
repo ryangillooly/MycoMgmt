@@ -1,13 +1,14 @@
-@page "/culture/new"
-@using Microsoft.AspNetCore.Antiforgery
-@model IndexModel
-@inject IAntiforgery antiforgery
-@{
-    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
-}
-<h1>Index</h1>
+@page "/spawn/new"
+@model SpawnModel
 
 <form method="post">
+
+    <h1>Create Spawn</h1>
+    
+    <br/>
+    <pre>@Model.responseString</pre>
+    <br/>
+    
     <div class="form-group">
         <label for="name">Name</label>
         <input type="text" class="form-control" id="name" name="name">
@@ -15,10 +16,10 @@
     <div class="form-group">
         <label for="type">Type</label>
         <select class="form-control" id="type" name="type">
-            <option value="Spore Syringe">Spore Syringe</option>
-            <option value="Spore Print">Spore Print</option>
-            <option value="Agar">Agar</option>
-            <option value="Liquid Culture">Liquid Culture</option>
+            <option value="Popcorn">Popcorn</option>
+            <option value="Rye Grain">Rye Grain</option>
+            <option value="Millet">Millet</option>
+            <option value="Brown Rice">Brown Rice</option>
         </select>
     </div>
     <div class="form-group">
@@ -42,10 +43,10 @@
     <div class="form-group">
         <label for="location">Location</label>
         <select class="form-control" id="location" name="location">
-            <option value="incubation chamber">Incubation Chamber</option>
-            <option value="wine cooler">Wine Cooler</option>
-            <option value="fridge">Fridge</option>
-            <option value="grow tent">Grow Tent</option>
+            <option value="Incubation Chamber">Incubation Chamber</option>
+            <option value="Wine Cooler">Wine Cooler</option>
+            <option value="Fridge">Fridge</option>
+            <option value="Grow Tent">Grow Tent</option>
         </select>
     </div>
     <div class="form-group">
@@ -56,10 +57,10 @@
         <label for="parenttype">Parent Type</label>
         <select class="form-control" id="parenttype" name="parenttype">
             <option value=""></option>
-            <option value="culture">Culture</option>
-            <option value="spawn">Spawn</option>
-            <option value="bulk">Bulk</option>
-            <option value="fruit">Fruit</option>
+            <option value="Culture">Culture</option>
+            <option value="Spawn">Spawn</option>
+            <option value="Bulk">Bulk</option>
+            <option value="Fruit">Fruit</option>
         </select>
     </div>
     <div class="form-group">
@@ -70,10 +71,10 @@
         <label for="childtype">Child Type</label>
         <select class="form-control" id="childtype" name="childtype">
             <option value=""></option>
-            <option value="culture">Culture</option>
-            <option value="spawn">Spawn</option>
-            <option value="bulk">Bulk</option>
-            <option value="fruit">Fruit</option>
+            <option value="Culture">Culture</option>
+            <option value="Spawn">Spawn</option>
+            <option value="Bulk">Bulk</option>
+            <option value="Fruit">Fruit</option>
         </select>
     </div>
     <div class="form-group">
@@ -97,12 +98,12 @@
         <input type="date" class="form-control" id="finishedon" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="finishedon">
     </div>
     <div class="form-group">
-        <label for="innoculatedon">Innoculated On</label>
-        <input type="date" class="form-control" id="innoculatedon" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="innoculatedon">
+        <label for="inoculatedon">Innoculated On</label>
+        <input type="date" class="form-control" id="inoculatedon" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="inoculatedon">
     </div>
     <div class="form-group">
-        <label for="innoculatedby">Innoculated By</label>
-        <select class="form-control" id="innoculatedby" name="innoculatedby">
+        <label for="inoculatedby">Innoculated By</label>
+        <select class="form-control" id="inoculatedby" name="inoculatedby">
             <option value="Ryan Gillooly">Ryan Gillooly</option>
             <option value="Calum Muirhead">Calum Muirhead</option>
             <option value="Aiden Neizer">Aiden Neizer</option>
@@ -123,7 +124,7 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="name">Number of Cultures</label>
+        <label for="name">Number of Spawn</label>
         <input type="text" class="form-control" id="count" name="count">
     </div>
     
@@ -132,15 +133,6 @@
 
 <br/>
 <br/>
-
-
-<button class="btn btn-primary btn-danger" onclick="RazorFunction()">Previous Page</button>
-
-
-<br/>
-<br/>
-
-<pre>@Model.responseString</pre>
 
 @{
     <style>

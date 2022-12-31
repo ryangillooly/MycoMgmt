@@ -12,7 +12,7 @@ namespace MycoMgmt.API.Repositories
         Task<string> GetByName(Bulk bulk);
         public Task<string> GetById(Bulk bulk);
         public Task<string> GetAll(Bulk bulk, int skip, int limit);
-        public Task<string> Create(Bulk bulk);
+        public Task<List<IEntity>> Create(Bulk bulk);
         public Task Delete(Bulk bulk);
         public Task<string> Update(Bulk bulk);
     }

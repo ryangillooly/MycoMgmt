@@ -48,6 +48,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 CreateRecipeRelationship(),
                 CreateParentRelationship(),
                 CreateChildRelationship(),
+                CreateVendorRelationship(),
                 CreateNodeLabels()
             };
 
@@ -71,6 +72,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 UpdateChildRelationship(),
                 UpdateModifiedOnRelationship(),
                 UpdateModifiedRelationship(),
+                UpdateVendorRelationship(),
                 UpdateStatus(),
                 UpdateStatusLabel()
             };

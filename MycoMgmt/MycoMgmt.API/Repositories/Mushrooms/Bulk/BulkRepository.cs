@@ -25,10 +25,10 @@ public class BulkRepository : IBulkRepository
         _logger = logger;
     }
     
-    public async Task<string> Create(Bulk bulk)
+    public async Task<List<IEntity>> Create(Bulk bulk)
     {
         var queryList = bulk.CreateQueryList();
-        return await _neo4JDataAccess.RunTransaction(queryList);
+        return await _neo4JDataAccess.RunTransaction2(queryList);
     }
     
     public async Task<string> Update(Bulk bulk)

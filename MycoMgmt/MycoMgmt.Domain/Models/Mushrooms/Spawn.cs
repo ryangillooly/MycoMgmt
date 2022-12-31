@@ -6,9 +6,8 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {   
         public Spawn()
         {
-            var entityType = EntityTypes.Spawn.ToString();
-            Tags.Add(entityType);
-            EntityType = entityType;
+            Tags.Add(GetType().Name);
+            EntityType = GetType().Name;
         }
         
         // Create
@@ -46,6 +45,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 CreateCreatedOnRelationship(),
                 CreateParentRelationship(),
                 CreateChildRelationship(),
+                CreateVendorRelationship(),
                 CreateNodeLabels()
             };
 
@@ -68,6 +68,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                 UpdateChildRelationship(),
                 UpdateModifiedOnRelationship(),
                 UpdateModifiedRelationship(),
+                UpdateVendorRelationship(),
                 UpdateStatus(),
                 UpdateStatusLabel()
             };

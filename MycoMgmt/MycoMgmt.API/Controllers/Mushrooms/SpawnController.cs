@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.API.Helpers;
+using Neo4j.Driver;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -11,10 +13,12 @@ namespace MycoMgmt.API.Controllers;
 public class SpawnController : Controller
 {
     private readonly ISpawnRepository _spawnRepository;
+    private readonly ILogger<SpawnController> _logger;
 
-    public SpawnController(ISpawnRepository repo)
+    public SpawnController(ISpawnRepository repo, ILogger<SpawnController> logger)
     {
         _spawnRepository = repo;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -30,6 +34,7 @@ public class SpawnController : Controller
         string? parentType,
         string? child,
         string? childType,
+        string? vendor,
         bool?   successful,
         bool    finished,
         string? finishedOn,
@@ -57,8 +62,9 @@ public class SpawnController : Controller
             Successful   = successful,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
+            Vendor       = vendor,
             Finished     = finished,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
             InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
@@ -68,25 +74,40 @@ public class SpawnController : Controller
         };
         
         spawn.Tags.Add(spawn.IsSuccessful());
-        spawn.Tags.Add(spawn.Type);
         
-        var resultList = new List<string>();
+        var resultList = new List<IEntity>();
         var spawnName = spawn.Name;
 
         if (count == 1)
         {
-            resultList.Add(await _spawnRepository.Create(spawn));   
+            var results = await _spawnRepository.Create(spawn);
+            resultList = resultList.Concat(results).ToList();
         }
         else
         {
             for (var i = 1; i <= count; i++)
             {
                 spawn.Name = spawnName + "-" + i.ToString("D2");
-                resultList.Add(await _spawnRepository.Create(spawn));
+                var results = await _spawnRepository.Create(spawn);
+                resultList = resultList.Concat(results).ToList();
             }
         }
+        
+        var nodeList = resultList
+            .Where(entity => entity is INode)
+            .Select(item => new 
+            {
+                Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
+                ElementId = (string? )item.ElementId
+            })
+            .ToList();
+        
+        var result = JsonConvert.SerializeObject(nodeList);
+        
+        _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
 
-        return Created("", string.Join(",", resultList));
+
+        return Created("", string.Join(",", result));
     }
 
     [HttpPut("{elementId}")]
@@ -103,6 +124,7 @@ public class SpawnController : Controller
         string? parentType,
         string? child,
         string? childType,
+        string? vendor,
         bool?   successful,
         bool?   finished,
         string? finishedOn,
@@ -133,8 +155,9 @@ public class SpawnController : Controller
             Successful   = successful,
             Parent       = parent,
             ParentType   = parentType,
-            Children        = child,
+            Children     = child,
             ChildType    = childType,
+            Vendor       = vendor, 
             Finished     = finished,
             FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
             InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),

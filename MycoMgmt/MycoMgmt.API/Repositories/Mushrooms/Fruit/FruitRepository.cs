@@ -29,10 +29,10 @@ public class FruitRepository : IFruitRepository
     }
 
     
-    public async Task<string> Create(Fruit fruit)
+    public async Task<List<IEntity>> Create(Fruit fruit)
     {
         var queryList = fruit.CreateQueryList();
-        return await _neo4JDataAccess.RunTransaction(queryList);
+        return await _neo4JDataAccess.RunTransaction2(queryList);
     }
     
     public async Task Delete(Fruit fruit)
