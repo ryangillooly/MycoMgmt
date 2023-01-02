@@ -3,11 +3,6 @@ namespace MycoMgmt.Domain.Models
 {
     public class Strain : ModelBase
     {
-        public Strain()
-        {
-            Tags.Add(GetType().Name);
-        }
-
         public string? Effects { get; set; }
         
         

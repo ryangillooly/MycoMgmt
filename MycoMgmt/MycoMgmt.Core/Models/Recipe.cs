@@ -2,11 +2,6 @@
 {
     public class Recipe : ModelBase
     {
-        public Recipe()
-        {
-            Tags.Add(GetType().Name);
-        }
-        
         public string? Description { get; set; }
         public List<string>? Steps { get; set; }
         public List<string>? Ingredients { get; set; }
@@ -28,7 +23,7 @@
             var query = $@"
                             CREATE 
                             (
-                                x:{Tags[0]} {{ 
+                                x:{EntityType} {{ 
                                                      Name: '{Name}',
                                                      Type: '{Type}'
                                                      {additionalData} 
@@ -94,7 +89,7 @@
                     ? null
                     : $@" 
                         MATCH 
-                            (recipe:{Tags[0]})
+                            (recipe:{EntityType})
                         WHERE
                             elementId(recipe) = '{ElementId}'
                         OPTIONAL MATCH
@@ -120,7 +115,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 
@@ -136,7 +131,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 

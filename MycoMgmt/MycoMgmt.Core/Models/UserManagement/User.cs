@@ -7,10 +7,6 @@ namespace MycoMgmt.Domain.Models.UserManagement
 {
     public class User : Security
     {
-        public User()
-        {
-            Tags.Add(GetType().Name);
-        }
         public string? Account { get; set; }
         public List<string>? Roles { get; set; }
         

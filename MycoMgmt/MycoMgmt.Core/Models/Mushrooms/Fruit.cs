@@ -6,12 +6,6 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     public class Fruit : Mushroom
     {
         //Properties
-        public Fruit()
-        {
-            Tags.Add(GetType().Name);
-            EntityType = GetType().Name;
-        }
-        
         public DateTime? HarvestedOn { get; set; }
         public string? HarvestedBy { get; set; }
         public decimal? WetWeight { get; set; }
@@ -34,7 +28,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             
             var query = $@"CREATE 
                                     (
-                                        x:{Tags[0]} {{ 
+                                        x:{EntityType} {{ 
                                                              Name: '{Name}',
                                                              EntityType: '{EntityType}',
                                                              Status: '{IsSuccessful()}'

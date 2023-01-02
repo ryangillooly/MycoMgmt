@@ -3,13 +3,7 @@
 namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Spawn : Mushroom
-    {   
-        public Spawn()
-        {
-            Tags.Add(GetType().Name);
-            EntityType = GetType().Name;
-        }
-        
+    {
         // Create
         public override string CreateNode()
         {

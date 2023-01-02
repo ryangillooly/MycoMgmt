@@ -6,30 +6,25 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Culture : Mushroom
     {
-        public Culture()
-        {
-            Tags.Add(GetType().Name);
-            EntityType = GetType().Name;
-        }
-        
         public override string CreateNode()
         {
             var additionalData = "";
         
             if (Notes != null)
                 additionalData += $",Notes: '{Notes}'";
-        
+
+            var status = IsSuccessful();
             var query = $@"CREATE 
                                 (
                                     x
-                                        {$@":`{EntityType}`"}
-                                        {$@":`{Type}`"}
-                                        {$@":`{Status}`"} 
+                                        :`{EntityType}`
+                                        :`{Type}`
+                                        :`{status}`
                                     {{ 
                                         Name:       '{Name}',
                                         EntityType: '{EntityType}',
                                         Type:       '{Type}',
-                                        Status:     '{IsSuccessful()}'
+                                        Status:     '{status}'
                                         {additionalData} 
                                      }}
                                 )

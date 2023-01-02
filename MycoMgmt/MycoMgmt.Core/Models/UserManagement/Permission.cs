@@ -6,9 +6,5 @@ namespace MycoMgmt.Domain.Models.UserManagement
 {
     public class Permission : ModelBase
     {
-        public Permission()
-        {
-            Tags.Add(EntityTypes.Permission.ToString());
-        }
     }
 }

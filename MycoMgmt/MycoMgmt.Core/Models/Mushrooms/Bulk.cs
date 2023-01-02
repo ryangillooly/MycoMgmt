@@ -5,12 +5,6 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Bulk : Mushroom
     {
-        public Bulk()
-        {
-            Tags.Add(GetType().Name);
-            EntityType = GetType().Name;
-        }
-
         // Create
         public override string CreateNode()
         {

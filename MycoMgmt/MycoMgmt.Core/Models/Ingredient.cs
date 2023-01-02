@@ -6,9 +6,5 @@ namespace MycoMgmt.Domain.Models
 {
     public class Ingredient : ModelBase
     {
-        public Ingredient()
-        {
-            Tags.Add(GetType().Name);
-        }
     }
 }

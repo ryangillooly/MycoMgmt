@@ -1,6 +1,6 @@
 ﻿namespace MycoMgmt.Domain.Models.Mushrooms
 {
-    public abstract class Mushroom : ModelBase
+    public class Mushroom : ModelBase
     {
         // Properties
         public string? Strain { get; set; }
@@ -28,8 +28,8 @@
                     ? null
                     : $@"
                             MATCH 
-                                (x:{Tags[0]} {{ Name: '{Name}' }}), 
-                                (d:Day                {{ day:   {FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {FinishedOn.Value.Year} }})
+                                (x:{EntityType} {{ Name: '{Name}' }}), 
+                                (d:Day {{ day:   {FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {FinishedOn.Value.Year} }})
                             CREATE
                                 (x)-[r:FINISHED_ON]->(d)
                             RETURN r
@@ -42,8 +42,8 @@
                     ? null
                     : $@"
                         MATCH 
-                            (c:{Tags[0]} {{ Name: '{Name}'   }}),
-                            (recipe:Recipe       {{ Name: '{Recipe}' }})
+                            (c:{EntityType} {{ Name: '{Name}'   }}),
+                            (recipe:Recipe {{ Name: '{Recipe}' }})
                         CREATE
                             (c)-[r:CREATED_USING]->(recipe)
                         RETURN 
@@ -57,8 +57,8 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]} {{ Name: '{Name}'   }}), 
-                            (s:Strain             {{ Name: '{Strain}' }})
+                            (x:{EntityType} {{ Name: '{Name}'   }}), 
+                            (s:Strain  {{ Name: '{Strain}' }})
                         CREATE
                             (x)-[r:HAS_STRAIN]->(s)
                         RETURN r
@@ -71,7 +71,7 @@
                     ? null
                     : $@"
                           MATCH 
-                              (c:{Tags[0]} {{ Name: '{Name}' }}), 
+                              (c:{EntityType} {{ Name: '{Name}' }}), 
                               (p:{ParentType} {{ Name: '{Parent}' }})
                           CREATE
                               (c)-[r:HAS_PARENT]->(p)
@@ -85,8 +85,8 @@
                     ? null
                     : $@"
                             MATCH 
-                                (x:{Tags[0]} {{ Name: '{Name}' }}), 
-                                (d:Day                {{ day:   {InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {InoculatedOn.Value.Year} }})
+                                (x:{EntityType} {{ Name: '{Name}' }}), 
+                                (d:Day  {{ day:   {InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {InoculatedOn.Value.Year} }})
                             CREATE
                                 (x)-[r:INOCULATED_ON]->(d)
                             RETURN r
@@ -99,8 +99,8 @@
                     ? null
                     : $@"
                           MATCH 
-                              (x:{Tags[0]} {{ Name: '{Name}'         }}),
-                              (u:User               {{ Name: '{InoculatedBy}' }})
+                              (x:{EntityType} {{ Name: '{Name}'         }}),
+                              (u:User  {{ Name: '{InoculatedBy}' }})
                           CREATE
                               (u)-[r:INOCULATED]->(x)
                           RETURN r
@@ -113,7 +113,7 @@
                     ? null 
                     : $@"
                         MATCH 
-                            (p:{Tags[0]} {{ Name: '{Name}' }}), 
+                            (p:{EntityType} {{ Name: '{Name}' }}), 
                             (c:{ChildType} {{ Name: '{Children}' }})
                         CREATE
                             (c)-[r:HAS_PARENT]->(p)
@@ -127,8 +127,8 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}  {{ Name: '{Name}'     }}), 
-                            (l:Location            {{ Name: '{Location}' }})
+                            (x:{EntityType}  {{ Name: '{Name}'     }}), 
+                            (l:Location   {{ Name: '{Location}' }})
                         CREATE
                             (x)-[r:STORED_IN]->(l)
                         RETURN r
@@ -141,9 +141,9 @@
                     ? null
                     : $@"
                             MATCH 
-                                (x:{Tags[0]} {{ Name: '{Name}'   }}),
+                                (x:{EntityType} {{ Name: '{Name}'   }}),
                                 (v:Vendor            {{ Name: '{Vendor}' }})
-                            MERGE
+                            CREATE
                                 (x)-[r:PURCHASED_FROM]->(v)
                             RETURN 
                                 r
@@ -159,7 +159,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (c:{Tags[0]})
+                            (c:{EntityType})
                         WHERE
                             elementId(c) = '{ElementId}'
                         OPTIONAL MATCH
@@ -183,7 +183,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (p:{Tags[0]})
+                            (p:{EntityType})
                         WHERE
                             elementId(p) = '{ElementId}'
                         OPTIONAL MATCH
@@ -207,7 +207,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE
                             elementId(x) = '{ElementId}'
                         OPTIONAL MATCH
@@ -231,7 +231,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE
                             elementId(x) = '{ElementId}'
                         OPTIONAL MATCH
@@ -255,7 +255,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (c:{Tags[0]})
+                            (c:{EntityType})
                         WHERE
                             elementId(c) = '{ElementId}'
                         OPTIONAL MATCH
@@ -279,7 +279,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE 
                             elementId(x) = '{ElementId}'
                         REMOVE 
@@ -315,7 +315,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE
                             elementId(x) = '{ElementId}'
                         OPTIONAL MATCH
@@ -339,7 +339,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE
                             elementId(x) = '{ElementId}'
                         OPTIONAL MATCH
@@ -363,7 +363,7 @@
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]})
+                            (x:{EntityType})
                         WHERE
                             elementId(x) = '{ElementId}'
                         OPTIONAL MATCH
@@ -387,7 +387,7 @@
                     ? null
                     : $@"
                             MATCH 
-                                (x:{Tags[0]})
+                                (x:{EntityType})
                             WHERE
                                 elementId(x) = '{ElementId}'
                             OPTIONAL MATCH

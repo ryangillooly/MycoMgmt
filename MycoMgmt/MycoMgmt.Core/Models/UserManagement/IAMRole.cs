@@ -9,13 +9,6 @@ namespace MycoMgmt.Domain.Models.UserManagement
 {
     public class IamRole : Security
     {
-        public IamRole()
-        {
-            Tags.Add(GetType().Name);
-            Type = GetType().Name;
-        }
-     
-        
         public override List<string> CreateQueryList()
         {
             var queryList = new List<string>

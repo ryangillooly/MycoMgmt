@@ -5,9 +5,5 @@ namespace MycoMgmt.Domain.Models.UserManagement
 {
     public class Account : ModelBase
     {
-        public Account()
-        {
-            Tags.Add(GetType().Name);
-        }
     }
 }

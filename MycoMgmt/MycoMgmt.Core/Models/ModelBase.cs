@@ -5,8 +5,14 @@ using System.Runtime.CompilerServices;
 
 namespace MycoMgmt.Domain.Models
 {
-    public abstract class ModelBase
+    public class ModelBase
     {
+        public ModelBase()
+        {
+            Tags.Add(GetType().Name);
+            EntityType = GetType().Name;
+        }
+        
         // Properties
         public string? ElementId { get; set; }
         public List<string> Tags { get; set; } = new ();
@@ -45,7 +51,7 @@ namespace MycoMgmt.Domain.Models
         {
             return
                 $@"
-                    MATCH (x:{Tags[0]} {{ Name: '{Name}' }})
+                    MATCH (x:{EntityType} {{ Name: '{Name}' }})
                     SET x:{string.Join(":", Tags)}
                 ";
         }
@@ -80,7 +86,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]} {{ Name: '{Name}'      }}),
+                        (x:{EntityType} {{ Name: '{Name}'      }}),
                         (u:User               {{ Name: '{CreatedBy}' }})
                     CREATE
                         (u)-[r:CREATED]->(x)
@@ -92,7 +98,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]} {{ Name: '{Name}' }}), 
+                        (x:{EntityType} {{ Name: '{Name}' }}), 
                         (d:Day                {{ day:   {CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {CreatedOn.Year} }})
                     CREATE
                         (x)-[r:CREATED_ON]->(d)
@@ -106,7 +112,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]}) 
+                        (x:{EntityType}) 
                     WHERE 
                         toUpper(x.Name) CONTAINS toUpper('{Name}') 
                     RETURN 
@@ -122,7 +128,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]}) 
+                        (x:{EntityType}) 
                     WHERE 
                         toUpper(x.Name) = toUpper('{Name}') 
                     RETURN 
@@ -134,7 +140,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]}) 
+                        (x:{EntityType}) 
                     WHERE 
                         elementId(x) = '{ElementId}'
                     RETURN 
@@ -146,7 +152,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]})
+                        (x:{EntityType})
                     OPTIONAL MATCH 
                         (x)-[r:INOCULATED_ON]->(d:Day)<-[rd:HAS_DAY]-(m:Month)-[:HAS_MONTH]-(y:Year)
                     WITH 
@@ -175,7 +181,7 @@ namespace MycoMgmt.Domain.Models
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 
@@ -190,7 +196,7 @@ namespace MycoMgmt.Domain.Models
 
             var query = $@"
                                 MATCH 
-                                    (x:{Tags[0]})
+                                    (x:{EntityType})
                                 WHERE
                                     elementId(x) = '{ElementId}'
                                 OPTIONAL MATCH
@@ -214,7 +220,7 @@ namespace MycoMgmt.Domain.Models
             return
                 $@"
                     MATCH 
-                        (x:{Tags[0]})
+                        (x:{EntityType})
                     WHERE
                         elementId(x) = '{ElementId}'
                     OPTIONAL MATCH
@@ -238,7 +244,7 @@ namespace MycoMgmt.Domain.Models
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 
@@ -253,7 +259,7 @@ namespace MycoMgmt.Domain.Models
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ElementId}' 
                         SET 
@@ -270,7 +276,7 @@ namespace MycoMgmt.Domain.Models
                     ? null
                     : $@"
                         MATCH 
-                            (x:{Tags[0]}) 
+                            (x:{EntityType}) 
                         WHERE 
                             elementId(x) = '{ ElementId }' 
                         DETACH DELETE 
