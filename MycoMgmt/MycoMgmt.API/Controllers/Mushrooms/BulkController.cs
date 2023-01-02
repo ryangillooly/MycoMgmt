@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Repositories;
+using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.API.Helpers;
 using Neo4j.Driver;

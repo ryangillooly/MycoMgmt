@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MycoMgmt.API.Helpers;
-using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.Mushrooms;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Repositories;
+using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
 
 namespace MycoMgmt.API.Controllers
