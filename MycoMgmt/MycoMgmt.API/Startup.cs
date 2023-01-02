@@ -23,8 +23,10 @@ namespace MycoMgmt.API
         {
             services.AddRazorPages();
             services.AddControllers();
-            services.AddNeoDatabase(Configuration);
-            services.AddRepositories();
+            
+            services
+                .AddDatabase(Configuration)
+                .AddRepositories();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

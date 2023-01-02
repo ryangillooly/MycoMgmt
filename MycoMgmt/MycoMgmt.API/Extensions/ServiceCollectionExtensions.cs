@@ -11,18 +11,14 @@ namespace MycoMgmt.API.Helpers
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            
+            if (services == null) throw new ArgumentNullException(nameof(services));
             services.AddTransient<IActionRepository,  ActionRepository>();
-            
             return services;
         }
         
-        public static IServiceCollection AddNeoDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
+            if (services == null) throw new ArgumentNullException(nameof(services));
             
             services.Configure<Neo4JSettings>(configuration.GetSection("Neo4JSettings"));
             
