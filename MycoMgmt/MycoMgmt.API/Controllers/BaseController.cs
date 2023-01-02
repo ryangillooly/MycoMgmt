@@ -8,8 +8,8 @@ namespace MycoMgmt.API.Controllers;
 public class BaseController<T> : ControllerBase where T : ModelBase
 {
     private ILogger<T>? _logger;
-    private BaseRepository? _repository;
+    private IActionRepository? _repository;
 
     protected ILogger<T> Logger => _logger ??= HttpContext.RequestServices.GetRequiredService<ILogger<T>>();
-    protected BaseRepository Repository => _repository ??= HttpContext.RequestServices.GetRequiredService<BaseRepository>();
+    protected IActionRepository Repository => _repository ??= HttpContext.RequestServices.GetRequiredService<IActionRepository>();
 }

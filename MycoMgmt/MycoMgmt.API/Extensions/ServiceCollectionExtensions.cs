@@ -14,7 +14,7 @@ namespace MycoMgmt.API.Helpers
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
             
-            services.AddTransient<BaseRepository,  ActionRepository>();
+            services.AddTransient<IActionRepository,  ActionRepository>();
             
             return services;
         }

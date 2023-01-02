@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using static MycoMgmt.Infrastructure.Helpers.BaseRepositoryExtensions;
+using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class CultureController : Controller
 {
-    private readonly ActionRepository _cultureRepository;
+    private readonly IActionRepository _cultureRepository;
     private readonly ILogger<CultureController> _logger;
 
-    public CultureController(ActionRepository repo, ILogger<CultureController> logger)
+    public CultureController(IActionRepository repo, ILogger<CultureController> logger)
     {
         _cultureRepository = repo;
         _logger = logger;
