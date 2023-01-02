@@ -7,17 +7,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("account")]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : BaseController<AccountController>
     {
-        private readonly ActionRepository _accountRepository;
-        private readonly ILogger<AccountController> _logger;
-        
-        public AccountController(ActionRepository repo, ILogger<AccountController> logger)
-        {
-            _accountRepository = repo;
-            _logger = logger;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create 
         (
@@ -33,7 +24,7 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy = createdBy
             };
 
-            var result = await _accountRepository.CreateEntities(_logger, account);
+            var result = await Repository.CreateEntities(Logger, account);
             
             return Created("", result);
         }
@@ -55,26 +46,26 @@ namespace MycoMgmt.API.Controllers
                 ModifiedBy = modifiedBy
             };
 
-            return Ok(await _accountRepository.Update(account));
+            return Ok(await Repository.Update(account));
         }
 
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _accountRepository.Delete(new Account { Id = Id });
+            await Repository.Delete(new Account { Id = Id });
             return NoContent();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _accountRepository.GetAll(new Account(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Account(), skip, limit));
 
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _accountRepository.GetById(new Account { Id = Id}));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Account { Id = Id}));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _accountRepository.GetByName(new Account { Name = name}));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Account { Name = name}));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _accountRepository.SearchByName(new Account { Name = name}));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Account { Name = name}));
     }
 }

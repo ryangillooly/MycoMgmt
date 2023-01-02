@@ -8,17 +8,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("user")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : BaseController<UserController>
     {
-        private readonly ActionRepository _userRepository;
-        private readonly ILogger<UserController> _logger;
-
-        public UserController(ActionRepository repo, ILogger<UserController> logger)
-        {
-            _userRepository = repo;
-            _logger = logger;
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create
         (
@@ -40,7 +31,7 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy   = createdBy
             };
 
-            var result  = await _userRepository.CreateEntities(_logger, user);
+            var result  = await Repository.CreateEntities(Logger, user);
 
             return Created("", result);
         }
@@ -66,26 +57,26 @@ namespace MycoMgmt.API.Controllers
                 ModifiedBy  = modifiedBy
             };
 
-            return Ok(await _userRepository.Update(user));
+            return Ok(await Repository.Update(user));
         }
         
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _userRepository.Delete(new User { Id = Id });
+            await Repository.Delete(new User { Id = Id });
             return NoContent();
         }
     
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _userRepository.GetAll(new User(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new User(), skip, limit));
 
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _userRepository.GetById(new User { Id = Id }));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new User { Id = Id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _userRepository.GetByName(new User { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new User { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _userRepository.SearchByName(new User { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new User { Name = name }));
     }
 }

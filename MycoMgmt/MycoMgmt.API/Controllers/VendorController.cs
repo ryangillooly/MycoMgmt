@@ -7,17 +7,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("accounts")]
     [ApiController]
-    public class VendorController : Controller
+    public class VendorController : BaseController<VendorController>
     {
-        private readonly ActionRepository _vendorRepository;
-        private readonly ILogger<VendorController> _logger;
-
-        public VendorController(ActionRepository repo, ILogger<VendorController> logger)
-        {
-            _vendorRepository = repo;
-            _logger = logger;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create 
         (
@@ -37,7 +28,7 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy  = createdBy
             };
 
-            var result  = await _vendorRepository.CreateEntities(_logger, vendor);
+            var result  = await Repository.CreateEntities(Logger, vendor);
 
             return Created("", result);
         } 
@@ -62,27 +53,27 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy  = modifiedBy
             };
             
-            return Ok(await _vendorRepository.Update(vendor));
+            return Ok(await Repository.Update(vendor));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _vendorRepository.Delete(new Vendor { Id = Id });
+            await Repository.Delete(new Vendor { Id = Id });
             return NoContent();
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _vendorRepository.GetAll(new Vendor(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Vendor(), skip, limit));
 
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _vendorRepository.GetById(new Vendor { Id = Id }));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Vendor { Id = Id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _vendorRepository.GetByName(new Vendor { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Vendor { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _vendorRepository.SearchByName(new Vendor { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Vendor { Name = name }));
 
     }
 }

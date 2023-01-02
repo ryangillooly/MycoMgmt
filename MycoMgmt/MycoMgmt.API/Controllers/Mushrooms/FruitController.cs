@@ -8,17 +8,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("fruit")]
 [ApiController]
-public class FruitController : Controller
+public class FruitController : BaseController<FruitController>
 {
-    private readonly ActionRepository _fruitRepository;
-    private readonly ILogger<FruitController> _logger;
-
-    public FruitController(ActionRepository repo, ILogger<FruitController> logger)
-    {
-        _fruitRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -74,7 +65,7 @@ public class FruitController : Controller
         fruit.Tags.Add(fruit.IsSuccessful());
         fruit.Status  = fruit.IsSuccessful();
         
-        var result  = await _fruitRepository.CreateEntities(_logger, fruit, count);
+        var result  = await Repository.CreateEntities(Logger, fruit, count);
         
         return Created("", string.Join(",", result));
     }
@@ -139,26 +130,26 @@ public class FruitController : Controller
             ModifiedBy   = modifiedBy
         };
         
-        return Ok(await _fruitRepository.Update(fruit));
+        return Ok(await Repository.Update(fruit));
     }
     
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _fruitRepository.Delete(new Fruit { Id = Id });
+        await Repository.Delete(new Fruit { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _fruitRepository.GetAll(new Fruit(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Fruit(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _fruitRepository.GetById(new Fruit { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Fruit { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _fruitRepository.GetByName(new Fruit { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Fruit { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _fruitRepository.SearchByName(new Fruit { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Fruit { Name = name }));
 }

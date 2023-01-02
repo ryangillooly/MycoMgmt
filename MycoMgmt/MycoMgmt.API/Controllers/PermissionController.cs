@@ -8,17 +8,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("permission")]
     [ApiController]
-    public class PermissionController : Controller
+    public class PermissionController : BaseController<PermissionController>
     {
-        private readonly ActionRepository _permissionRepository;
-        private readonly ILogger<PermissionController> _logger;
-
-        public PermissionController(ActionRepository repo, ILogger<PermissionController> logger)
-        {
-            _permissionRepository = repo;
-            _logger = logger;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create(string name)
         {
@@ -27,7 +18,7 @@ namespace MycoMgmt.API.Controllers
                 Name = name
             };
             
-            var result  = await _permissionRepository.CreateEntities(_logger, permission);
+            var result  = await Repository.CreateEntities(Logger, permission);
 
             return Created("", result);
         }
@@ -48,27 +39,27 @@ namespace MycoMgmt.API.Controllers
                 ModifiedBy  = modifiedBy
             };
             
-            return Ok(await _permissionRepository.Update(permission));
+            return Ok(await Repository.Update(permission));
         }
 
 
         [HttpDelete]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _permissionRepository.Delete(new Permission { Id = Id});
+            await Repository.Delete(new Permission { Id = Id});
             return NoContent();
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _permissionRepository.GetAll(new Permission(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Permission(), skip, limit));
 
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _permissionRepository.GetById(new Permission { Id = Id }));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Permission { Id = Id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _permissionRepository.GetByName(new Permission { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Permission { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _permissionRepository.SearchByName(new Permission { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Permission { Name = name }));
     }
 }

@@ -9,17 +9,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("recipe")]
 [ApiController]
-public class RecipeController : Controller
+public class RecipeController : BaseController<RecipeController>
 {
-    private readonly ActionRepository _recipeRepository;
-    private readonly ILogger<RecipeController> _logger;
-
-    public RecipeController(ActionRepository repo, ILogger<RecipeController> logger)
-    {
-        _recipeRepository = repo;
-        _logger = logger;
-    }
-    
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -46,7 +37,7 @@ public class RecipeController : Controller
         recipe.SplitStepsToList(steps);
         recipe.SplitIngredientsToList(ingredients);
         
-        var result = await _recipeRepository.CreateEntities(_logger, recipe);
+        var result = await Repository.CreateEntities(Logger, recipe);
             
         return Created("", result);
     }
@@ -95,26 +86,26 @@ public class RecipeController : Controller
             }
         }
         
-        return Ok(await _recipeRepository.Update(recipe));
+        return Ok(await Repository.Update(recipe));
     }
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _recipeRepository.Delete(new Recipe { Id = Id});
+        await Repository.Delete(new Recipe { Id = Id});
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _recipeRepository.GetAll(new Recipe(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Recipe(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _recipeRepository.GetById(new Recipe { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Recipe { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _recipeRepository.GetByName(new Recipe { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Recipe { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _recipeRepository.SearchByName(new Recipe { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Recipe { Name = name }));
 
 }

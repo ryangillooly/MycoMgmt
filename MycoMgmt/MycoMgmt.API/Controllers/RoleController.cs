@@ -9,17 +9,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("role")]
     [ApiController]
-    public class RoleController : Controller
+    public class RoleController : BaseController<RoleController>
     {
-        private readonly ActionRepository _roleRepository;
-        private readonly ILogger<RoleController> _logger;
-        
-        public RoleController(ActionRepository repo, ILogger<RoleController> logger)
-        {
-            _roleRepository = repo;
-            _logger = logger;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create
         (
@@ -38,7 +29,7 @@ namespace MycoMgmt.API.Controllers
                 CreatedOn   = DateTime.Parse(createdOn)
             };
 
-            var result  = await _roleRepository.CreateEntities(_logger, role);
+            var result  = await Repository.CreateEntities(Logger, role);
 
             return Created("", result);
         }
@@ -61,25 +52,25 @@ namespace MycoMgmt.API.Controllers
                 ModifiedOn  = DateTime.Parse(modifiedOn)
             };
 
-            return Ok(await _roleRepository.Update(role));
+            return Ok(await Repository.Update(role));
         }
         
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _roleRepository.Delete(new IamRole() { Id = Id });
+            await Repository.Delete(new IamRole() { Id = Id });
             return NoContent();
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _roleRepository.GetAll(new IamRole(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new IamRole(), skip, limit));
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _roleRepository.GetById(new IamRole { Id = Id }));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new IamRole { Id = Id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _roleRepository.GetByName(new IamRole { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new IamRole { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _roleRepository.SearchByName(new IamRole { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new IamRole { Name = name }));
     }
 }

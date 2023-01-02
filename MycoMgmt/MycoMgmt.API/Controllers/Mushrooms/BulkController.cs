@@ -8,17 +8,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("bulk")]
 [ApiController]
-public class BulkController : Controller
+public class BulkController : BaseController<BulkController>
 {
-    private readonly ActionRepository _bulkRepository;
-    private readonly ILogger<BulkController> _logger;
-
-    public BulkController(ActionRepository repo, ILogger<BulkController> logger)
-    {
-        _bulkRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -72,7 +63,7 @@ public class BulkController : Controller
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
         
-        var result  = await _bulkRepository.CreateEntities(_logger, bulk, count);
+        var result  = await Repository.CreateEntities(Logger, bulk, count);
 
         return Created("", result);
     }
@@ -132,25 +123,25 @@ public class BulkController : Controller
             ModifiedBy   = modifiedBy
         };
         
-        return Ok(await _bulkRepository.Update(bulk));
+        return Ok(await Repository.Update(bulk));
     }
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _bulkRepository.Delete(new Bulk { Id = Id });
+        await Repository.Delete(new Bulk { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _bulkRepository.GetAll(new Bulk(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Bulk(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _bulkRepository.GetById(new Bulk { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Bulk { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _bulkRepository.GetByName(new Bulk { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Bulk { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _bulkRepository.SearchByName(new Bulk { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Bulk { Name = name }));
 }
