@@ -11,9 +11,11 @@ namespace MycoMgmt.Domain.Models
         {
             Tags.Add(GetType().Name);
             EntityType = GetType().Name;
+            Id         = Guid.NewGuid().ToString();
         }
         
         // Properties
+        public string Id { get; set; }
         public string? ElementId { get; set; }
         public List<string> Tags { get; set; } = new ();
         public string? EntityType { get; set; }
@@ -38,7 +40,8 @@ namespace MycoMgmt.Domain.Models
                             CREATE 
                             (
                                 x:{EntityType} {{ 
-                                                 Name: '{Name}'
+                                                 Name: '{Name}',
+                                                 Id: '{Id}'
                                                  {additionalData} 
                                               }}
                             )

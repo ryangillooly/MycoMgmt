@@ -103,7 +103,7 @@ public class CultureModel : PageModel
         
         foreach (var item in nodeObj)
         {
-            outputString += $"\n {item["Name"]} ({item["ElementId"]})"; 
+            outputString += $"\n <b><i><a href='/culture/{item}'{item["Name"]} ({item["ElementId"]})"; 
         }
 
         responseString = outputString;

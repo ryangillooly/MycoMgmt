@@ -9,9 +9,9 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class LocationController : Controller
     {
-        private readonly ILocationsRepository _locationsRepository;
+        private readonly BaseRepository<Location> _locationsRepository;
         
-        public LocationController(ILocationsRepository repo, IDriver driver)
+        public LocationController(BaseRepository<Location> repo, IDriver driver)
         {
             _locationsRepository = repo;
         }

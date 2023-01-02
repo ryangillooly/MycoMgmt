@@ -1,19 +1,42 @@
+using System.Runtime.InteropServices;
 using AutoFixture;
 using Xunit;
 using FluentAssertions;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Domain.Models.Mushrooms;
+using Neo4j.Driver;
 
 namespace MycoMgmt.Tests.UnitTests;
 
 public class ModelBaseTests
 {
-    private Domain.Models.Mushrooms.Mushroom mushroom { get; set; }
+    private Mushroom mushroom { get; set; }
 
     public ModelBaseTests()
     {
-        mushroom = new Fixture().Create<Domain.Models.Mushrooms.Mushroom>();
+        mushroom = new Fixture().Create<Mushroom>();
     }
+
+
+    [Fact]
+    public void MultipleEntityCreationsShouldReturnMultipleEntityIds()
+    {
+        const int entityCount     = 5;
+        const int expectedIdCount = 5;
+        var mushroomName    = mushroom.Name;
+        
+        var resultList = new List<string>();
+        
+        for (var i = 1; i <= entityCount; i++)
+        {
+            mushroom.Id = Guid.NewGuid().ToString();
+            mushroom.Name = mushroomName + "-" + i.ToString("D2");
+            resultList.Add(mushroom.Id);
+        }
+
+        resultList.Distinct().Count().Should().Be(expectedIdCount);
+    }
+    
     
     [Fact]
     public void NewEntityShouldReturnEntityType()
@@ -32,7 +55,8 @@ public class ModelBaseTests
                                 CREATE 
                                 (
                                     x:{mushroom.EntityType} {{ 
-                                        Name: '{mushroom.Name}'
+                                        Name: '{mushroom.Name}',
+                                        Id: '{mushroom.Id}'
                                         ,Notes: '{mushroom.Notes}',Type: '{mushroom.Type}'
                                     }}
                                 )

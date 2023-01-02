@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.API.Helpers;
+using MycoMgmt.Core.Helpers;
+using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Neo4j.Driver;
 using Newtonsoft.Json;
+using static MycoMgmt.Infrastructure.Helpers.BaseRepositoryExtensions;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -12,10 +13,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class CultureController : Controller
 {
-    private readonly ICultureRepository _cultureRepository;
+    private readonly BaseRepository<Culture> _cultureRepository;
     private readonly ILogger<CultureController> _logger;
 
-    public CultureController(ICultureRepository repo, ILogger<CultureController> logger)
+    public CultureController(BaseRepository<Culture> repo, ILogger<CultureController> logger)
     {
         _cultureRepository = repo;
         _logger = logger;
@@ -77,43 +78,15 @@ public class CultureController : Controller
             CreatedOn    = DateTime.Parse(createdOn),
             CreatedBy    = createdBy
         };
-
-        culture.Status = culture.IsSuccessful();
-
-        var resultList = new List<IEntity>();
-        var cultureName = culture.Name;
         
-        if (count == 1)
-        {
-            var results = await _cultureRepository.Create(culture);
-            resultList = resultList.Concat(results).ToList();
-        }
-        else
-        {
-            for (var i = 1; i <= count; i++)
-            {
-                culture.Name = cultureName + "-" + i.ToString("D2");
-                var results = await _cultureRepository.Create(culture);
-                resultList = resultList.Concat(results).ToList();
-            }
-        }
+        culture.Tags.Add(culture.IsSuccessful());
+        culture.Status  = culture.IsSuccessful();
+        
+        var result  = await _cultureRepository.CreateEntities(_logger, culture, count);
 
-        var nodeList = resultList
-                                            .Where(entity => entity is INode)
-                                            .Select(item => new 
-                                           {
-                                               Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
-                                               ElementId = (string? )item.ElementId
-                                           })
-                                           .ToList();
-        
-        var result = JsonConvert.SerializeObject(nodeList);
-        
-         _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
-         
         return Created("", result);
     }
-
+    
     [HttpPut("{elementId}")]
     public async Task<IActionResult> Update
     (

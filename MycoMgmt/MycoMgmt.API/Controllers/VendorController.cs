@@ -8,9 +8,9 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class VendorController : Controller
     {
-        private readonly IVendorRepository _vendorRepository;
+        private readonly BaseRepository<Vendor> _vendorRepository;
         
-        public VendorController(IVendorRepository repo)
+        public VendorController(BaseRepository<Vendor> repo)
         {
             _vendorRepository = repo;
         }

@@ -9,9 +9,9 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        private readonly BaseRepository<User> _userRepository;
         
-        public UserController(IUserRepository repo)
+        public UserController(BaseRepository<User> repo)
         {
             _userRepository = repo;
         }

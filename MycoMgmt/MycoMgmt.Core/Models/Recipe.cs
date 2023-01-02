@@ -25,7 +25,8 @@
                             (
                                 x:{EntityType} {{ 
                                                      Name: '{Name}',
-                                                     Type: '{Type}'
+                                                     Type: '{Type}',
+                                                     Id: '{Id}'
                                                      {additionalData} 
                                                   }}
                             )

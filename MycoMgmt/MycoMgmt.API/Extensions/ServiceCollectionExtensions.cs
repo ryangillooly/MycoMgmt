@@ -1,4 +1,7 @@
-﻿using MycoMgmt.Infrastructure.DataStores.Neo4J;
+﻿using MycoMgmt.Domain.Models;
+using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 
@@ -11,17 +14,17 @@ namespace MycoMgmt.API.Helpers
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
             
-            services.AddTransient<ICultureRepository,    CultureRepository>();
-            services.AddTransient<ISpawnRepository,      SpawnRepository>();
-            services.AddTransient<IBulkRepository,       BulkRepository>();
-            services.AddTransient<IFruitRepository,      FruitRepository>();
-            services.AddTransient<ILocationsRepository,  LocationsRepository>();
-            services.AddTransient<IStrainsRepository,    StrainsRepository>();
-            services.AddTransient<IAccountRepository,    AccountRepository>();
-            services.AddTransient<IRecipeRepository,     RecipeRepository>();
-            services.AddTransient<IUserRepository,       UserRepository>();
-            services.AddTransient<IPermissionRepository, PermissionRepository>();
-            services.AddTransient<IRoleRepository,       RoleRepository>();
+            services.AddTransient<BaseRepository<Culture>,    CultureRepository>();
+            services.AddTransient<BaseRepository<Spawn>,      SpawnRepository>();
+            services.AddTransient<BaseRepository<Bulk>,       BulkRepository>();
+            services.AddTransient<BaseRepository<Fruit>,      FruitRepository>();
+            services.AddTransient<BaseRepository<Location>,   LocationsRepository>();
+            services.AddTransient<BaseRepository<Strain>,     StrainsRepository>();
+            services.AddTransient<BaseRepository<Account>,    AccountRepository>();
+            services.AddTransient<BaseRepository<Recipe>,     RecipeRepository>();
+            services.AddTransient<BaseRepository<User>,       UserRepository>();
+            services.AddTransient<BaseRepository<Permission>, PermissionRepository>();
+            services.AddTransient<BaseRepository<IamRole>,    RoleRepository>();
             
             return services;
         }

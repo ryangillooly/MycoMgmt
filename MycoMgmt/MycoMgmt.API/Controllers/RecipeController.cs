@@ -8,9 +8,9 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class RecipeController : Controller
 {
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly BaseRepository<Recipe> _recipeRepository;
 
-    public RecipeController(IRecipeRepository repo)
+    public RecipeController(BaseRepository<Recipe> repo)
     {
         _recipeRepository = repo;
     }

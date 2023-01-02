@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories
 {
-    public class AccountRepository : IAccountRepository
+    public class AccountRepository : BaseRepository<Account>
     {
         private readonly INeo4JDataAccess _neo4JDataAccess;
         private ILogger<AccountRepository> _logger;
@@ -23,45 +23,45 @@ namespace MycoMgmt.Infrastructure.Repositories
             _logger = logger;
         }
         
-        public async Task<string> SearchByName(Account account)
+        public override async Task<string> SearchByName(Account account)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.SearchByNameQuery(), "x");
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetByName(Account account)
+        public override async Task<string> GetByName(Account account)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(account.GetByNameQuery(), "x");
 
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetById(Account account)
+        public override async Task<string> GetById(Account account)
         {
             var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(account.GetByIdQuery());
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetAll(Account account, int skip, int limit)
+        public override async Task<string> GetAll(Account account, int skip, int limit)
         {
             var result = await _neo4JDataAccess.ExecuteReadListAsync(account.GetAllQuery(skip, limit), "result");
             return JsonConvert.SerializeObject(result);
         }
-        
-        public async Task<string> Create(Account account)
+
+        public override async Task<List<IEntity>> Create(Account account)
         {
             var queryList = account.CreateQueryList();
             var result = await _neo4JDataAccess.RunTransaction(queryList);
             return result;
         }
         
-        public async Task<string> Delete(Account account)
+        public override async Task<string> Delete(Account account)
         {
             var accounts = await _neo4JDataAccess.RunTransaction(new List<string?> { account.Delete() });
             return JsonConvert.SerializeObject(accounts);
         }
 
-        public async Task<string> Update(Account account)
+        public override async Task<string> Update(Account account)
         {
             var queryList = account.UpdateQueryList();
             var cultures = await _neo4JDataAccess.RunTransaction(queryList);

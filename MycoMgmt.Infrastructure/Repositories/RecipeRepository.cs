@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories;
 
-public class RecipeRepository : IRecipeRepository
+public class RecipeRepository : BaseRepository<Recipe>
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
     private ILogger<RecipeRepository> _logger;
@@ -19,38 +19,38 @@ public class RecipeRepository : IRecipeRepository
         _logger = logger;
     }
 
-    public async Task<string> SearchByName(Recipe recipe)
+    public override async Task<string> SearchByName(Recipe recipe)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(recipe.SearchByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public async Task<string> GetByName(Recipe recipe)
+    public override async Task<string> GetByName(Recipe recipe)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(recipe.GetByNameQuery(), "x");
 
         return JsonConvert.SerializeObject(result);
     }
 
-    public async Task<string> GetById(Recipe recipe)
+    public override async Task<string> GetById(Recipe recipe)
     {
         var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(recipe.GetByIdQuery());
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> GetAll(Recipe recipe, int skip, int limit)
+    public override async Task<string> GetAll(Recipe recipe, int skip, int limit)
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(recipe.GetAllQuery(skip, limit), "x");
         return JsonConvert.SerializeObject(result);
     }
     
-    public async Task<string> Create(Recipe recipe)
+    public override async Task<List<IEntity>> Create(Recipe recipe)
     {
         var queryList = recipe.CreateQueryList();        
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public async Task Delete(Recipe recipe)
+    public override async Task Delete(Recipe recipe)
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(recipe.Delete());
 
@@ -60,7 +60,7 @@ public class RecipeRepository : IRecipeRepository
         _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", recipe.ElementId);
     }
         
-    public async Task<string> Update(Recipe recipe)
+    public override async Task<string> Update(Recipe recipe)
     {
         var queryList = recipe.UpdateQueryList();   
         var results = await _neo4JDataAccess.RunTransaction(queryList);

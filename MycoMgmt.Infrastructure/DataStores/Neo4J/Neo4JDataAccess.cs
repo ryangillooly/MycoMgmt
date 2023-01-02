@@ -100,7 +100,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
     }
     
-    public async Task<List<IEntity>> RunTransaction2(List<string?> queryList)
+    public async Task<List<IEntity>> RunTransaction(List<string?> queryList)
     {
         try
         {
@@ -154,6 +154,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
     }
     
+    /*
     public async Task<string> RunTransaction(List<string?> queryList)
     {
         try
@@ -196,6 +197,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
             throw;
         }
     }
+    */
         
     private async Task<List<object>> ExecuteReadTransactionAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters)
     {

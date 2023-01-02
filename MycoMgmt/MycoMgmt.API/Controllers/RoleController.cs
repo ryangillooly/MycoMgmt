@@ -9,9 +9,9 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class RoleController : Controller
     {
-        private readonly IRoleRepository _roleRepository;
+        private readonly BaseRepository<IamRole> _roleRepository;
         
-        public RoleController(IRoleRepository repo)
+        public RoleController(BaseRepository<IamRole> repo)
         {
             _roleRepository = repo;
         }

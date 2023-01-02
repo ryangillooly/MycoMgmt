@@ -22,6 +22,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                         :`{status}`
                                     {{ 
                                         Name:       '{Name}',
+                                        Id:       '{Id}',
                                         EntityType: '{EntityType}',
                                         Type:       '{Type}',
                                         Status:     '{status}'
@@ -129,7 +130,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         sum(entityCount) as entities
                     RETURN
                         entities, 
-                        apoc.map.CREATEList
+                        apoc.map.mergeList
                         ([
                             {{ElementId:    elementId(x)}},
                             {{EntityType:   properties(x).EntityType}},

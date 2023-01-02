@@ -16,6 +16,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 (
                                     x:{EntityType} {{ 
                                                          Name:       '{Name}',
+                                                         Id:       '{Id}',
                                                          EntityType: '{EntityType}',
                                                          Status:     '{IsSuccessful()}'
                                                          {additionalData} 

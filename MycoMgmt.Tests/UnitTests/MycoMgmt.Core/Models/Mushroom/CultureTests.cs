@@ -27,6 +27,7 @@ public class CultureTests
                                         :`{status}`
                                     {{ 
                                         Name:       '{culture.Name}',
+                                        Id:       '{culture.Id}',
                                         EntityType: '{culture.EntityType}',
                                         Type:       '{culture.Type}',
                                         Status:     '{status}'

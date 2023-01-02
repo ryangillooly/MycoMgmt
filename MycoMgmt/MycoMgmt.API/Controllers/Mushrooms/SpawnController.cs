@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.API.Helpers;
-using Neo4j.Driver;
-using Newtonsoft.Json;
+using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -12,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class SpawnController : Controller
 {
-    private readonly ISpawnRepository _spawnRepository;
+    private readonly BaseRepository<Spawn> _spawnRepository;
     private readonly ILogger<SpawnController> _logger;
 
-    public SpawnController(ISpawnRepository repo, ILogger<SpawnController> logger)
+    public SpawnController(BaseRepository<Spawn> repo, ILogger<SpawnController> logger)
     {
         _spawnRepository = repo;
         _logger = logger;
@@ -74,38 +72,9 @@ public class SpawnController : Controller
         };
         
         spawn.Tags.Add(spawn.IsSuccessful());
+        spawn.Status  = spawn.IsSuccessful();
         
-        var resultList = new List<IEntity>();
-        var spawnName = spawn.Name;
-
-        if (count == 1)
-        {
-            var results = await _spawnRepository.Create(spawn);
-            resultList = resultList.Concat(results).ToList();
-        }
-        else
-        {
-            for (var i = 1; i <= count; i++)
-            {
-                spawn.Name = spawnName + "-" + i.ToString("D2");
-                var results = await _spawnRepository.Create(spawn);
-                resultList = resultList.Concat(results).ToList();
-            }
-        }
-        
-        var nodeList = resultList
-            .Where(entity => entity is INode)
-            .Select(item => new 
-            {
-                Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
-                ElementId = (string? )item.ElementId
-            })
-            .ToList();
-        
-        var result = JsonConvert.SerializeObject(nodeList);
-        
-        _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
-
+        var result  = await _spawnRepository.CreateEntities(_logger, spawn, count);
 
         return Created("", string.Join(",", result));
     }

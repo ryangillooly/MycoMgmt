@@ -29,9 +29,10 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             var query = $@"CREATE 
                                     (
                                         x:{EntityType} {{ 
-                                                             Name: '{Name}',
+                                                             Name:       '{Name}',
+                                                             Id:       '{Id}',
                                                              EntityType: '{EntityType}',
-                                                             Status: '{IsSuccessful()}'
+                                                             Status:     '{IsSuccessful()}'
                                                              {additionalData} 
                                                           }}
                                     )
@@ -212,7 +213,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         location,
                         parent
                     RETURN 
-                        apoc.map.CREATEList
+                        apoc.map.mergeList
                         ([
                             {{ElementId:    elementId(x)}},
                             {{Name:         properties(x).Name}},

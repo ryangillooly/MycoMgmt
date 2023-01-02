@@ -18,7 +18,8 @@ namespace MycoMgmt.Domain.Models
                             CREATE 
                             (
                                 x:{EntityType} {{ 
-                                                     Name: '{Name}'
+                                                     Name: '{Name}',
+                                                     Id: '{Id}'
                                                      {additionalData} 
                                                   }}
                             )

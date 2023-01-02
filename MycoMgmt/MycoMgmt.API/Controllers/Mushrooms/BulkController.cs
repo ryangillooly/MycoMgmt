@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.API.Helpers;
-using Neo4j.Driver;
-using Newtonsoft.Json;
+using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -12,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class BulkController : Controller
 {
-    private readonly IBulkRepository _bulkRepository;
+    private readonly BaseRepository<Bulk> _bulkRepository;
     private readonly ILogger<SpawnController> _logger;
 
-    public BulkController(IBulkRepository repo, ILogger<SpawnController> logger)
+    public BulkController(BaseRepository<Bulk> repo, ILogger<SpawnController> logger)
     {
         _bulkRepository = repo;
         _logger = logger;
@@ -72,40 +70,11 @@ public class BulkController : Controller
         };
         
         bulk.Tags.Add(bulk.IsSuccessful());
+        bulk.Status = bulk.IsSuccessful();
+        
+        var result  = await _bulkRepository.CreateEntities(_logger, bulk, count);
 
-        var resultList = new List<IEntity>();
-        var bulkName = bulk.Name;
-        
-        if (count == 1)
-        {
-            var results = await _bulkRepository.Create(bulk);
-            resultList = resultList.Concat(results).ToList();
-        }
-        else
-        {
-            for (var i = 1; i <= count; i++)
-            {
-                bulk.Name = bulkName + "-" + i.ToString("D2");
-                var results = await _bulkRepository.Create(bulk);
-                resultList = resultList.Concat(results).ToList();
-            }
-        }
-        
-        var nodeList = resultList
-            .Where(entity => entity is INode)
-            .Select(item => new 
-            {
-                Name      = item.Properties.TryGetValue("Name", out var name) ? (string?) name : null,
-                ElementId = (string? )item.ElementId
-            })
-            .ToList();
-        
-        var result = JsonConvert.SerializeObject(nodeList);
-        
-        _logger.LogInformation("New Cultures Created - {cultureName}", nodeList.Select(item => $"{item.Name} ({item.ElementId})"));
-
-
-        return Created("", string.Join(",", result));
+        return Created("", result);
     }
 
     [HttpPut("{elementId}")]

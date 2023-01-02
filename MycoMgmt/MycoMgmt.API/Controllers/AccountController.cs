@@ -8,9 +8,9 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly IAccountRepository _accountRepository;
+        private readonly BaseRepository<Account> _accountRepository;
         
-        public AccountController(IAccountRepository repo)
+        public AccountController(BaseRepository<Account> repo)
         {
             _accountRepository = repo;
         }
