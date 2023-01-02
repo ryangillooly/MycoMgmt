@@ -18,7 +18,6 @@ public class CultureController : BaseController<CultureController>
     [MushroomValidation]
     public async Task<IActionResult> Create (CultureControllerViewModel values)
     {
-        var count = values.count;
         var culture = new Culture
         {
             Name         = values.name,
@@ -44,7 +43,7 @@ public class CultureController : BaseController<CultureController>
 
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status  = culture.IsSuccessful();
-        var result  = await Repository.CreateEntities(Logger, culture, count);
+        var result  = await Repository.CreateEntities(Logger, culture, values.count);
         return Created("", result);
     }
     
