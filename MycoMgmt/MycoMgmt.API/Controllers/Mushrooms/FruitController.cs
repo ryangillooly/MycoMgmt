@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -34,12 +35,6 @@ public class FruitController : BaseController<FruitController>
         int?     count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-
         var fruit = new Fruit()
         {
             Name         = name,
@@ -64,9 +59,8 @@ public class FruitController : BaseController<FruitController>
         
         fruit.Tags.Add(fruit.IsSuccessful());
         fruit.Status  = fruit.IsSuccessful();
-        
+        fruit.Validate();
         var result  = await Repository.CreateEntities(Logger, fruit, count);
-        
         return Created("", string.Join(",", result));
     }
 
@@ -96,18 +90,9 @@ public class FruitController : BaseController<FruitController>
         string   modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
         var fruit = new Fruit()
         {
-            Id    = Id,
+            Id           = Id,
             Name         = name,
             WetWeight    = wetWeight,
             DryWeight    = dryWeight,
@@ -130,6 +115,7 @@ public class FruitController : BaseController<FruitController>
             ModifiedBy   = modifiedBy
         };
         
+        fruit.Validate();
         return Ok(await Repository.Update(fruit));
     }
     

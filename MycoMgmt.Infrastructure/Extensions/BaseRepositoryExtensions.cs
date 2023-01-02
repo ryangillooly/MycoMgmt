@@ -4,6 +4,7 @@ using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 using MycoMgmt.Core.Helpers;
+using MycoMgmt.Domain.Models.Mushrooms;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 

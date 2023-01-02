@@ -29,7 +29,7 @@ namespace MycoMgmt.API.Controllers
             
             var result = await Repository.CreateEntities(Logger, location);
             
-            return Created("", result);
+            return Created($"", result);
         }
         
         [HttpPut("{Id}")]
@@ -44,7 +44,7 @@ namespace MycoMgmt.API.Controllers
         {
             var location = new Location
             {
-                Id       = Id,
+                Id              = Id,
                 Name            = name,
                 AgentConfigured = agentConfigured,
                 ModifiedOn      = DateTime.Parse(modifiedOn),

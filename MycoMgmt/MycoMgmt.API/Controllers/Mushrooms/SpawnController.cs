@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -34,12 +35,6 @@ public class SpawnController : BaseController<SpawnController>
         int?    count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-
         var spawn = new Spawn()
         {
             Name         = name,
@@ -64,9 +59,8 @@ public class SpawnController : BaseController<SpawnController>
         
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Status  = spawn.IsSuccessful();
-        
+        spawn.Validate();
         var result  = await Repository.CreateEntities(Logger, spawn, count);
-
         return Created("", string.Join(",", result));
     }
 
@@ -94,15 +88,6 @@ public class SpawnController : BaseController<SpawnController>
         string  modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-        
         var spawn = new Spawn()
         {
             Id    = Id,
@@ -126,6 +111,7 @@ public class SpawnController : BaseController<SpawnController>
             ModifiedBy   = modifiedBy
         };
 
+        spawn.Validate();
         return Ok(await Repository.Update(spawn));
     }
     

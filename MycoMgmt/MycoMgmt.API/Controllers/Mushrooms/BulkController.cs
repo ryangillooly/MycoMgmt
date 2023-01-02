@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -33,12 +34,6 @@ public class BulkController : BaseController<BulkController>
         int?    count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
         var bulk = new Bulk()
         {
             Name         = name,
@@ -62,9 +57,8 @@ public class BulkController : BaseController<BulkController>
         
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
-        
+        bulk.Validate();
         var result  = await Repository.CreateEntities(Logger, bulk, count);
-
         return Created("", result);
     }
 
@@ -92,15 +86,6 @@ public class BulkController : BaseController<BulkController>
         
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-        
         var bulk = new Bulk
         {
             Id    = Id,
@@ -123,6 +108,7 @@ public class BulkController : BaseController<BulkController>
             ModifiedBy   = modifiedBy
         };
         
+        bulk.Validate();
         return Ok(await Repository.Update(bulk));
     }
     

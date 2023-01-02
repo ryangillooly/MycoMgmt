@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
@@ -35,15 +37,6 @@ public class CultureController : BaseController<CultureController>
         int?    count = 1
     )
     {
-        if((parent is null && parentType is not null ) || (parent is not null && parentType is null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child is null && childType is not null ) || (child is not null && childType is null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if(purchased is null or false && vendor is not null )
-            throw new ValidationException("You cannot supply a Vendor if the item was not Purchased.");
-        
         var culture = new Culture
         {
             Name         = name,
@@ -69,9 +62,8 @@ public class CultureController : BaseController<CultureController>
         
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status  = culture.IsSuccessful();
-        
+        culture.Validate();
         var result  = await Repository.CreateEntities(Logger, culture, count);
-
         return Created("", result);
     }
     
@@ -99,15 +91,6 @@ public class CultureController : BaseController<CultureController>
         string  modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
         var culture = new Culture
         {
             Id    = Id,
@@ -131,6 +114,7 @@ public class CultureController : BaseController<CultureController>
             ModifiedBy   = modifiedBy
         };
         
+        culture.Validate();
         return Ok(await Repository.Update(culture));
     }
     
