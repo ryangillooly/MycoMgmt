@@ -1,6 +1,5 @@
-﻿using MycoMgmt.API.DataStores.Neo4J;
-using MycoMgmt.API.Repositories;
-using MycoMgmt.DataStores.Neo4J;
+﻿using MycoMgmt.Infrastructure.DataStores.Neo4J;
+using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers

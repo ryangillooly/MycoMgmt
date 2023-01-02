@@ -3,11 +3,15 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+        <RootNamespace>MycoMgmt.Web</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MycoMgmt.API\MycoMgmt.API.csproj" />
-      <ProjectReference Include="..\MycoMgmt.Domain\MycoMgmt.Domain.csproj" />
+      <ProjectReference Include="..\MycoMgmt.Core\MycoMgmt.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 
 </Project>

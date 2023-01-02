@@ -17,7 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MycoMgmt.Domain\MycoMgmt.Domain.csproj" />
+      <ProjectReference Include="..\..\MycoMgmt.Infrastructure\MycoMgmt.Infrastructure.csproj" />
+      <ProjectReference Include="..\MycoMgmt.Core\MycoMgmt.Core.csproj" />
     </ItemGroup>
 
 </Project>

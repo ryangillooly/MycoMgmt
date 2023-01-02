@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
-using MycoMgmt.API.Repositories;
+using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers

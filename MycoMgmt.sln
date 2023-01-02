@@ -2,9 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.API", "MycoMgmt\MycoMgmt.API\MycoMgmt.API.csproj", "{CFBEE46C-1001-4D1D-8937-CC9E2E48BFE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Domain", "MycoMgmt\MycoMgmt.Domain\MycoMgmt.Domain.csproj", "{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Core", "MycoMgmt\MycoMgmt.Core\MycoMgmt.Core.csproj", "{CA27B17E-4CF6-4FD5-92DD-9D4A3D35DEEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Web", "MycoMgmt\MycoMgmt.Web\MycoMgmt.Web.csproj", "{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Infrastructure", "MycoMgmt.Infrastructure\MycoMgmt.Infrastructure.csproj", "{3CA98B63-E5A3-4079-9ABF-ABE7CE793D73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MycoMgmt.Tests", "MycoMgmt.Tests\MycoMgmt.Tests.csproj", "{F5CABF9D-2738-4EAC-8C4E-87F62891CA39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,13 @@ Global
 		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B40A648-CBFF-4D9D-83A8-2B4CE9C7F3DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CA98B63-E5A3-4079-9ABF-ABE7CE793D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CA98B63-E5A3-4079-9ABF-ABE7CE793D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CA98B63-E5A3-4079-9ABF-ABE7CE793D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CA98B63-E5A3-4079-9ABF-ABE7CE793D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5CABF9D-2738-4EAC-8C4E-87F62891CA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5CABF9D-2738-4EAC-8C4E-87F62891CA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5CABF9D-2738-4EAC-8C4E-87F62891CA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5CABF9D-2738-4EAC-8C4E-87F62891CA39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
