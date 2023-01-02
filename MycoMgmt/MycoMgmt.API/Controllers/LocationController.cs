@@ -8,17 +8,8 @@ namespace MycoMgmt.API.Controllers
 {
     [Route("location")]
     [ApiController]
-    public class LocationController : Controller
+    public class LocationController : BaseController<LocationController>
     {
-        private readonly BaseRepository<Location> _locationsRepository;
-        private readonly ILogger<LocationController> _logger;
-        
-        public LocationController(BaseRepository<Location> repo, ILogger<LocationController> logger)
-        {
-            _locationsRepository = repo;
-            _logger = logger;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create
         (
@@ -36,9 +27,9 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy       = createdBy
             };
             
-            var result = await _locationsRepository.CreateEntities(_logger, location);
+            var result = await Repository.CreateEntities(Logger, location);
             
-            return Created("", result);
+            return Created($"", result);
         }
         
         [HttpPut("{Id}")]
@@ -53,34 +44,34 @@ namespace MycoMgmt.API.Controllers
         {
             var location = new Location
             {
-                Id       = Id,
+                Id              = Id,
                 Name            = name,
                 AgentConfigured = agentConfigured,
                 ModifiedOn      = DateTime.Parse(modifiedOn),
                 ModifiedBy      = modifiedBy
             };
             
-            return Ok(await _locationsRepository.Update(location));
+            return Ok(await Repository.Update(location));
         }
 
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(string Id)
         {
-            await _locationsRepository.Delete(new Location { Id = Id });
+            await Repository.Delete(new Location { Id = Id });
             return NoContent();
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _locationsRepository.GetAll(new Location(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Location(), skip, limit));
         
         [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await _locationsRepository.GetById(new Location { Id = Id }));
+        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Location { Id = Id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _locationsRepository.GetByName(new Location { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Location { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _locationsRepository.SearchByName(new Location { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Location { Name = name }));
 
     }
 }

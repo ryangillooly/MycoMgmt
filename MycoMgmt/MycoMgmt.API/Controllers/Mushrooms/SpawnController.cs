@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -8,17 +9,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("spawn")]
 [ApiController]
-public class SpawnController : Controller
+public class SpawnController : BaseController<SpawnController>
 {
-    private readonly BaseRepository<Spawn> _spawnRepository;
-    private readonly ILogger<SpawnController> _logger;
-
-    public SpawnController(BaseRepository<Spawn> repo, ILogger<SpawnController> logger)
-    {
-        _spawnRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -43,12 +35,6 @@ public class SpawnController : Controller
         int?    count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-
         var spawn = new Spawn()
         {
             Name         = name,
@@ -73,9 +59,8 @@ public class SpawnController : Controller
         
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Status  = spawn.IsSuccessful();
-        
-        var result  = await _spawnRepository.CreateEntities(_logger, spawn, count);
-
+        spawn.Validate();
+        var result  = await Repository.CreateEntities(Logger, spawn, count);
         return Created("", string.Join(",", result));
     }
 
@@ -103,15 +88,6 @@ public class SpawnController : Controller
         string  modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-        
         var spawn = new Spawn()
         {
             Id    = Id,
@@ -135,26 +111,27 @@ public class SpawnController : Controller
             ModifiedBy   = modifiedBy
         };
 
-        return Ok(await _spawnRepository.Update(spawn));
+        spawn.Validate();
+        return Ok(await Repository.Update(spawn));
     }
     
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _spawnRepository.Delete(new Spawn { Id = Id });
+        await Repository.Delete(new Spawn { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _spawnRepository.GetAll(new Spawn(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Spawn(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _spawnRepository.GetById(new Spawn { Id = Id}));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Spawn { Id = Id}));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _spawnRepository.GetByName(new Spawn { Name = name}));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Spawn { Name = name}));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _spawnRepository.SearchByName(new Spawn { Name = name}));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Spawn { Name = name}));
 }

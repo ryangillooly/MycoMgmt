@@ -1,27 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Helpers;
 using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Newtonsoft.Json;
-using static MycoMgmt.Infrastructure.Helpers.BaseRepositoryExtensions;
+using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
 
 namespace MycoMgmt.API.Controllers;
 
 [Route("culture")]
 [ApiController]
-public class CultureController : Controller
+public class CultureController : BaseController<CultureController>
 {
-    private readonly BaseRepository<Culture> _cultureRepository;
-    private readonly ILogger<CultureController> _logger;
-
-    public CultureController(BaseRepository<Culture> repo, ILogger<CultureController> logger)
-    {
-        _cultureRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -47,15 +37,6 @@ public class CultureController : Controller
         int?    count = 1
     )
     {
-        if((parent is null && parentType is not null ) || (parent is not null && parentType is null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child is null && childType is not null ) || (child is not null && childType is null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if(purchased is null or false && vendor is not null )
-            throw new ValidationException("You cannot supply a Vendor if the item was not Purchased.");
-        
         var culture = new Culture
         {
             Name         = name,
@@ -81,9 +62,8 @@ public class CultureController : Controller
         
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status  = culture.IsSuccessful();
-        
-        var result  = await _cultureRepository.CreateEntities(_logger, culture, count);
-
+        culture.Validate();
+        var result  = await Repository.CreateEntities(Logger, culture, count);
         return Created("", result);
     }
     
@@ -111,15 +91,6 @@ public class CultureController : Controller
         string  modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
         var culture = new Culture
         {
             Id    = Id,
@@ -143,25 +114,26 @@ public class CultureController : Controller
             ModifiedBy   = modifiedBy
         };
         
-        return Ok(await _cultureRepository.Update(culture));
+        culture.Validate();
+        return Ok(await Repository.Update(culture));
     }
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _cultureRepository.Delete(new Culture { Id = Id });
+        await Repository.Delete(new Culture { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await _cultureRepository.GetAll(new Culture(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _cultureRepository.GetById(new Culture { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Culture { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _cultureRepository.GetByName(new Culture { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _cultureRepository.SearchByName(new Culture { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
 }

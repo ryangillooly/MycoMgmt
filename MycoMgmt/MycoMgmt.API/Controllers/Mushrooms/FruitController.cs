@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -8,17 +9,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("fruit")]
 [ApiController]
-public class FruitController : Controller
+public class FruitController : BaseController<FruitController>
 {
-    private readonly BaseRepository<Fruit> _fruitRepository;
-    private readonly ILogger<FruitController> _logger;
-
-    public FruitController(BaseRepository<Fruit> repo, ILogger<FruitController> logger)
-    {
-        _fruitRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -43,12 +35,6 @@ public class FruitController : Controller
         int?     count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-
         var fruit = new Fruit()
         {
             Name         = name,
@@ -73,9 +59,8 @@ public class FruitController : Controller
         
         fruit.Tags.Add(fruit.IsSuccessful());
         fruit.Status  = fruit.IsSuccessful();
-        
-        var result  = await _fruitRepository.CreateEntities(_logger, fruit, count);
-        
+        fruit.Validate();
+        var result  = await Repository.CreateEntities(Logger, fruit, count);
         return Created("", string.Join(",", result));
     }
 
@@ -105,18 +90,9 @@ public class FruitController : Controller
         string   modifiedBy
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-
         var fruit = new Fruit()
         {
-            Id    = Id,
+            Id           = Id,
             Name         = name,
             WetWeight    = wetWeight,
             DryWeight    = dryWeight,
@@ -139,26 +115,27 @@ public class FruitController : Controller
             ModifiedBy   = modifiedBy
         };
         
-        return Ok(await _fruitRepository.Update(fruit));
+        fruit.Validate();
+        return Ok(await Repository.Update(fruit));
     }
     
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _fruitRepository.Delete(new Fruit { Id = Id });
+        await Repository.Delete(new Fruit { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _fruitRepository.GetAll(new Fruit(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Fruit(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _fruitRepository.GetById(new Fruit { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Fruit { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _fruitRepository.GetByName(new Fruit { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Fruit { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _fruitRepository.SearchByName(new Fruit { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Fruit { Name = name }));
 }

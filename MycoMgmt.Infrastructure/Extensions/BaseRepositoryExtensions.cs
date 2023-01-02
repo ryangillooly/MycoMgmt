@@ -4,14 +4,15 @@ using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 using MycoMgmt.Core.Helpers;
+using MycoMgmt.Domain.Models.Mushrooms;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 
 namespace MycoMgmt.Infrastructure.Helpers;
 
-public static class BaseRepositoryExtensions
+public static class IActionRepositoryExtensions
 {
-    public static async Task<string> CreateEntities<T>(this BaseRepository<T> repository, ILogger logger, T model, int? count = 1) where T : ModelBase
+    public static async Task<string> CreateEntities<T>(this IActionRepository repository, ILogger logger, T model, int? count = 1) where T : ModelBase
     {
         var resultList = new List<IEntity>();
         var modelName = model.Name;

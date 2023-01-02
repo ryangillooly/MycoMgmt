@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
@@ -8,17 +9,8 @@ namespace MycoMgmt.API.Controllers;
 
 [Route("bulk")]
 [ApiController]
-public class BulkController : Controller
+public class BulkController : BaseController<BulkController>
 {
-    private readonly BaseRepository<Bulk> _bulkRepository;
-    private readonly ILogger<SpawnController> _logger;
-
-    public BulkController(BaseRepository<Bulk> repo, ILogger<SpawnController> logger)
-    {
-        _bulkRepository = repo;
-        _logger = logger;
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -42,12 +34,6 @@ public class BulkController : Controller
         int?    count = 1
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
         var bulk = new Bulk()
         {
             Name         = name,
@@ -71,9 +57,8 @@ public class BulkController : Controller
         
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
-        
-        var result  = await _bulkRepository.CreateEntities(_logger, bulk, count);
-
+        bulk.Validate();
+        var result  = await Repository.CreateEntities(Logger, bulk, count);
         return Created("", result);
     }
 
@@ -101,15 +86,6 @@ public class BulkController : Controller
         
     )
     {
-        if((parent == null && parentType != null ) || (parent != null && parentType == null))
-            throw new ValidationException("If the Parent parameter has been provided, then the ParentType must also be provided");
-        
-        if((child == null && childType != null ) || (child != null && childType == null))
-            throw new ValidationException("If the Children parameter has been provided, then the ChildType must also be provided");
-        
-        if (finished == null && successful != null)
-            throw new ValidationException("When providing the Successful parameter, you must also specify the Finished parameter");
-        
         var bulk = new Bulk
         {
             Id    = Id,
@@ -132,25 +108,26 @@ public class BulkController : Controller
             ModifiedBy   = modifiedBy
         };
         
-        return Ok(await _bulkRepository.Update(bulk));
+        bulk.Validate();
+        return Ok(await Repository.Update(bulk));
     }
     
     [HttpDelete("{Id}")]
     public async Task<IActionResult> Delete(string Id)
     {
-        await _bulkRepository.Delete(new Bulk { Id = Id });
+        await Repository.Delete(new Bulk { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _bulkRepository.GetAll(new Bulk(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Bulk(), skip, limit));
 
     [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await _bulkRepository.GetById(new Bulk { Id = Id }));
+    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Bulk { Id = Id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _bulkRepository.GetByName(new Bulk { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Bulk { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _bulkRepository.SearchByName(new Bulk { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Bulk { Name = name }));
 }
