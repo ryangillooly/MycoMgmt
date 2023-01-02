@@ -92,7 +92,7 @@
                         MATCH 
                             (recipe:{EntityType})
                         WHERE
-                            elementId(recipe) = '{ElementId}'
+                            recipe.Id = '{Id}'
                         OPTIONAL MATCH
                             (recipe)-[r:CREATED_USING]->(i)
                         DELETE
@@ -118,7 +118,7 @@
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Steps = '{StepsToNumberedStringList()}' 
                         RETURN 
@@ -134,7 +134,7 @@
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Description = '{Description}' 
                         RETURN 
@@ -186,7 +186,7 @@
                     RETURN 
                         apoc.map.mergeList
                         ([
-                            {{ElementId:    elementId(x)}},
+                            {{Id:    x.Id}},
                             {{Name:         properties(x).Name}},
                             {{EntityType:   properties(x).EntityType}},
                             {{Notes:        properties(x).Notes}},

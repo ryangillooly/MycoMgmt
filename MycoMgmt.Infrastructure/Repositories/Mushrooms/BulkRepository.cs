@@ -38,10 +38,10 @@ public class BulkRepository : BaseRepository<Bulk>
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(bulk.Delete());
 
-        if(delete.ElementId == bulk.ElementId)
-            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", bulk.ElementId);
+        if(delete.Id.ToString() == bulk.Id)
+            _logger.LogInformation("Node with Id {Id} was deleted successfully", bulk.Id);
         else    
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", bulk.ElementId);
+            _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", bulk.Id);
         
     }
 

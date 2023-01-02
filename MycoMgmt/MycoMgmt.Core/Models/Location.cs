@@ -54,7 +54,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType}) 
                     WHERE 
-                        elementId(x) = '{ElementId}' 
+                        x.Id = '{Id}' 
                     SET 
                         x.AgentConfigured = '{AgentConfigured}' 
                     RETURN 

@@ -80,7 +80,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                             MATCH 
                                 (x:{EntityType})
                             WHERE
-                                elementId(x) = '{ElementId}'
+                                x.Id = '{Id}'
                             OPTIONAL MATCH
                                 (u:User)-[r:HARVESTED]->(x)
                             DELETE 
@@ -105,7 +105,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                             MATCH 
                                 (x:{EntityType})
                             WHERE
-                                elementId(x) = '{ElementId}'
+                                x.Id = '{Id}'
                             OPTIONAL MATCH
                                 (x)-[r:HARVESTED_ON]->(d)
                             DELETE 
@@ -215,7 +215,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                     RETURN 
                         apoc.map.mergeList
                         ([
-                            {{ElementId:    elementId(x)}},
+                            {{Id:    x.Id}},
                             {{Name:         properties(x).Name}},
                             {{EntityType:   properties(x).EntityType}},
                             {{Notes:        properties(x).Notes}},

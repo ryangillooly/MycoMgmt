@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 
@@ -10,12 +11,14 @@ namespace MycoMgmt.API.Controllers
     public class UserController : Controller
     {
         private readonly BaseRepository<User> _userRepository;
-        
-        public UserController(BaseRepository<User> repo)
+        private readonly ILogger<UserController> _logger;
+
+        public UserController(BaseRepository<User> repo, ILogger<UserController> logger)
         {
             _userRepository = repo;
+            _logger = logger;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Create
         (
@@ -37,10 +40,12 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy   = createdBy
             };
 
-            return Created("", await _userRepository.Create(user));
+            var result  = await _userRepository.CreateEntities(_logger, user);
+
+            return Created("", result);
         }
         
-        [HttpPut("{elementId}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> Update
         (
             string? name,
@@ -64,18 +69,18 @@ namespace MycoMgmt.API.Controllers
             return Ok(await _userRepository.Update(user));
         }
         
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _userRepository.Delete(new User { ElementId = elementId });
+            await _userRepository.Delete(new User { Id = Id });
             return NoContent();
         }
     
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _userRepository.GetAll(new User(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _userRepository.GetById(new User { ElementId = elementId }));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _userRepository.GetById(new User { Id = Id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _userRepository.GetByName(new User { Name = name }));

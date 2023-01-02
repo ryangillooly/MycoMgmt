@@ -162,7 +162,7 @@
                         MATCH 
                             (c:{EntityType})
                         WHERE
-                            elementId(c) = '{ElementId}'
+                            c.Id = '{Id}'
                         OPTIONAL MATCH
                             (c)-[r:HAS_PARENT]->(p)
                         DELETE
@@ -186,7 +186,7 @@
                         MATCH 
                             (p:{EntityType})
                         WHERE
-                            elementId(p) = '{ElementId}'
+                            p.Id = '{Id}'
                         OPTIONAL MATCH
                             (c)-[r:HAS_PARENT]->(p)
                         DELETE
@@ -210,7 +210,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (x)-[r:HAS_STRAIN]->(:Strain)
                         DELETE 
@@ -234,7 +234,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (x)-[r:STORED_IN]->(:Location)
                         DELETE 
@@ -258,7 +258,7 @@
                         MATCH 
                             (c:{EntityType})
                         WHERE
-                            elementId(c) = '{ElementId}'
+                            c.Id = '{Id}'
                         OPTIONAL MATCH
                             (c)-[r:CREATED_USING]->(:Recipe)
                         DELETE 
@@ -282,7 +282,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE 
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         REMOVE 
                             x :InProgress:Successful:Failed
                         WITH 
@@ -302,7 +302,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE 
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         SET 
                             x {{ Status: '{IsSuccessful()}' }}
                         RETURN 
@@ -318,7 +318,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (u:User)-[r:INOCULATED]->(x)
                         DELETE 
@@ -342,7 +342,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (x)-[r:INOCULATED_ON]->(d)
                         DELETE 
@@ -366,7 +366,7 @@
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (x)-[r:FINISHED_ON]->(d)
                         DELETE 
@@ -390,7 +390,7 @@
                             MATCH 
                                 (x:{EntityType})
                             WHERE
-                                elementId(x) = '{ElementId}'
+                                x.Id = '{Id}'
                             OPTIONAL MATCH
                                 (x)-[r:PURCHASED_FROM]->(v)
                             DELETE 

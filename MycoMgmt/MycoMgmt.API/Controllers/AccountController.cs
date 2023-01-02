@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -9,10 +10,12 @@ namespace MycoMgmt.API.Controllers
     public class AccountController : Controller
     {
         private readonly BaseRepository<Account> _accountRepository;
+        private readonly ILogger<AccountController> _logger;
         
-        public AccountController(BaseRepository<Account> repo)
+        public AccountController(BaseRepository<Account> repo, ILogger<AccountController> logger)
         {
             _accountRepository = repo;
+            _logger = logger;
         }
         
         [HttpPost]
@@ -30,13 +33,15 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy = createdBy
             };
 
-            return Created("", await _accountRepository.Create(account));
+            var result = await _accountRepository.CreateEntities(_logger, account);
+            
+            return Created("", result);
         }
 
-        [HttpPut("{elementId}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> Update
         (
-            string elementId,
+            string Id,
             string name,
             string modifiedOn,
             string modifiedBy   
@@ -44,7 +49,7 @@ namespace MycoMgmt.API.Controllers
         {
             var account = new Account
             {
-                ElementId  = elementId,
+                Id  = Id,
                 Name       = name,
                 ModifiedOn = DateTime.Parse(modifiedOn),
                 ModifiedBy = modifiedBy
@@ -53,18 +58,18 @@ namespace MycoMgmt.API.Controllers
             return Ok(await _accountRepository.Update(account));
         }
 
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _accountRepository.Delete(new Account { ElementId = elementId });
+            await _accountRepository.Delete(new Account { Id = Id });
             return NoContent();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _accountRepository.GetAll(new Account(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _accountRepository.GetById(new Account { ElementId = elementId}));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _accountRepository.GetById(new Account { Id = Id}));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _accountRepository.GetByName(new Account { Name = name}));

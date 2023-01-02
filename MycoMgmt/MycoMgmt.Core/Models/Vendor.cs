@@ -58,7 +58,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType})
                     WHERE 
-                        elementId(x) = '{ElementId}'                  
+                        x.Id = '{Id}'                  
                     SET 
                         x.Url = '{Url}'
                     RETURN 

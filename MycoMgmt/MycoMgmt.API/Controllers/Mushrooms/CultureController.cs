@@ -87,10 +87,10 @@ public class CultureController : Controller
         return Created("", result);
     }
     
-    [HttpPut("{elementId}")]
+    [HttpPut("{Id}")]
     public async Task<IActionResult> Update
     (
-        string  elementId,
+        string  Id,
         string? name,
         string? type,
         string? strain,
@@ -122,7 +122,7 @@ public class CultureController : Controller
 
         var culture = new Culture
         {
-            ElementId    = elementId,
+            Id    = Id,
             Name         = name,
             Strain       = strain,
             Type         = type,
@@ -146,18 +146,18 @@ public class CultureController : Controller
         return Ok(await _cultureRepository.Update(culture));
     }
     
-    [HttpDelete("{elementId}")]
-    public async Task<IActionResult> Delete(string elementId)
+    [HttpDelete("{Id}")]
+    public async Task<IActionResult> Delete(string Id)
     {
-        await _cultureRepository.Delete(new Culture { ElementId = elementId });
+        await _cultureRepository.Delete(new Culture { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await _cultureRepository.GetAll(new Culture(), skip, limit));
 
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId) => Ok(await _cultureRepository.GetById(new Culture { ElementId = elementId }));
+    [HttpGet("id/{Id}")]
+    public async Task<IActionResult> GetById(string Id) => Ok(await _cultureRepository.GetById(new Culture { Id = Id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await _cultureRepository.GetByName(new Culture { Name = name }));

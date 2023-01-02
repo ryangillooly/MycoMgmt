@@ -145,7 +145,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType}) 
                     WHERE 
-                        elementId(x) = '{ElementId}'
+                        x.Id = '{Id}'
                     RETURN 
                         x
                 ";
@@ -184,7 +184,7 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Name = '{Name}' 
                         RETURN 
@@ -199,7 +199,7 @@ namespace MycoMgmt.Domain.Models
                                 MATCH 
                                     (x:{EntityType})
                                 WHERE
-                                    elementId(x) = '{ElementId}'
+                                    x.Id = '{Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:MODIFIED_ON]->(d)
                                 DELETE 
@@ -223,7 +223,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType})
                     WHERE
-                        elementId(x) = '{ElementId}'
+                        x.Id = '{Id}'
                     OPTIONAL MATCH
                         (u)-[r:MODIFIED]->(x)
                     DELETE
@@ -247,7 +247,7 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Notes = '{Notes}' 
                         RETURN s 
@@ -262,7 +262,7 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Type = '{Type}' 
                         RETURN s 
@@ -273,13 +273,13 @@ namespace MycoMgmt.Domain.Models
         public virtual string? Delete()
         {
             return
-                ElementId is null
+                Id is null
                     ? null
                     : $@"
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ ElementId }' 
+                            x.Id = '{ Id }' 
                         DETACH DELETE 
                             x
                         RETURN 

@@ -54,10 +54,10 @@ public class RecipeRepository : BaseRepository<Recipe>
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(recipe.Delete());
 
-        if(delete.ElementId != recipe.ElementId)
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", recipe.ElementId);
+        if(delete.Id.ToString() != recipe.Id)
+            _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", recipe.Id);
         
-        _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", recipe.ElementId);
+        _logger.LogInformation("Node with Id {Id} was deleted successfully", recipe.Id);
     }
         
     public override async Task<string> Update(Recipe recipe)

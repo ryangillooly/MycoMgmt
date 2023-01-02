@@ -103,7 +103,7 @@ public class SpawnModel : PageModel
         
         foreach (var item in nodeObj)
         {
-            outputString += $"\n {item["Name"]} ({item["ElementId"]})"; 
+            outputString += $"\n {item["Name"]} ({item["Id"]})"; 
         }
 
         responseString = outputString;

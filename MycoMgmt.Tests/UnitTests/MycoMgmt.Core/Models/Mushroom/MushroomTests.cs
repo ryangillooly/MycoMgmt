@@ -204,7 +204,7 @@ public class MushroomTests
                                 MATCH 
                                     (c:{mushroom.EntityType})
                                 WHERE
-                                    elementId(c) = '{mushroom.ElementId}'
+                                    c.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:HAS_PARENT]->(p)
                                 DELETE
@@ -232,7 +232,7 @@ public class MushroomTests
                                 MATCH 
                                     (p:{mushroom.EntityType})
                                 WHERE
-                                    elementId(p) = '{mushroom.ElementId}'
+                                    p.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:HAS_PARENT]->(p)
                                 DELETE
@@ -260,7 +260,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:HAS_STRAIN]->(:Strain)
                                 DELETE 
@@ -288,7 +288,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:STORED_IN]->(:Location)
                                 DELETE 
@@ -316,7 +316,7 @@ public class MushroomTests
                                 MATCH 
                                     (c:{mushroom.EntityType})
                                 WHERE
-                                    elementId(c) = '{mushroom.ElementId}'
+                                    c.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:CREATED_USING]->(:Recipe)
                                 DELETE 
@@ -344,7 +344,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 REMOVE 
                                     x :InProgress:Successful:Failed
                                 WITH 
@@ -368,7 +368,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 SET 
                                     x {{ Status: '{mushroom.IsSuccessful()}' }}
                                 RETURN 
@@ -388,7 +388,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (u:User)-[r:INOCULATED]->(x)
                                 DELETE 
@@ -416,7 +416,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:INOCULATED_ON]->(d)
                                 DELETE 
@@ -444,7 +444,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:FINISHED_ON]->(d)
                                 DELETE 
@@ -472,7 +472,7 @@ public class MushroomTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:PURCHASED_FROM]->(v)
                                 DELETE 

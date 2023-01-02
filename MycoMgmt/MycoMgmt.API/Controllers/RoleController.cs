@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
+using ILogger = Neo4j.Driver.ILogger;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -10,10 +12,12 @@ namespace MycoMgmt.API.Controllers
     public class RoleController : Controller
     {
         private readonly BaseRepository<IamRole> _roleRepository;
+        private readonly ILogger<RoleController> _logger;
         
-        public RoleController(BaseRepository<IamRole> repo)
+        public RoleController(BaseRepository<IamRole> repo, ILogger<RoleController> logger)
         {
             _roleRepository = repo;
+            _logger = logger;
         }
         
         [HttpPost]
@@ -34,7 +38,9 @@ namespace MycoMgmt.API.Controllers
                 CreatedOn   = DateTime.Parse(createdOn)
             };
 
-            return Ok(await _roleRepository.Create(role));
+            var result  = await _roleRepository.CreateEntities(_logger, role);
+
+            return Created("", result);
         }
         
         [HttpPut]
@@ -58,17 +64,17 @@ namespace MycoMgmt.API.Controllers
             return Ok(await _roleRepository.Update(role));
         }
         
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _roleRepository.Delete(new IamRole() { ElementId = elementId });
+            await _roleRepository.Delete(new IamRole() { Id = Id });
             return NoContent();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _roleRepository.GetAll(new IamRole(), skip, limit));
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _roleRepository.GetById(new IamRole { ElementId = elementId }));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _roleRepository.GetById(new IamRole { Id = Id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _roleRepository.GetByName(new IamRole { Name = name }));

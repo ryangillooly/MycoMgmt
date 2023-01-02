@@ -178,7 +178,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 RETURN 
                                     x
                             ";
@@ -225,7 +225,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Name = '{mushroom.Name}' 
                                 RETURN 
@@ -247,7 +247,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:MODIFIED_ON]->(d)
                                 DELETE 
@@ -275,7 +275,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (u)-[r:MODIFIED]->(x)
                                 DELETE
@@ -303,7 +303,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Notes = '{mushroom.Notes}' 
                                 RETURN s 
@@ -322,7 +322,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Type = '{mushroom.Type}' 
                                 RETURN s 
@@ -341,7 +341,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{ mushroom.ElementId }' 
+                                    x.Id = '{ mushroom.Id }' 
                                 DETACH DELETE 
                                     x
                                 RETURN 

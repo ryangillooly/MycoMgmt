@@ -24,7 +24,7 @@ public class MushroomModel : PageModel
     public string? Recipe { get; set; }
     public bool? Purchased { get; set; }
     public string? Vendor { get; set; }
-    public string? ElementId { get; set; }
+    public string? Id { get; set; }
     public List<string> Tags { get; set; } = new ();
     public string? EntityType { get; set; }
     public string? Name { get; set; }

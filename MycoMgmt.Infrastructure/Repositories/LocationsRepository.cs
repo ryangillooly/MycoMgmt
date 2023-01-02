@@ -38,11 +38,11 @@ namespace MycoMgmt.Infrastructure.Repositories
         public override async Task Delete(Location location)
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(location.Delete());
-        
-            if(delete.ElementId == location.ElementId)
-                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", location.ElementId);
+
+            if (delete.Properties["Id"].ToString() == location.Id) 
+                _logger.LogInformation("Node with Id {Id} was deleted successfully", location.Id);
             else
-                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", location.ElementId);
+                _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", location.Id);
         }
         
         public override async Task<string> GetAll(Location location, int skip, int limit)

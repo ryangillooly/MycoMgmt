@@ -32,10 +32,10 @@ public class FruitRepository : BaseRepository<Fruit>
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(fruit.Delete());
         
-        if(delete.ElementId == fruit.ElementId)
-            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", fruit.ElementId);
+        if(delete.Id.ToString() == fruit.Id)
+            _logger.LogInformation("Node with Id {Id} was deleted successfully", fruit.Id);
         else
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", fruit.ElementId);
+            _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", fruit.Id);
     }
         
     public override async Task<string> Update(Fruit fruit)
@@ -66,7 +66,7 @@ public class FruitRepository : BaseRepository<Fruit>
     public override async Task<string> GetAll(Fruit fruit, int skip, int limit)
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAllQuery(skip, limit), "result");
-        var dedupeResult = result.OfType<Dictionary<string, object>>().Distinct(new DictionaryEqualityComparer("ElementId")).ToList();
+        var dedupeResult = result.OfType<Dictionary<string, object>>().Distinct(new DictionaryEqualityComparer("Id")).ToList();
         return JsonConvert.SerializeObject(dedupeResult);
     }
 }

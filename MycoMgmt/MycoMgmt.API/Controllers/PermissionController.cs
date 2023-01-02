@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 
@@ -10,10 +11,12 @@ namespace MycoMgmt.API.Controllers
     public class PermissionController : Controller
     {
         private readonly BaseRepository<Permission> _permissionRepository;
-        
-        public PermissionController(BaseRepository<Permission> repo)
+        private readonly ILogger<PermissionController> _logger;
+
+        public PermissionController(BaseRepository<Permission> repo, ILogger<PermissionController> logger)
         {
             _permissionRepository = repo;
+            _logger = logger;
         }
         
         [HttpPost]
@@ -24,7 +27,9 @@ namespace MycoMgmt.API.Controllers
                 Name = name
             };
             
-            return Created("", await _permissionRepository.Create(permission));
+            var result  = await _permissionRepository.CreateEntities(_logger, permission);
+
+            return Created("", result);
         }
         
         
@@ -48,17 +53,17 @@ namespace MycoMgmt.API.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(string elementId)
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _permissionRepository.Delete(new Permission { ElementId = elementId});
+            await _permissionRepository.Delete(new Permission { Id = Id});
             return NoContent();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _permissionRepository.GetAll(new Permission(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _permissionRepository.GetById(new Permission { ElementId = elementId }));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _permissionRepository.GetById(new Permission { Id = Id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _permissionRepository.GetByName(new Permission { Name = name }));

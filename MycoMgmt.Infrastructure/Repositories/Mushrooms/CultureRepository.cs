@@ -39,10 +39,10 @@ public class CultureRepository : BaseRepository<Culture>
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(culture.Delete());
         
-        if(delete.ElementId == culture.ElementId)
-            _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", culture.ElementId);
+        if(delete.Id.ToString() == culture.Id)
+            _logger.LogInformation("Node with Id {Id} was deleted successfully", culture.Id);
         else
-            _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", culture.ElementId);
+            _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", culture.Id);
     }
 
     public override async Task<string> SearchByName(Culture culture)

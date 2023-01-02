@@ -79,10 +79,10 @@ public class SpawnController : Controller
         return Created("", string.Join(",", result));
     }
 
-    [HttpPut("{elementId}")]
+    [HttpPut("{Id}")]
     public async Task<IActionResult> Update
     (
-        string  elementId,
+        string  Id,
         string? name,
         string? strain,
         string? notes,
@@ -114,7 +114,7 @@ public class SpawnController : Controller
         
         var spawn = new Spawn()
         {
-            ElementId    = elementId,
+            Id    = Id,
             Name         = name,
             Recipe       = recipe,
             Location     = location,
@@ -139,18 +139,18 @@ public class SpawnController : Controller
     }
     
     
-    [HttpDelete("{elementId}")]
-    public async Task<IActionResult> Delete(string elementId)
+    [HttpDelete("{Id}")]
+    public async Task<IActionResult> Delete(string Id)
     {
-        await _spawnRepository.Delete(new Spawn { ElementId = elementId });
+        await _spawnRepository.Delete(new Spawn { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _spawnRepository.GetAll(new Spawn(), skip, limit));
 
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId) => Ok(await _spawnRepository.GetById(new Spawn { ElementId = elementId}));
+    [HttpGet("id/{Id}")]
+    public async Task<IActionResult> GetById(string Id) => Ok(await _spawnRepository.GetById(new Spawn { Id = Id}));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await _spawnRepository.GetByName(new Spawn { Name = name}));

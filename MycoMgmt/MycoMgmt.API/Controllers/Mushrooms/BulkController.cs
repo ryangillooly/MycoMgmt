@@ -77,10 +77,10 @@ public class BulkController : Controller
         return Created("", result);
     }
 
-    [HttpPut("{elementId}")]
+    [HttpPut("{Id}")]
     public async Task<IActionResult> Update
     (
-        string elementId,
+        string Id,
         string? name,
         string? strain,
         string? recipe,
@@ -112,7 +112,7 @@ public class BulkController : Controller
         
         var bulk = new Bulk
         {
-            ElementId    = elementId,
+            Id    = Id,
             Name         = name,
             Recipe       = recipe,
             Strain       = strain,
@@ -135,18 +135,18 @@ public class BulkController : Controller
         return Ok(await _bulkRepository.Update(bulk));
     }
     
-    [HttpDelete("{elementId}")]
-    public async Task<IActionResult> Delete(string elementId)
+    [HttpDelete("{Id}")]
+    public async Task<IActionResult> Delete(string Id)
     {
-        await _bulkRepository.Delete(new Bulk { ElementId = elementId });
+        await _bulkRepository.Delete(new Bulk { Id = Id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _bulkRepository.GetAll(new Bulk(), skip, limit));
 
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId) => Ok(await _bulkRepository.GetById(new Bulk { ElementId = elementId }));
+    [HttpGet("id/{Id}")]
+    public async Task<IActionResult> GetById(string Id) => Ok(await _bulkRepository.GetById(new Bulk { Id = Id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await _bulkRepository.GetByName(new Bulk { Name = name }));

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Infrastructure.Helpers;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
@@ -10,10 +11,12 @@ namespace MycoMgmt.API.Controllers
     public class StrainsController : Controller
     {
         private readonly BaseRepository<Strain> _strainsRepository;
-        
-        public StrainsController(BaseRepository<Strain> repo)
+        private readonly ILogger<StrainsController> _logger;
+
+        public StrainsController(BaseRepository<Strain> repo, ILogger<StrainsController> logger)
         {
             _strainsRepository = repo;
+            _logger = logger;
         }
         
         [HttpPost]
@@ -33,7 +36,9 @@ namespace MycoMgmt.API.Controllers
                 CreatedOn = DateTime.Parse(createdOn)
             };
             
-            return Created("", await _strainsRepository.Create(strain));
+            var result  = await _strainsRepository.CreateEntities(_logger, strain);
+
+            return Created("", result);
         }
         
         [HttpPut]
@@ -56,18 +61,18 @@ namespace MycoMgmt.API.Controllers
             return Created("", await _strainsRepository.Update(strain));
         }
         
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _strainsRepository.Delete(new Strain { ElementId = elementId });
+            await _strainsRepository.Delete(new Strain { Id = Id });
             return NoContent();
         }
     
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _strainsRepository.GetAll(new Strain(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _strainsRepository.GetById(new Strain { ElementId = elementId }));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _strainsRepository.GetById(new Strain { Id = Id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _strainsRepository.GetByName(new Strain { Name = name }));

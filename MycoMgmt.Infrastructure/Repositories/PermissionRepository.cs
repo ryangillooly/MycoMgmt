@@ -63,10 +63,10 @@ namespace MycoMgmt.Infrastructure.Repositories
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(permission.Delete());
         
-            if(delete.ElementId == permission.ElementId)
-                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", permission.ElementId);
+            if(delete.Id.ToString() == permission.Id)
+                _logger.LogInformation("Node with Id {Id} was deleted successfully", permission.Id);
             else
-                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", permission.ElementId);
+                _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", permission.Id);
         }
         
     }

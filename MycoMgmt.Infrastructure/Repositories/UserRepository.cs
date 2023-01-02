@@ -36,10 +36,10 @@ namespace MycoMgmt.Infrastructure.Repositories
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(user.Delete());
         
-            if(delete.ElementId == user.ElementId)
-                _logger.LogInformation("Node with elementId {ElementId} was deleted successfully", user.ElementId);
+            if(delete.Id.ToString() == user.Id)
+                _logger.LogInformation("Node with Id {Id} was deleted successfully", user.Id);
             else
-                _logger.LogWarning("Node with elementId {ElementId} was not deleted, or was not found for deletion", user.ElementId);
+                _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", user.Id);
         }
         
         public override async Task<string> SearchByName(User user)

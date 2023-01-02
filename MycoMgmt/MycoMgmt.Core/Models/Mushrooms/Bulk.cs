@@ -110,7 +110,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         properties(strain).Name as strain,
                         properties(location).Name as location,
                         parent,
-                        count(elementId(x)) as entityCount
+                        count(x.Id) as entityCount
                     WITH    
                         x,
                         left(childrenString, size(childrenString)-1) as children,
@@ -129,7 +129,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         entities, 
                         apoc.map.mergeList
                         ([
-                            {{ElementId:    elementId(x)}},
+                            {{Id:    x.Id}},
                             {{Name:         properties(x).Name}},
                             {{EntityType:   properties(x).EntityType}},
                             {{Notes:        properties(x).Notes}},
@@ -206,7 +206,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 RETURN
                                     apoc.map.mergeList
                                     ([
-                                        {{ElementId:    elementId(x)}},
+                                        {{Id:    x.Id}},
                                         {{Name:         properties(x).Name}},
                                         {{EntityType:   properties(x).EntityType}},
                                         {{Notes:        properties(x).Notes}},

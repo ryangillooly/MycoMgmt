@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Infrastructure.Helpers;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
@@ -10,10 +11,12 @@ namespace MycoMgmt.API.Controllers
     public class LocationController : Controller
     {
         private readonly BaseRepository<Location> _locationsRepository;
+        private readonly ILogger<LocationController> _logger;
         
-        public LocationController(BaseRepository<Location> repo, IDriver driver)
+        public LocationController(BaseRepository<Location> repo, ILogger<LocationController> logger)
         {
             _locationsRepository = repo;
+            _logger = logger;
         }
         
         [HttpPost]
@@ -33,13 +36,15 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy       = createdBy
             };
             
-            return Created("", await _locationsRepository.Create(location));
+            var result = await _locationsRepository.CreateEntities(_logger, location);
+            
+            return Created("", result);
         }
         
-        [HttpPut("{elementId}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> Update
         (
-            string  elementId,
+            string  Id,
             string? name,
             bool?   agentConfigured,
             string  modifiedOn,
@@ -48,7 +53,7 @@ namespace MycoMgmt.API.Controllers
         {
             var location = new Location
             {
-                ElementId       = elementId,
+                Id       = Id,
                 Name            = name,
                 AgentConfigured = agentConfigured,
                 ModifiedOn      = DateTime.Parse(modifiedOn),
@@ -58,18 +63,18 @@ namespace MycoMgmt.API.Controllers
             return Ok(await _locationsRepository.Update(location));
         }
 
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _locationsRepository.Delete(new Location { ElementId = elementId });
+            await _locationsRepository.Delete(new Location { Id = Id });
             return NoContent();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _locationsRepository.GetAll(new Location(), skip, limit));
         
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _locationsRepository.GetById(new Location { ElementId = elementId }));
+        [HttpGet("id/{Id}")]
+        public async Task<IActionResult> GetById(string Id) => Ok(await _locationsRepository.GetById(new Location { Id = Id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await _locationsRepository.GetByName(new Location { Name = name }));
