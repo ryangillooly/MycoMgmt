@@ -11,7 +11,7 @@ namespace MycoMgmt.Infrastructure.Helpers;
 
 public static class BaseRepositoryExtensions
 {
-    public static async Task<string> CreateEntities<T>(this BaseRepository<T> repository, ILogger logger, T model, int? count = 1) where T : ModelBase
+    public static async Task<string> CreateEntities<T>(this ActionRepository repository, ILogger logger, T model, int? count = 1) where T : ModelBase
     {
         var resultList = new List<IEntity>();
         var modelName = model.Name;

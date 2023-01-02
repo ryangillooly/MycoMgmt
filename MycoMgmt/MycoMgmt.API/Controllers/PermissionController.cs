@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class PermissionController : Controller
     {
-        private readonly BaseRepository<Permission> _permissionRepository;
+        private readonly ActionRepository _permissionRepository;
         private readonly ILogger<PermissionController> _logger;
 
-        public PermissionController(BaseRepository<Permission> repo, ILogger<PermissionController> logger)
+        public PermissionController(ActionRepository repo, ILogger<PermissionController> logger)
         {
             _permissionRepository = repo;
             _logger = logger;

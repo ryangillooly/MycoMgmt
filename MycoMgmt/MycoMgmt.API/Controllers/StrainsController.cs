@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class StrainsController : Controller
     {
-        private readonly BaseRepository<Strain> _strainsRepository;
+        private readonly ActionRepository _strainsRepository;
         private readonly ILogger<StrainsController> _logger;
 
-        public StrainsController(BaseRepository<Strain> repo, ILogger<StrainsController> logger)
+        public StrainsController(ActionRepository repo, ILogger<StrainsController> logger)
         {
             _strainsRepository = repo;
             _logger = logger;

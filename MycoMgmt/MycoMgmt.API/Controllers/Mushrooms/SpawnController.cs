@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class SpawnController : Controller
 {
-    private readonly BaseRepository<Spawn> _spawnRepository;
+    private readonly ActionRepository _spawnRepository;
     private readonly ILogger<SpawnController> _logger;
 
-    public SpawnController(BaseRepository<Spawn> repo, ILogger<SpawnController> logger)
+    public SpawnController(ActionRepository repo, ILogger<SpawnController> logger)
     {
         _spawnRepository = repo;
         _logger = logger;

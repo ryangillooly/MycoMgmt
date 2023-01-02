@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories
 {
-    public class PermissionRepository : BaseRepository<Permission>
+    public class PermissionRepository 
     {
         private readonly INeo4JDataAccess _neo4JDataAccess;
         private ILogger<PermissionRepository> _logger;
@@ -19,26 +19,26 @@ namespace MycoMgmt.Infrastructure.Repositories
             _logger = logger;
         }
         
-        public override async Task<string> SearchByName(Permission permission)
+        public async Task<string> SearchByName(Permission permission)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(permission.SearchByNameQuery(), "x");
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetByName(Permission permission)
+        public async Task<string> GetByName(Permission permission)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(permission.GetByNameQuery(), "x");
 
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetById(Permission permission)
+        public async Task<string> GetById(Permission permission)
         {
             var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(permission.GetByIdQuery());
             return JsonConvert.SerializeObject(result);
         }
     
-        public override async Task<string> GetAll(Permission permission, int skip, int limit)
+        public async Task<string> GetAll(Permission permission, int skip, int limit)
         {
 
             
@@ -46,20 +46,20 @@ namespace MycoMgmt.Infrastructure.Repositories
             return JsonConvert.SerializeObject(result);
         }
         
-        public override async Task<List<IEntity>> Create(Permission permission)
+        public async Task<List<IEntity>> Create(Permission permission)
         {
             var queryList = permission.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public override async Task<string> Update(Permission permission)
+        public async Task<string> Update(Permission permission)
         {
             var queryList = permission.UpdateQueryList();
             var results = await _neo4JDataAccess.RunTransaction(queryList);
             return JsonConvert.SerializeObject(results);
         }
         
-        public override async Task Delete(Permission permission)
+        public async Task Delete(Permission permission)
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(permission.Delete());
         

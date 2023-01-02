@@ -14,17 +14,7 @@ namespace MycoMgmt.API.Helpers
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
             
-            services.AddTransient<BaseRepository<Culture>,    CultureRepository>();
-            services.AddTransient<BaseRepository<Spawn>,      SpawnRepository>();
-            services.AddTransient<BaseRepository<Bulk>,       BulkRepository>();
-            services.AddTransient<BaseRepository<Fruit>,      FruitRepository>();
-            services.AddTransient<BaseRepository<Location>,   LocationsRepository>();
-            services.AddTransient<BaseRepository<Strain>,     StrainsRepository>();
-            services.AddTransient<BaseRepository<Account>,    AccountRepository>();
-            services.AddTransient<BaseRepository<Recipe>,     RecipeRepository>();
-            services.AddTransient<BaseRepository<User>,       UserRepository>();
-            services.AddTransient<BaseRepository<Permission>, PermissionRepository>();
-            services.AddTransient<BaseRepository<IamRole>,    RoleRepository>();
+            services.AddTransient<BaseRepository,  ActionRepository>();
             
             return services;
         }

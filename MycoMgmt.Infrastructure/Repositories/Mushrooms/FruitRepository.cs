@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories;
 
-public class FruitRepository : BaseRepository<Fruit>
+public class FruitRepository
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
     private ILogger<FruitRepository> _logger;
@@ -22,13 +22,13 @@ public class FruitRepository : BaseRepository<Fruit>
     }
 
     
-    public override async Task<List<IEntity>> Create(Fruit fruit)
+    public  async Task<List<IEntity>> Create(Fruit fruit)
     {
         var queryList = fruit.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public override async Task Delete(Fruit fruit)
+    public  async Task Delete(Fruit fruit)
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(fruit.Delete());
         
@@ -38,32 +38,32 @@ public class FruitRepository : BaseRepository<Fruit>
             _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", fruit.Id);
     }
         
-    public override async Task<string> Update(Fruit fruit)
+    public  async Task<string> Update(Fruit fruit)
     {
         var queryList = fruit.CreateQueryList();
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
     }
     
-    public override async Task<string> SearchByName(Fruit fruit)
+    public  async Task<string> SearchByName(Fruit fruit)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.SearchByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetByName(Fruit fruit)
+    public  async Task<string> GetByName(Fruit fruit)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(fruit.GetByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetById(Fruit fruit)
+    public async Task<string> GetById(Fruit fruit)
     {
         var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(fruit.GetByIdQuery());
         return JsonConvert.SerializeObject(result);
     }
     
-    public override async Task<string> GetAll(Fruit fruit, int skip, int limit)
+    public async Task<string> GetAll(Fruit fruit, int skip, int limit)
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(fruit.GetAllQuery(skip, limit), "result");
         var dedupeResult = result.OfType<Dictionary<string, object>>().Distinct(new DictionaryEqualityComparer("Id")).ToList();

@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Helpers;
-using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Newtonsoft.Json;
 using static MycoMgmt.Infrastructure.Helpers.BaseRepositoryExtensions;
 
 namespace MycoMgmt.API.Controllers;
@@ -13,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class CultureController : Controller
 {
-    private readonly BaseRepository<Culture> _cultureRepository;
+    private readonly ActionRepository _cultureRepository;
     private readonly ILogger<CultureController> _logger;
 
-    public CultureController(BaseRepository<Culture> repo, ILogger<CultureController> logger)
+    public CultureController(ActionRepository repo, ILogger<CultureController> logger)
     {
         _cultureRepository = repo;
         _logger = logger;

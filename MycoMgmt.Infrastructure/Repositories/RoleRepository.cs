@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories
 {
-    public class RoleRepository : BaseRepository<IamRole>
+    public class RoleRepository
     {
         private readonly INeo4JDataAccess _neo4JDataAccess;
         private ILogger<RoleRepository> _logger;
@@ -18,40 +18,37 @@ namespace MycoMgmt.Infrastructure.Repositories
             _logger = logger;
         }
         
-        public override async Task<string> SearchByName(IamRole role)
+        public async Task<string> SearchByName(IamRole role)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(role.SearchByNameQuery(), "x");
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetByName(IamRole role)
+        public async Task<string> GetByName(IamRole role)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(role.GetByNameQuery(), "x");
-
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetById(IamRole role)
+        public async Task<string> GetById(IamRole role)
         {
             var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(role.GetByIdQuery());
             return JsonConvert.SerializeObject(result);
         }
     
-        public override async Task<string> GetAll(IamRole role, int skip, int limit)
+        public async Task<string> GetAll(IamRole role, int skip, int limit)
         {
-
-            
             var result = await _neo4JDataAccess.ExecuteReadListAsync(role.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }
         
-        public override async Task<List<IEntity>> Create(IamRole role)
+        public async Task<List<IEntity>> Create(IamRole role)
         {
             var queryList = role.CreateQueryList();      
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public override async Task Delete(IamRole role)
+        public async Task Delete(IamRole role)
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(role.Delete());
         
@@ -61,7 +58,7 @@ namespace MycoMgmt.Infrastructure.Repositories
                 _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", role.Id);
         }
         
-        public override async Task<string> Update(IamRole role)
+        public async Task<string> Update(IamRole role)
         {
             var queryList = role.UpdateQueryList();      
             var results = await _neo4JDataAccess.RunTransaction(queryList);

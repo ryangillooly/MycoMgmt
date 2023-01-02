@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories
 {
-    public class VendorRepository : BaseRepository<Vendor>
+    public class VendorRepository
     {
         private readonly INeo4JDataAccess _neo4JDataAccess;
         private ILogger<VendorRepository> _logger;
@@ -19,20 +19,20 @@ namespace MycoMgmt.Infrastructure.Repositories
             _logger = logger;
         }
         
-        public override async Task<List<IEntity>> Create(Vendor vendor)
+        public async Task<List<IEntity>> Create(Vendor vendor)
         {
             var queryList = vendor.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public override async Task<string> Update(Vendor vendor)
+        public async Task<string> Update(Vendor vendor)
         {
             var queryList = vendor.UpdateQueryList();
             var results = await _neo4JDataAccess.RunTransaction(queryList);
             return JsonConvert.SerializeObject(results);
         }
         
-        public override async Task Delete(Vendor vendor)
+        public async Task Delete(Vendor vendor)
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(vendor.Delete());
         
@@ -42,29 +42,27 @@ namespace MycoMgmt.Infrastructure.Repositories
                 _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", vendor.Id);
         }
 
-        public override async Task<string> SearchByName(Vendor vendor)
+        public async Task<string> SearchByName(Vendor vendor)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(vendor.SearchByNameQuery(), "x");
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetByName(Vendor vendor)
+        public async Task<string> GetByName(Vendor vendor)
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(vendor.GetByNameQuery(), "x");
 
             return JsonConvert.SerializeObject(result);
         }
 
-        public override async Task<string> GetById(Vendor vendor)
+        public async Task<string> GetById(Vendor vendor)
         {
             var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(vendor.GetByIdQuery());
             return JsonConvert.SerializeObject(result);
         }
     
-        public override async Task<string> GetAll(Vendor vendor, int skip, int limit)
+        public async Task<string> GetAll(Vendor vendor, int skip, int limit)
         {
-
-            
             var result = await _neo4JDataAccess.ExecuteReadListAsync(vendor.GetAllQuery(skip, limit), "x");
             return JsonConvert.SerializeObject(result);
         }

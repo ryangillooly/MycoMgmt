@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories;
 
-public class SpawnRepository : BaseRepository<Spawn>
+public class SpawnRepository
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
     private ILogger<SpawnRepository> _logger;
@@ -20,20 +20,20 @@ public class SpawnRepository : BaseRepository<Spawn>
         _logger = logger;
     }
     
-    public override async Task<List<IEntity>> Create(Spawn spawn)
+    public async Task<List<IEntity>> Create(Spawn spawn)
     {
         var queryList = spawn.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public override async Task<string> Update(Spawn spawn)
+    public async Task<string> Update(Spawn spawn)
     {
         var queryList = spawn.UpdateQueryList();
         var spawnData = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(spawnData);
     }
     
-    public override async Task Delete(Spawn spawn)
+    public async Task Delete(Spawn spawn)
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(spawn.Delete());
 
@@ -43,25 +43,25 @@ public class SpawnRepository : BaseRepository<Spawn>
             _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", spawn.Id);
     }
 
-    public override async Task<string> SearchByName(Spawn spawn)
+    public async Task<string> SearchByName(Spawn spawn)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(spawn.SearchByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetByName(Spawn spawn)
+    public async Task<string> GetByName(Spawn spawn)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(spawn.GetByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetById(Spawn spawn)
+    public async Task<string> GetById(Spawn spawn)
     {
         var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(spawn.GetByIdQuery());
         return JsonConvert.SerializeObject(result);
     }
     
-    public override async Task<string> GetAll(Spawn spawn, int skip, int limit)
+    public async Task<string> GetAll(Spawn spawn, int skip, int limit)
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(spawn.GetAllQuery(skip, limit), "result");
         return JsonConvert.SerializeObject(result);

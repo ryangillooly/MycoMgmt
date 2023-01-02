@@ -9,10 +9,10 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly BaseRepository<Account> _accountRepository;
+        private readonly ActionRepository _accountRepository;
         private readonly ILogger<AccountController> _logger;
         
-        public AccountController(BaseRepository<Account> repo, ILogger<AccountController> logger)
+        public AccountController(ActionRepository repo, ILogger<AccountController> logger)
         {
             _accountRepository = repo;
             _logger = logger;

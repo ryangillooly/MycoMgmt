@@ -11,10 +11,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class RecipeController : Controller
 {
-    private readonly BaseRepository<Recipe> _recipeRepository;
+    private readonly ActionRepository _recipeRepository;
     private readonly ILogger<RecipeController> _logger;
 
-    public RecipeController(BaseRepository<Recipe> repo, ILogger<RecipeController> logger)
+    public RecipeController(ActionRepository repo, ILogger<RecipeController> logger)
     {
         _recipeRepository = repo;
         _logger = logger;

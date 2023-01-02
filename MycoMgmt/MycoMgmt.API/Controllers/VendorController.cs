@@ -9,10 +9,10 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class VendorController : Controller
     {
-        private readonly BaseRepository<Vendor> _vendorRepository;
+        private readonly ActionRepository _vendorRepository;
         private readonly ILogger<VendorController> _logger;
 
-        public VendorController(BaseRepository<Vendor> repo, ILogger<VendorController> logger)
+        public VendorController(ActionRepository repo, ILogger<VendorController> logger)
         {
             _vendorRepository = repo;
             _logger = logger;

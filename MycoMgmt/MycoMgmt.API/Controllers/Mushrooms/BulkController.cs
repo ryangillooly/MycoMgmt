@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class BulkController : Controller
 {
-    private readonly BaseRepository<Bulk> _bulkRepository;
-    private readonly ILogger<SpawnController> _logger;
+    private readonly ActionRepository _bulkRepository;
+    private readonly ILogger<BulkController> _logger;
 
-    public BulkController(BaseRepository<Bulk> repo, ILogger<SpawnController> logger)
+    public BulkController(ActionRepository repo, ILogger<BulkController> logger)
     {
         _bulkRepository = repo;
         _logger = logger;

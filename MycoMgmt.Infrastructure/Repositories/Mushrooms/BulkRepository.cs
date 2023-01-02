@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Infrastructure.Repositories;
 
-public class BulkRepository : BaseRepository<Bulk>
+public class BulkRepository 
 {
     private readonly INeo4JDataAccess _neo4JDataAccess;
     private ILogger<BulkRepository> _logger;
@@ -21,20 +21,20 @@ public class BulkRepository : BaseRepository<Bulk>
         _logger = logger;
     }
     
-    public override async Task<List<IEntity>> Create(Bulk bulk)
+    public async Task<List<IEntity>> Create(Bulk bulk)
     {
         var queryList = bulk.CreateQueryList();
         return await _neo4JDataAccess.RunTransaction(queryList);
     }
     
-    public override async Task<string> Update(Bulk bulk)
+    public async Task<string> Update(Bulk bulk)
     {
         var queryList = bulk.UpdateQueryList();
         var results = await _neo4JDataAccess.RunTransaction(queryList);
         return JsonConvert.SerializeObject(results);
     }
     
-    public override async Task Delete(Bulk bulk)
+    public async Task Delete(Bulk bulk)
     {
         var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(bulk.Delete());
 
@@ -45,26 +45,26 @@ public class BulkRepository : BaseRepository<Bulk>
         
     }
 
-    public override async Task<string> SearchByName(Bulk bulk)
+    public async Task<string> SearchByName(Bulk bulk)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(bulk.SearchByNameQuery(), "x");
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetByName(Bulk bulk)
+    public async Task<string> GetByName(Bulk bulk)
     {
         var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(bulk.GetByNameQuery(), "x");
 
         return JsonConvert.SerializeObject(result);
     }
 
-    public override async Task<string> GetById(Bulk bulk)
+    public async Task<string> GetById(Bulk bulk)
     {
         var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(bulk.GetByIdQuery());
         return JsonConvert.SerializeObject(result);
     }
     
-    public override async Task<string> GetAll(Bulk bulk, int skip, int limit)
+    public async Task<string> GetAll(Bulk bulk, int skip, int limit)
     {
         var result = await _neo4JDataAccess.ExecuteReadListAsync(bulk.GetAllQuery(skip, limit), "result");
         return JsonConvert.SerializeObject(result);

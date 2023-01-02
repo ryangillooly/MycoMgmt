@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers
     [ApiController]
     public class LocationController : Controller
     {
-        private readonly BaseRepository<Location> _locationsRepository;
+        private readonly ActionRepository _locationsRepository;
         private readonly ILogger<LocationController> _logger;
         
-        public LocationController(BaseRepository<Location> repo, ILogger<LocationController> logger)
+        public LocationController(ActionRepository repo, ILogger<LocationController> logger)
         {
             _locationsRepository = repo;
             _logger = logger;

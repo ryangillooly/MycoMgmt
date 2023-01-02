@@ -10,10 +10,10 @@ namespace MycoMgmt.API.Controllers;
 [ApiController]
 public class FruitController : Controller
 {
-    private readonly BaseRepository<Fruit> _fruitRepository;
+    private readonly ActionRepository _fruitRepository;
     private readonly ILogger<FruitController> _logger;
 
-    public FruitController(BaseRepository<Fruit> repo, ILogger<FruitController> logger)
+    public FruitController(ActionRepository repo, ILogger<FruitController> logger)
     {
         _fruitRepository = repo;
         _logger = logger;
