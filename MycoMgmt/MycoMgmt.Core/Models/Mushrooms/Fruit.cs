@@ -88,7 +88,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 x
                             MATCH
                                 (u:User {{ Name: '{InoculatedBy}' }})
-                            MERGE
+                            CREATE
                                 (u)-[r:HARVESTED]->(x)
                             RETURN 
                                 r
@@ -113,7 +113,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 x
                             MATCH
                                 (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
-                            MERGE
+                            CREATE
                                 (x)-[r:HARVESTED_ON]->(d)
                             RETURN 
                                 r
@@ -212,7 +212,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         location,
                         parent
                     RETURN 
-                        apoc.map.mergeList
+                        apoc.map.CREATEList
                         ([
                             {{ElementId:    elementId(x)}},
                             {{Name:         properties(x).Name}},

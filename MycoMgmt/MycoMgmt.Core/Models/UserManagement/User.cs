@@ -49,7 +49,7 @@ namespace MycoMgmt.Domain.Models.UserManagement
             MATCH 
                 (u:{EntityType} {{ Name: '{Name}' }}),
                 (a:Account      {{ Name: '{Account}' }})
-            MERGE
+            CREATE
                 (a)-[r:HAS]->(u)
             RETURN 
                 r
@@ -66,7 +66,7 @@ namespace MycoMgmt.Domain.Models.UserManagement
                             (r:IAMRole}})
                         WHERE
                             r.Name IN ['{string.Join("','", Roles)}']
-                        MERGE
+                        CREATE
                             (u)-[rel:HAS]->(r)
                         RETURN 
                             r
@@ -78,7 +78,7 @@ namespace MycoMgmt.Domain.Models.UserManagement
             MATCH 
                 (u:{EntityType} {{ Name: '{Name}' }}),
                 (a:Account      {{ Name: '{Account}' }})
-            MERGE
+            CREATE
                 (a)-[r:HAS]->(u)
             RETURN 
                 r
@@ -95,7 +95,7 @@ namespace MycoMgmt.Domain.Models.UserManagement
                         (r:IAMRole}})
                     WHERE
                         r.Name IN ['{string.Join("','", Roles)}']
-                    MERGE
+                    CREATE
                         (u)-[rel:HAS]->(r)
                     RETURN 
                         r

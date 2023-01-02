@@ -207,7 +207,7 @@ namespace MycoMgmt.Domain.Models
                                     x
                                 MATCH
                                     (d:Day {{ day: {parsedDateTime.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {parsedDateTime.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {parsedDateTime.Year} }})
-                                MERGE
+                                CREATE
                                     (x)-[r:MODIFIED_ON]->(d)
                                 RETURN 
                                     r
@@ -231,7 +231,7 @@ namespace MycoMgmt.Domain.Models
                         x
                     MATCH
                         (u:User {{ Name: '{ModifiedBy}'}} )
-                    MERGE 
+                    CREATE 
                         (u)-[r:MODIFIED]->(x)
                     RETURN
                         r  

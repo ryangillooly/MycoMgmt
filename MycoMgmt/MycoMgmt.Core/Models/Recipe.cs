@@ -45,7 +45,7 @@
                               (i:Ingredient)
                           WHERE
                               i.Name IN ['{string.Join("','", Ingredients)}']
-                          MERGE
+                          CREATE
                               (recipe)-[r:CREATED_USING]->(i)
                           RETURN r
                       ";
@@ -102,7 +102,7 @@
                             (i:Ingredient)
                         WHERE
                             i.Name IN ['{string.Join("','", Ingredients)}']
-                        MERGE 
+                        CREATE 
                             (recipe)-[r:CREATED_USING]->(i)
                         RETURN
                             r  

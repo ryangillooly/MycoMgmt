@@ -32,7 +32,8 @@
                                 (d:Day {{ day:   {FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {FinishedOn.Value.Year} }})
                             CREATE
                                 (x)-[r:FINISHED_ON]->(d)
-                            RETURN r
+                            RETURN 
+                                r
                       ";
         }
         public virtual string? CreateRecipeRelationship()
@@ -170,7 +171,7 @@
                             c
                         MATCH 
                             (p:{ParentType} {{Name: '{Parent}' }})
-                        MERGE 
+                        CREATE 
                             (c)-[r:HAS_PARENT]->(p) 
                         RETURN 
                             r
@@ -194,7 +195,7 @@
                             p
                         MATCH 
                             (c:{ChildType} {{Name: '{Children}' }})
-                        MERGE 
+                        CREATE 
                             (c)-[r:HAS_PARENT]->(p) 
                         RETURN 
                             r
@@ -218,7 +219,7 @@
                             x
                         MATCH
                             (s:Strain {{ Name: '{Strain}' }})
-                        MERGE
+                        CREATE
                             (x)-[r:HAS_STRAIN]->(s)
                         RETURN 
                             r
@@ -242,7 +243,7 @@
                             x
                         MATCH
                             (l:Location {{ Name: '{Location}' }})
-                        MERGE
+                        CREATE
                             (x)-[r:STORED_IN]->(l) 
                         RETURN 
                             r
@@ -266,7 +267,7 @@
                             c
                         MATCH
                             (recipe:Recipe {{ Name: '{Recipe}' }})
-                        MERGE
+                        CREATE
                             (c)-[r:CREATED_USING]->(recipe)
                         RETURN 
                             r
@@ -326,7 +327,7 @@
                             x
                         MATCH
                             (u:User {{ Name: '{InoculatedBy}' }})
-                        MERGE
+                        CREATE
                             (u)-[r:INOCULATED]->(x)
                         RETURN 
                             r
@@ -350,7 +351,7 @@
                             x
                         MATCH
                             (d:Day {{ day: {InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {InoculatedOn.Value.Year} }})
-                        MERGE
+                        CREATE
                             (x)-[r:INOCULATED_ON]->(d)
                         RETURN 
                             r
@@ -374,7 +375,7 @@
                             x
                         MATCH
                             (d:Day {{ day: {FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {FinishedOn.Value.Year} }})
-                        MERGE
+                        CREATE
                             (x)-[r:FINISHED_ON]->(d)
                         RETURN 
                             r
@@ -398,7 +399,7 @@
                                 x
                             MATCH
                                 (v:Vendor  {{ Name: '{Vendor}' }})
-                            MERGE
+                            CREATE
                                 (x)-[r:PURCHASED_FROM]->(v)
                             RETURN 
                                 r
