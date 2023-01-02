@@ -147,7 +147,7 @@ namespace MycoMgmt.Domain.Models
                         x
                 ";
         }
-        public virtual string GetAllQuery(int skip, int limit)
+        public virtual string GetAllQuery(int skip = 0, int limit = 20)
         {
             return
                 $@"
@@ -169,8 +169,6 @@ namespace MycoMgmt.Domain.Models
                     LIMIT
                         {limit}
                 ";
-            
-            
         }
         
         // Update

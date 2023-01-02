@@ -2,7 +2,7 @@ using Xunit;
 using FluentAssertions;
 using MycoMgmt.Domain.Models.Mushrooms;
 
-namespace MycoMgmt.Tests.UnitTests.MycoMgmt.Core.Models.Mushroom;
+namespace MycoMgmt.Tests.UnitTests;
 
 public class CultureTests
 {
