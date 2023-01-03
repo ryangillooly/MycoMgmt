@@ -9,25 +9,33 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var mushroom = context.ActionArguments["mushroom"] as Mushroom;
+        var mushroom = context.ActionArguments;
 
-        if ((mushroom.Parent == null && mushroom.ParentType != null) ||
-            (mushroom.Parent != null && mushroom.ParentType == null))
-            new BadRequestObjectResult(
-                "If the Parent parameter has been provided, then the ParentType must also be provided");
+        mushroom.TryGetValue("parent",     out var parent);
+        mushroom.TryGetValue("parentType", out var parentType);
+        mushroom.TryGetValue("children",   out var children);
+        mushroom.TryGetValue("childType",  out var childType);
+        mushroom.TryGetValue("purchased",  out var purchased);
+        mushroom.TryGetValue("vendor",     out var vendor);
+        mushroom.TryGetValue("finished",   out var finished);
+        mushroom.TryGetValue("successful", out var successful);
 
-        if ((mushroom.Children == null && mushroom.ChildType != null) ||
-            (mushroom.Children != null && mushroom.ChildType == null))
-            new BadRequestObjectResult(
-                "If the Children parameter has been provided, then the ChildType must also be provided");
+        var errors = new List<string>();
+        
+        if (parent == null && parentType != null)                 errors.Add("You must also specify the `ParentType` parameter when using the `Parent` parameter");
+        if (parent != null && parentType == null)                 errors.Add("You must also specify the `Parent` parameter when using the `ParentType` parameter");
+        if (children == null && childType != null)                errors.Add("You must also specify the `Children` parameter when using the `ChildType` parameter");
+        if (children != null && childType == null)                errors.Add("You must also specify the `ChildType` parameter when using the `Children` parameter");
+        if ((purchased is null or false) && (vendor is not null)) errors.Add("You must also specify the `Vendor` parameter when using the `Purchased` parameter");
+        if ((purchased is not null) && (vendor is null))          errors.Add("You must also specify the `Purchased` parameter when using the `Vendor` parameter");
+        if (finished is null && successful is not null)           errors.Add("You must also specify the `Successful` parameter when using the `Finished` parameter");
 
-        if ((mushroom.Purchased is null or false) && (mushroom.Vendor is not null))
-            new BadRequestObjectResult("You cannot supply a Vendor if the item was not Purchased.");
-
-        if (mushroom.Finished == null && mushroom.Successful != null)
-            new BadRequestObjectResult(
-                "When providing the Successful parameter, you must also specify the Finished parameter");
-
+        if (errors.Any())
+        {
+            context.Result = new BadRequestObjectResult(errors);
+            return;
+        }
+        
         await next();
     }
 }

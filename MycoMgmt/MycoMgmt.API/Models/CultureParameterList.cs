@@ -1,6 +1,6 @@
 namespace MycoMgmt.API.Models;
 
-public class CultureControllerViewModel
+public class CultureParameterList
 {
     public string  name         { get; set;}
     public string  type         { get; set;}

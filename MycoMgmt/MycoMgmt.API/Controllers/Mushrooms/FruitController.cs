@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.API.Filters;
 using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
@@ -12,6 +13,7 @@ namespace MycoMgmt.API.Controllers;
 public class FruitController : BaseController<FruitController>
 {
     [HttpPost]
+    [MushroomValidation]
     public async Task<IActionResult> Create
     (
         string   name,
@@ -59,15 +61,15 @@ public class FruitController : BaseController<FruitController>
         
         fruit.Tags.Add(fruit.IsSuccessful());
         fruit.Status  = fruit.IsSuccessful();
-        fruit.Validate();
         var result  = await Repository.CreateEntities(Logger, fruit, count);
         return Created("", string.Join(",", result));
     }
 
-    [HttpPut("{Id}")]
+    [HttpPut("{id}")]
+    [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string   Id,
+        string   id,
         string?  name,
         decimal? wetWeight,
         decimal? dryWeight,
@@ -92,7 +94,7 @@ public class FruitController : BaseController<FruitController>
     {
         var fruit = new Fruit()
         {
-            Id           = Id,
+            Id           = id,
             Name         = name,
             WetWeight    = wetWeight,
             DryWeight    = dryWeight,
@@ -115,7 +117,6 @@ public class FruitController : BaseController<FruitController>
             ModifiedBy   = modifiedBy
         };
         
-        fruit.Validate();
         return Ok(await Repository.Update(fruit));
     }
     

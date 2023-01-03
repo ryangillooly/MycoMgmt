@@ -16,41 +16,64 @@ public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create (CultureControllerViewModel values)
+    public async Task<IActionResult> Create
+    (
+        string  name         ,
+        string  type         ,
+        string  strain       ,
+        string? recipe       ,
+        string? notes        ,
+        string? location     ,
+        string? parent       ,
+        string? parentType   ,
+        string? child        ,
+        string? childType    ,
+        bool?   successful   ,
+        bool    finished     ,
+        bool?   purchased    ,
+        string? vendor       ,
+        string? finishedOn   ,
+        string? inoculatedOn ,
+        string? inoculatedBy ,
+        string  createdOn     ,
+        string  createdBy     ,
+        int?    count = 1
+    )
     {
         var culture = new Culture
         {
-            Name         = values.name,
-            Type         = values.type,
-            Recipe       = values.recipe,
-            Location     = values.location,
-            Notes        = values.notes,
-            Strain       = values.strain,
-            Parent       = values.parent,
-            ParentType   = values.parentType,
-            Children     = values.child,
-            ChildType    = values.childType,
-            Vendor       = values.vendor,
-            Purchased    = values.purchased, 
-            Finished     = values.finished,
-            Successful   = values.successful,
-            FinishedOn   = values.finishedOn is null ? null : DateTime.Parse(values.finishedOn),
-            InoculatedOn = values.inoculatedOn is null ? null : DateTime.Parse(values.inoculatedOn),
-            InoculatedBy = values.inoculatedBy,
-            CreatedOn    = DateTime.Parse(values.createdOn),
-            CreatedBy    = values.createdBy
+            Name         = name,
+            Type         = type,
+            Recipe       = recipe,
+            Location     = location,
+            Notes        = notes,
+            Strain       = strain,
+            Parent       = parent,
+            ParentType   = parentType,
+            Children     = child,
+            ChildType    = childType,
+            Vendor       = vendor,
+            Purchased    = purchased, 
+            Finished     = finished,
+            Successful   = successful,
+            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
+            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
+            InoculatedBy = inoculatedBy,
+            CreatedOn    = DateTime.Parse(createdOn),
+            CreatedBy    = createdBy
         };
 
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status  = culture.IsSuccessful();
-        var result  = await Repository.CreateEntities(Logger, culture, values.count);
+        var result  = await Repository.CreateEntities(Logger, culture, count);
         return Created("", result);
     }
     
-    [HttpPut("{Id}")]
+    [HttpPut("{id}")]
+    [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string  Id,
+        string  id,
         string? name,
         string? type,
         string? strain,
@@ -73,7 +96,7 @@ public class CultureController : BaseController<CultureController>
     {
         var culture = new Culture
         {
-            Id    = Id,
+            Id           = id,
             Name         = name,
             Strain       = strain,
             Type         = type,
@@ -94,7 +117,6 @@ public class CultureController : BaseController<CultureController>
             ModifiedBy   = modifiedBy
         };
         
-        culture.Validate();
         return Ok(await Repository.Update(culture));
     }
     

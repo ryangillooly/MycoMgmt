@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.API.Filters;
 using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
@@ -12,6 +13,7 @@ namespace MycoMgmt.API.Controllers;
 public class BulkController : BaseController<BulkController>
 {
     [HttpPost]
+    [MushroomValidation]
     public async Task<IActionResult> Create
     (
         string  name,
@@ -57,15 +59,15 @@ public class BulkController : BaseController<BulkController>
         
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
-        bulk.Validate();
         var result  = await Repository.CreateEntities(Logger, bulk, count);
         return Created("", result);
     }
 
-    [HttpPut("{Id}")]
+    [HttpPut("{id}")]
+    [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string Id,
+        string  id,
         string? name,
         string? strain,
         string? recipe,
@@ -88,7 +90,7 @@ public class BulkController : BaseController<BulkController>
     {
         var bulk = new Bulk
         {
-            Id    = Id,
+            Id           = id,
             Name         = name,
             Recipe       = recipe,
             Strain       = strain,
@@ -108,22 +110,21 @@ public class BulkController : BaseController<BulkController>
             ModifiedBy   = modifiedBy
         };
         
-        bulk.Validate();
         return Ok(await Repository.Update(bulk));
     }
     
     [HttpDelete("{Id}")]
-    public async Task<IActionResult> Delete(string Id)
+    public async Task<IActionResult> Delete(string id)
     {
-        await Repository.Delete(new Bulk { Id = Id });
+        await Repository.Delete(new Bulk { Id = id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Bulk(), skip, limit));
 
-    [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Bulk { Id = Id }));
+    [HttpGet("id/{id}")]
+    public async Task<IActionResult> GetById(string id) => Ok(await Repository.GetById(new Bulk { Id = id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Bulk { Name = name }));
