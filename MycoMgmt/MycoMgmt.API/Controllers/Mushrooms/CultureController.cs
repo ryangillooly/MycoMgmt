@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.API.Filters;
+using MycoMgmt.API.Models;
 using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
@@ -13,27 +15,28 @@ namespace MycoMgmt.API.Controllers;
 public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
+    [MushroomValidation]
     public async Task<IActionResult> Create
     (
-        string  name,
-        string  type,
-        string  strain,
-        string? recipe,
-        string? notes,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        bool?   successful,
-        bool    finished,
-        bool?   purchased,
-        string? vendor,
-        string? finishedOn,
-        string? inoculatedOn,
-        string? inoculatedBy,
-        string  createdOn,
-        string  createdBy,
+        string  name         ,
+        string  type         ,
+        string  strain       ,
+        string? recipe       ,
+        string? notes        ,
+        string? location     ,
+        string? parent       ,
+        string? parentType   ,
+        string? child        ,
+        string? childType    ,
+        bool?   successful   ,
+        bool    finished     ,
+        bool?   purchased    ,
+        string? vendor       ,
+        string? finishedOn   ,
+        string? inoculatedOn ,
+        string? inoculatedBy ,
+        string  createdOn     ,
+        string  createdBy     ,
         int?    count = 1
     )
     {
@@ -59,18 +62,18 @@ public class CultureController : BaseController<CultureController>
             CreatedOn    = DateTime.Parse(createdOn),
             CreatedBy    = createdBy
         };
-        
+
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status  = culture.IsSuccessful();
-        culture.Validate();
         var result  = await Repository.CreateEntities(Logger, culture, count);
         return Created("", result);
     }
     
-    [HttpPut("{Id}")]
+    [HttpPut("{id}")]
+    [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string  Id,
+        string  id,
         string? name,
         string? type,
         string? strain,
@@ -93,7 +96,7 @@ public class CultureController : BaseController<CultureController>
     {
         var culture = new Culture
         {
-            Id    = Id,
+            Id           = id,
             Name         = name,
             Strain       = strain,
             Type         = type,
@@ -114,7 +117,6 @@ public class CultureController : BaseController<CultureController>
             ModifiedBy   = modifiedBy
         };
         
-        culture.Validate();
         return Ok(await Repository.Update(culture));
     }
     

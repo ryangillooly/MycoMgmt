@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.API.Filters;
 using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
@@ -12,6 +13,7 @@ namespace MycoMgmt.API.Controllers;
 public class SpawnController : BaseController<SpawnController>
 {
     [HttpPost]
+    [MushroomValidation]
     public async Task<IActionResult> Create
     (
         string  name,
@@ -59,15 +61,15 @@ public class SpawnController : BaseController<SpawnController>
         
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Status  = spawn.IsSuccessful();
-        spawn.Validate();
         var result  = await Repository.CreateEntities(Logger, spawn, count);
         return Created("", string.Join(",", result));
     }
 
-    [HttpPut("{Id}")]
+    [HttpPut("{id}")]
+    [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string  Id,
+        string  id,
         string? name,
         string? strain,
         string? notes,
@@ -90,7 +92,7 @@ public class SpawnController : BaseController<SpawnController>
     {
         var spawn = new Spawn()
         {
-            Id    = Id,
+            Id           = id,
             Name         = name,
             Recipe       = recipe,
             Location     = location,
@@ -111,7 +113,6 @@ public class SpawnController : BaseController<SpawnController>
             ModifiedBy   = modifiedBy
         };
 
-        spawn.Validate();
         return Ok(await Repository.Update(spawn));
     }
     
