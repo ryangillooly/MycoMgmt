@@ -1,4 +1,6 @@
-﻿namespace MycoMgmt.Domain.Models.Mushrooms
+﻿using System.ComponentModel;
+
+namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Mushroom : ModelBase
     {

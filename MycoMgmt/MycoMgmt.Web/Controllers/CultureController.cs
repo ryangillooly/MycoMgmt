@@ -1,18 +1,24 @@
+using MycoMgmt.Domain.Models.Mushrooms;
+
+namespace MycoMgmt.Web.Controllers;
+
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using static Microsoft.AspNetCore.Mvc.Controller;
 
-public class CultureModel : Controller
+public class CultureController : Controller
 {
     private readonly IHttpClientFactory _clientFactory;
     private const string url = "http://localhost:6002/culture";
     public string responseString;
     public List<string> strains;
     
-    public CultureModel(IHttpClientFactory clientFactory)
+    public CultureController(IHttpClientFactory clientFactory)
     {
         _clientFactory = clientFactory;
     }
@@ -22,7 +28,7 @@ public class CultureModel : Controller
         Redirect("/culture/list");
     }
     
-    public async Task<List<string>> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
         // Use the HttpClientFactory to create a new HttpClient
         var client = _clientFactory.CreateClient();
@@ -34,7 +40,7 @@ public class CultureModel : Controller
         var list = JsonConvert.DeserializeObject<List<string>>(responseResult);
         strains = list;
 
-        return ViewData();
+        return Ok(strains);
     }
     
     public async Task OnPostAsync()
@@ -116,5 +122,7 @@ public class CultureModel : Controller
             // The API call was not successful, display an error message to the user
             TempData["Message"] = "An error occurred while creating the new object.";
         }
+        
+        Redirect("/culture/list");
     }
 }

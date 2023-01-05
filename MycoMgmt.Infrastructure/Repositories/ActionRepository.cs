@@ -65,7 +65,7 @@ namespace MycoMgmt.Infrastructure.Repositories
     
         public async Task<string> GetAll(ModelBase model, int skip, int limit)
         {
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "x");
+            var result = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
             return JsonConvert.SerializeObject(result);
         }
     }

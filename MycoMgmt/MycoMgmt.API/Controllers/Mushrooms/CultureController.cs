@@ -16,108 +16,20 @@ public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create
-    (
-        string  name         ,
-        string  type         ,
-        string  strain       ,
-        string? recipe       ,
-        string? notes        ,
-        string? location     ,
-        string? parent       ,
-        string? parentType   ,
-        string? child        ,
-        string? childType    ,
-        bool?   successful   ,
-        bool    finished     ,
-        bool?   purchased    ,
-        string? vendor       ,
-        string? finishedOn   ,
-        string? inoculatedOn ,
-        string? inoculatedBy ,
-        string  createdOn     ,
-        string  createdBy     ,
-        int?    count = 1
-    )
+    public async Task<IActionResult> Create ([FromBody] Culture mushroom, int? count = 1)
     {
-        var culture = new Culture
-        {
-            Name         = name,
-            Type         = type,
-            Recipe       = recipe,
-            Location     = location,
-            Notes        = notes,
-            Strain       = strain,
-            Parent       = parent,
-            ParentType   = parentType,
-            Children     = child,
-            ChildType    = childType,
-            Vendor       = vendor,
-            Purchased    = purchased, 
-            Finished     = finished,
-            Successful   = successful,
-            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
-            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
-            InoculatedBy = inoculatedBy,
-            CreatedOn    = DateTime.Parse(createdOn),
-            CreatedBy    = createdBy
-        };
-
-        culture.Tags.Add(culture.IsSuccessful());
-        culture.Status  = culture.IsSuccessful();
-        var result  = await Repository.CreateEntities(Logger, culture, count);
+        mushroom.Tags.Add(mushroom.IsSuccessful());
+        mushroom.Status = mushroom.IsSuccessful();
+        var result = await Repository.CreateEntities(Logger, mushroom , count);
         return Created("", result);
     }
     
     [HttpPut("{id}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update
-    (
-        string  id,
-        string? name,
-        string? type,
-        string? strain,
-        string? recipe,
-        string? notes,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        string? vendor,
-        bool?   successful,
-        bool?   finished,
-        string? finishedOn,
-        string? inoculatedOn,
-        string? inoculatedBy,
-        string  modifiedOn,
-        string  modifiedBy
-    )
+    public async Task<IActionResult> Update ([FromBody] Culture mushroom, string id)
     {
-        var culture = new Culture
-        {
-            Id           = id,
-            Name         = name,
-            Strain       = strain,
-            Type         = type,
-            Notes        = notes,
-            Recipe       = recipe,
-            Location     = location,
-            Vendor       = vendor,
-            Successful   = successful,
-            Parent       = parent,
-            ParentType   = parentType,
-            Children     = child,
-            ChildType    = childType,
-            InoculatedBy = inoculatedBy,
-            Finished     = finished,
-            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
-            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
-            ModifiedOn   = DateTime.Parse(modifiedOn),
-            ModifiedBy   = modifiedBy
-        };
-        
-        return Ok(await Repository.Update(culture));
+        mushroom.Id = id;
+        return Ok(await Repository.Update(mushroom));
     }
     
     [HttpDelete("{Id}")]

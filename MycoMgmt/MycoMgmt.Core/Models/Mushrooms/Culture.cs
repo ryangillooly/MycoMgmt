@@ -132,7 +132,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         entities, 
                         apoc.map.mergeList
                         ([
-                            {{Id:    x.Id}},
+                            {{Id:           x.Id}},
                             {{EntityType:   properties(x).EntityType}},
                             {{Type:         properties(x).Type}},
                             {{Name:         properties(x).Name}},

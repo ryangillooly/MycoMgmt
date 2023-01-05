@@ -119,7 +119,7 @@ public class ModelBaseTests
         var expected = $@"
                                 MATCH 
                                     (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                    (d:Day {{ day: {mushroom.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.CreatedOn.Year} }})
+                                    (d:Day {{ day: {mushroom.CreatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.CreatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.CreatedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:CREATED_ON]->(d)
                                 RETURN r
