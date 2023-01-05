@@ -6,6 +6,41 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Culture : Mushroom
     {
+        public Culture
+        (
+            string?   strain,
+            string?   location,
+            string?   parent,
+            string?   parentType,
+            string?   children,
+            string?   childType,
+            string?   status,
+            bool?     successful,
+            bool?     finished,
+            DateTime? finishedOn,
+            DateTime? inoculatedOn,
+            string?   inoculatedBy,
+            string?   recipe,
+            bool?     purchased,
+            string?   vendor
+        )
+        {
+            Strain       = strain;
+            Location     = location;
+            Parent       = parent;
+            ParentType   = parentType;
+            Children     = children;
+            ChildType    = childType;
+            Status       = status;
+            Successful   = successful;
+            Finished     = finished;
+            FinishedOn   = finishedOn;
+            InoculatedOn = inoculatedOn; 
+            InoculatedBy = inoculatedBy;
+            Recipe       = recipe;
+            Purchased    = purchased;
+            Vendor       = vendor;
+        }
         public override string CreateNode()
         {
             var additionalData = "";

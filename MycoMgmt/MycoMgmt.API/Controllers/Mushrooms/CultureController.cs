@@ -1,10 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.API.Models;
-using MycoMgmt.Core.Helpers;
-using MycoMgmt.Infrastructure.Repositories;
+using MycoMgmt.Domain.Contracts.Mushroom.Culture;
 using MycoMgmt.Domain.Models.Mushrooms;
 using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
 
@@ -16,11 +12,11 @@ public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] Culture mushroom, int? count = 1)
+    public async Task<IActionResult> Create ([FromBody] CreateCultureRequest culture)
     {
-        mushroom.Tags.Add(mushroom.IsSuccessful());
-        mushroom.Status = mushroom.IsSuccessful();
-        var result = await Repository.CreateEntities(Logger, mushroom , count);
+        culture.Tags.Add(culture.IsSuccessful());
+        culture.Status = culture.IsSuccessful();
+        var result = await Repository.CreateEntities(Logger, culture);
         return Created("", result);
     }
     
