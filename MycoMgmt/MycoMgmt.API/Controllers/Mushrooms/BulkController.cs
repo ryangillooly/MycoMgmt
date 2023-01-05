@@ -67,7 +67,7 @@ public class BulkController : BaseController<BulkController>
     [MushroomValidation]
     public async Task<IActionResult> Update
     (
-        string  id,
+        Guid    id,
         string? name,
         string? strain,
         string? recipe,
@@ -113,8 +113,8 @@ public class BulkController : BaseController<BulkController>
         return Ok(await Repository.Update(bulk));
     }
     
-    [HttpDelete("{Id}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         await Repository.Delete(new Bulk { Id = id });
         return NoContent();
@@ -123,8 +123,8 @@ public class BulkController : BaseController<BulkController>
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Bulk(), skip, limit));
 
-    [HttpGet("id/{id}")]
-    public async Task<IActionResult> GetById(string id) => Ok(await Repository.GetById(new Bulk { Id = id }));
+    [HttpGet("id/{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Bulk { Id = id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Bulk { Name = name }));

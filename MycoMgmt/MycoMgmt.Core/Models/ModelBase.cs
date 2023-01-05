@@ -11,11 +11,11 @@ namespace MycoMgmt.Domain.Models
         {
             Tags.Add(GetType().Name);
             EntityType = GetType().Name;
-            Id         = Guid.NewGuid().ToString();
+            Id         = Guid.NewGuid();
         }
         
         // Properties
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string? ElementId { get; set; }
         public List<string> Tags { get; set; } = new ();
         public string? EntityType { get; set; }
@@ -276,9 +276,11 @@ namespace MycoMgmt.Domain.Models
         public virtual string? Delete()
         {
             return
-                Id is null
+                /*Id is null
                     ? null
-                    : $@"
+                    :
+                */ 
+                    $@"
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 

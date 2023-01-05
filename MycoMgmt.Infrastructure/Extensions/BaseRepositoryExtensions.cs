@@ -26,7 +26,7 @@ public static class IActionRepositoryExtensions
         {
             for (var i = 1; i <= count; i++)
             {
-                model.Id = Guid.NewGuid().ToString();
+                model.Id = Guid.NewGuid();
                 model.Name = modelName + "-" + i.ToString("D2");
                 var results = await repository.Create(model);
                 resultList = resultList.Concat(results).ToList();

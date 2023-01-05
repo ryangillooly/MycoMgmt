@@ -39,7 +39,8 @@ namespace MycoMgmt.Infrastructure.Repositories
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(model.Delete());
         
-            if(delete.Id.ToString() == model.Id)
+            // Need to check this logic is still valid after moving away from ElementId
+            if(delete.Id.ToString() == model.Id.ToString())
                 _logger.LogInformation("Node with Id {Id} was deleted successfully", model.Id);
             else
                 _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", model.Id);

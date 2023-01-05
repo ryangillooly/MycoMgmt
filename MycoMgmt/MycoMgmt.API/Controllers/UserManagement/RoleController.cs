@@ -55,17 +55,17 @@ namespace MycoMgmt.API.Controllers
             return Ok(await Repository.Update(role));
         }
         
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete(string Id)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await Repository.Delete(new IamRole() { Id = Id });
+            await Repository.Delete(new IamRole() { Id = id });
             return NoContent();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new IamRole(), skip, limit));
-        [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new IamRole { Id = Id }));
+        [HttpGet("id/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new IamRole { Id = id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new IamRole { Name = name }));

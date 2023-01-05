@@ -3,6 +3,7 @@ using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.Repositories;
+using MycoMgmt.Infrastructure.Services;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers
@@ -13,6 +14,13 @@ namespace MycoMgmt.API.Helpers
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
             services.AddTransient<IActionRepository,  ActionRepository>();
+            return services;
+        }
+        
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            services.AddScoped<IActionService,  ActionService>();
             return services;
         }
         
