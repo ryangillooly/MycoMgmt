@@ -12,32 +12,28 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         }
         public Culture
         (
-            string    name,
-            string    type,
-            string?   notes,
-            string    strain,
-            string?   location,
-            string?   parent,
-            string?   parentType,
-            string?   children,
-            string?   childType,
-            bool?     successful,
-            bool      finished,
-            DateTime? finishedOn,
-            string    inoculatedBy,
-            DateTime  inoculatedOn,
-            string    createdBy,
-            DateTime  createdOn,
-            string?   recipe,
-            bool?     purchased,
-            string?   vendor
+            string     name,
+            string     type,
+            string     strain,
+            string?    recipe,
+            string?    notes,
+            string?    location,
+            string?    parent,
+            string?    parentType,
+            string?    children,
+            string?    childType,
+            string?    vendor,
+            bool?      purchased,
+            bool?      successful,
+            bool       finished,
+            DateTime?  finishedOn,
+            DateTime?  inoculatedOn,
+            string?    inoculatedBy
         )
         {
             Name         = name;
             Type         = type;
             Notes        = notes;
-            CreatedBy    = createdBy;
-            CreatedOn    = createdOn;
             Strain       = strain;
             Location     = location;
             Parent       = parent;
@@ -53,6 +49,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             Purchased    = purchased;
             Vendor       = vendor;
         }
+        
         public override string CreateNode()
         {
             var additionalData = "";

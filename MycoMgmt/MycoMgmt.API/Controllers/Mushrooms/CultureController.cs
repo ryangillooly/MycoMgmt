@@ -1,99 +1,101 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Domain.Contracts.Mushroom.Culture;
+using MycoMgmt.Domain.Contracts.Mushroom;
 using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Infrastructure.Services;
-using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("culture")]
+[Route("[controller]")]
 [ApiController]
 public class CultureController : BaseController<CultureController>
 {
-    private readonly IActionService _actionService;
-
-    public CultureController(IActionService actionService)
-    {
-        _actionService = actionService;
-    }
-    
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateCultureRequest request)
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
     {
         var culture = new Culture
         (
             request.Name,
             request.Type,
-            request.Notes,
             request.Strain,
+            request.Recipe,
+            request.Notes,
             request.Location,
             request.Parent,
             request.ParentType,
             request.Children,
             request.ChildType,
+            request.Vendor,
+            request.Purchased,
             request.Successful,
             request.Finished,
             request.FinishedOn,
-            request.InoculatedBy,
             request.InoculatedOn,
-            request.CreatedBy,
-            request.CreatedOn,
-            request.Recipe,
-            request.Purchased,
-            request.Vendor
-        );
+            request.InoculatedBy
+        )
+        {
+            CreatedOn = DateTime.Now,
+            CreatedBy = request.CreatedBy
+        };
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status = culture.IsSuccessful();
-        var result = await Repository.CreateEntities(Logger, culture);
-        return Created("", result);
+        
+        var result = await ActionService.Create
+        (
+            culture, 
+            HttpContext.Request.GetDisplayUrl(), 
+            request.Count
+        );
+   
+       return Created("", result);
     }
     
     [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] UpdateCultureRequest request, Guid id)
+    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
     {
         var culture = new Culture
         (
             request.Name,
             request.Type,
-            request.Notes,
             request.Strain,
+            request.Recipe,
+            request.Notes,
             request.Location,
             request.Parent,
             request.ParentType,
             request.Children,
             request.ChildType,
+            request.Vendor,
+            request.Purchased,
             request.Successful,
             (bool) request.Finished,
             request.FinishedOn,
-            request.InoculatedBy,
-            (DateTime) request.InoculatedOn,
-            request.ModifiedBy,
-            request.ModifiedOn,
-            request.Recipe,
-            request.Purchased,
-            request.Vendor
+            request.InoculatedOn,
+            request.InoculatedBy
         )
         {
-            Id = id
+            Id         = id,
+            ModifiedOn = DateTime.Now,
+            ModifiedBy = request.ModifiedBy
         };
         return Ok(await Repository.Update(culture));
     }
     
-    [HttpDelete("{Id}")]
-    public async Task<IActionResult> Delete(Guid Id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        await Repository.Delete(new Culture { Id = Id });
+        await Repository.Delete(new Culture { Id = id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
 
-    [HttpGet("id/{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Culture { Id = id }));
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));

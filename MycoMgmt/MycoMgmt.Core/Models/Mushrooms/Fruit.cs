@@ -5,11 +5,46 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Fruit : Mushroom
     {
-        //Properties
-        public DateTime? HarvestedOn { get; set; }
-        public string? HarvestedBy { get; set; }
-        public decimal? WetWeight { get; set; }
-        public decimal? DryWeight { get; set; }
+        public Fruit()
+        {
+        
+        }
+
+        public Fruit
+        (
+            string    name,
+            string    strain,
+            decimal?      wetWeight,
+            decimal?      dryWeight,
+            string?   recipe,
+            string?   notes,
+            string?   location,
+            string?   parent,
+            string?   parentType,
+            string?   children,
+            string?   childType,
+            string?   vendor,
+            bool?     purchased,
+            bool?     successful,
+            bool      finished
+        )
+        {
+            Name        = name;
+            WetWeight   = wetWeight;
+            DryWeight   = dryWeight;
+            Notes       = notes;
+            Strain      = strain;
+            Location    = location;
+            Parent      = parent;
+            ParentType  = parentType;
+            Children    = children;
+            ChildType   = childType;
+            Successful  = successful;
+            Finished    = finished;
+            Recipe      = recipe;
+            Purchased   = purchased;
+            Vendor      = vendor;
+        }
         
         
         // Create
@@ -49,7 +84,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                     : $@"
                           MATCH 
                               (x:{EntityType} {{ Name: '{Name}' }}),
-                              (u:User {{ Name: '{InoculatedBy}' }})
+                              (u:User {{ Name: '{HarvestedBy}' }})
                           CREATE
                               (u)-[r:HARVESTED]->(x)
                           RETURN r

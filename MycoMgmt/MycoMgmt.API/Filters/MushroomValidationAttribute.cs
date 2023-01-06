@@ -3,6 +3,7 @@ using System.Net;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MycoMgmt.Domain.Contracts.Mushroom;
 using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Filters;
@@ -11,21 +12,67 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var mushroom         = (Mushroom) context.ActionArguments["mushroom"]!;
+        var request          = (CreateMushroomRequest) context.ActionArguments["request"]!;
         var httpMethod = context.HttpContext.Request.Method;
         var errors           = new Dictionary<string, string>();
+        var mushroom = new Mushroom
+        {
+            Name = request.Name,
+            Type = request.Type,
+            Notes = request.Notes,
+            CreatedBy = request.CreatedBy,
+            CreatedOn = request.CreatedOn,
+            ModifiedBy = request.ModifiedBy,
+            ModifiedOn = request.ModifiedOn,
+            Strain = request.Strain,
+            Location = request.Location,
+            Parent = request.Parent,
+            ParentType = request.ParentType,
+            Children = request.Children,
+            ChildType = request.ChildType,
+            Successful = request.Successful,
+            Finished = request.Finished,
+            FinishedOn = request.FinishedOn,
+            InoculatedOn = request.InoculatedOn,
+            InoculatedBy = request.InoculatedBy,
+            Recipe = request.Recipe,
+            Purchased = request.Purchased,
+            Vendor = request.Vendor,
+            WetWeight = request.WetWeight,
+            DryWeight = request.DryWeight,
+            HarvestedBy = request.HarvestedBy,
+            HarvestedOn = request.HarvestedOn
+        };
+        
+        var action     = context.RouteData.Values["action"];
+        var controller = context.RouteData.Values["controller"];
         
         switch (httpMethod)
         {
             case "POST":
             {
                 if (string.IsNullOrEmpty(mushroom.Name))   errors.Add(nameof(mushroom.Name),   SingleFieldMessage(nameof(mushroom.Name)));
-                if (string.IsNullOrEmpty(mushroom.Type))   errors.Add(nameof(mushroom.Type),   SingleFieldMessage(nameof(mushroom.Type)));
                 if (string.IsNullOrEmpty(mushroom.Strain)) errors.Add(nameof(mushroom.Strain), SingleFieldMessage(nameof(mushroom.Strain)));
-                
-                if (mushroom.CreatedOn is null) errors.Add(nameof(mushroom.CreatedOn), SingleFieldMessage(nameof(mushroom.CreatedOn)));
+                //if (mushroom.CreatedOn is null) errors.Add(nameof(mushroom.CreatedOn), SingleFieldMessage(nameof(mushroom.CreatedOn)));
                 if (mushroom.CreatedBy is null) errors.Add(nameof(mushroom.CreatedBy), SingleFieldMessage(nameof(mushroom.CreatedBy)));
+
+                var list = new List<string>{"Culture", "Spawn", "Recipe"};
+
+                if (list.Contains(controller))
+                    if (string.IsNullOrEmpty(mushroom.Type)) errors.Add(nameof(mushroom.Type), SingleFieldMessage(nameof(mushroom.Type)));
+
+                if (controller is not "Fruit")
+                {
+                    if (mushroom.InoculatedOn is null) errors.Add(nameof(mushroom.InoculatedOn), SingleFieldMessage(nameof(mushroom.InoculatedOn)));
+                    if (mushroom.InoculatedBy is null) errors.Add(nameof(mushroom.InoculatedBy), SingleFieldMessage(nameof(mushroom.InoculatedBy)));
+                }
                 
+                if (controller is "Fruit" && mushroom.Finished is true)
+                {
+                    if (mushroom.HarvestedOn is null) errors.Add(nameof(mushroom.HarvestedOn), SingleFieldMessage(nameof(mushroom.HarvestedOn)));
+                    if (mushroom.HarvestedBy is null) errors.Add(nameof(mushroom.HarvestedBy), SingleFieldMessage(nameof(mushroom.HarvestedBy)));
+                }
+
                 break;
             }
             case "PUT":
@@ -59,12 +106,18 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
                 
                 if(fieldList.Any())
                 {
-                    if (mushroom.ModifiedOn is null) errors.Add(nameof(mushroom.ModifiedOn), SingleFieldMessage(nameof(mushroom.ModifiedOn)));
+                    //if (mushroom.ModifiedOn is null) errors.Add(nameof(mushroom.ModifiedOn), SingleFieldMessage(nameof(mushroom.ModifiedOn)));
                     if (mushroom.ModifiedBy is null) errors.Add(nameof(mushroom.ModifiedBy), SingleFieldMessage(nameof(mushroom.ModifiedBy)));
                 }
                 else
                 {
                     errors.Add("Validation", $"The minimum required fields are ModifiedOn, ModifiedBy, and at least 1 other field");
+                }
+                
+                if (controller is "Fruit" && mushroom.Finished is true)
+                {
+                    if (mushroom.HarvestedOn is null) errors.Add(nameof(mushroom.HarvestedOn), SingleFieldMessage(nameof(mushroom.HarvestedOn)));
+                    if (mushroom.HarvestedBy is null) errors.Add(nameof(mushroom.HarvestedBy), SingleFieldMessage(nameof(mushroom.HarvestedBy)));
                 }
                 
                 break;

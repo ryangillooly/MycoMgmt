@@ -1,11 +1,13 @@
-namespace MycoMgmt.Domain.Contracts.Mushroom.Culture;
+namespace MycoMgmt.Domain.Contracts.Mushroom;
 
-public class UpdateCultureRequest 
+public class UpdateMushroomRequest 
 {
     public string?      Name { get; set; }
     public string?      Type { get; set; }
     public string?      Notes { get; set; }
     public string?      Strain { get; set; }
+    public decimal?         WetWeight { get; set; }
+    public decimal?         DryWeight { get; set; }
     public string?      Location { get; set; }
     public string?      Parent { get; set; }
     public string?      ParentType { get; set; }
@@ -17,8 +19,11 @@ public class UpdateCultureRequest
     public DateTime?    FinishedOn { get; set; }
     public DateTime?    InoculatedOn { get; set; }
     public string?      InoculatedBy { get; set; }
-    public DateTime     ModifiedOn { get; set; }
-    public string       ModifiedBy { get; set; }
+    
+    public string?    HarvestedBy { get; set; }
+    public DateTime?      HarvestedOn { get; set; }
+    public DateTime?     ModifiedOn { get; set; }
+    public string?       ModifiedBy { get; set; }
     public string?      Recipe { get; set; }
     public string?      Vendor { get; set; }
     public int?         Count     { get; set; } = 1;

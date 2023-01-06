@@ -1,115 +1,89 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
 using MycoMgmt.Core.Helpers;
+using MycoMgmt.Domain.Contracts.Mushroom;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("bulk")]
+[Route("[controller]")]
 [ApiController]
 public class BulkController : BaseController<BulkController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create
-    (
-        string  name,
-        string  strain,
-        string? recipe,
-        string? notes,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        string? vendor,
-        bool?   successful,
-        bool    finished,
-        string? finishedOn,
-        string? inoculatedOn,
-        string? inoculatedBy,
-        string  createdOn,
-        string  createdBy,
-        int?    count = 1
-    )
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
     {
-        var bulk = new Bulk()
+        var bulk = new Bulk
+        (
+            request.Name,
+            request.Strain,
+            request.Recipe,
+            request.Notes,
+            request.Location,
+            request.Parent,
+            request.ParentType,
+            request.Children,
+            request.ChildType,
+            request.Vendor,
+            request.Purchased,
+            request.Successful,
+            request.Finished,
+            request.FinishedOn,
+            request.InoculatedOn,
+            request.InoculatedBy
+        )
         {
-            Name         = name,
-            Strain       = strain,
-            Recipe       = recipe,
-            Location     = location,
-            Notes        = notes,
-            Parent       = parent,
-            ParentType   = parentType,
-            Children     = child,
-            ChildType    = childType,
-            Vendor       = vendor,
-            Successful   = successful,
-            Finished     = finished,
-            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
-            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
-            InoculatedBy = inoculatedBy,
-            CreatedOn    = DateTime.Parse(createdOn),
-            CreatedBy    = createdBy
+            CreatedOn = DateTime.Now,
+            CreatedBy = request.CreatedBy
         };
         
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
-        var result  = await Repository.CreateEntities(Logger, bulk, count);
+        
+        var result = await ActionService.Create
+        (
+            bulk, 
+            HttpContext.Request.GetDisplayUrl(), 
+            request.Count
+        );
+        
         return Created("", result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update
-    (
-        Guid    id,
-        string? name,
-        string? strain,
-        string? recipe,
-        string? notes,
-        string? location,
-        string? parent,
-        string? parentType,
-        string? child,
-        string? childType,
-        string? vendor,
-        bool?   successful,
-        bool?   finished,
-        string? finishedOn,
-        string? inoculatedOn,
-        string? inoculatedBy,
-        string  modifiedOn,
-        string  modifiedBy
-        
-    )
+    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
     {
         var bulk = new Bulk
+        (
+            request.Name,
+            request.Strain,
+            request.Recipe,
+            request.Notes,
+            request.Location,
+            request.Parent,
+            request.ParentType,
+            request.Children,
+            request.ChildType,
+            request.Vendor,
+            request.Purchased,
+            request.Successful,
+            (bool) request.Finished,
+            request.FinishedOn,
+            request.InoculatedOn,
+            request.InoculatedBy
+        )
         {
-            Id           = id,
-            Name         = name,
-            Recipe       = recipe,
-            Strain       = strain,
-            Notes        = notes,
-            Location     = location,
-            Parent       = parent,
-            ParentType   = parentType,
-            Children     = child,
-            ChildType    = childType,
-            Vendor       = vendor, 
-            Successful   = successful,
-            Finished     = finished,
-            FinishedOn   = finishedOn is null ? null : DateTime.Parse(finishedOn),
-            InoculatedOn = inoculatedOn is null ? null : DateTime.Parse(inoculatedOn),
-            InoculatedBy = inoculatedBy,
-            ModifiedOn   = DateTime.Parse(modifiedOn),
-            ModifiedBy   = modifiedBy
+            Id         = id,
+            ModifiedOn = DateTime.Now,
+            ModifiedBy = request.ModifiedBy
         };
-        
+
         return Ok(await Repository.Update(bulk));
     }
     
@@ -123,7 +97,7 @@ public class BulkController : BaseController<BulkController>
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Bulk(), skip, limit));
 
-    [HttpGet("id/{id:guid}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Bulk { Id = id }));
 
     [HttpGet("name/{name}")]

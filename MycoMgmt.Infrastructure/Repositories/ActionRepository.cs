@@ -28,11 +28,10 @@ namespace MycoMgmt.Infrastructure.Repositories
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public async Task<string> Update(ModelBase model)
+        public async Task<List<IEntity>> Update (ModelBase model)
         {
             var queryList = model.UpdateQueryList();
-            var results = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(results);
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
         public async Task Delete(ModelBase model)
@@ -58,11 +57,7 @@ namespace MycoMgmt.Infrastructure.Repositories
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetById(ModelBase model)
-        {
-            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
-            return JsonConvert.SerializeObject(result);
-        }
+        public async Task<INode> GetById(ModelBase model) => await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
     
         public async Task<string> GetAll(ModelBase model, int skip, int limit)
         {
