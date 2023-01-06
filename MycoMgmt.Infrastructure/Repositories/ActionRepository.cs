@@ -28,18 +28,18 @@ namespace MycoMgmt.Infrastructure.Repositories
             return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
-        public async Task<string> Update(ModelBase model)
+        public async Task<List<IEntity>> Update (ModelBase model)
         {
             var queryList = model.UpdateQueryList();
-            var results = await _neo4JDataAccess.RunTransaction(queryList);
-            return JsonConvert.SerializeObject(results);
+            return await _neo4JDataAccess.RunTransaction(queryList);
         }
         
         public async Task Delete(ModelBase model)
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(model.Delete());
         
-            if(delete.Id.ToString() == model.Id)
+            // Need to check this logic is still valid after moving away from ElementId
+            if(delete.Id.ToString() == model.Id.ToString())
                 _logger.LogInformation("Node with Id {Id} was deleted successfully", model.Id);
             else
                 _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", model.Id);
@@ -57,11 +57,7 @@ namespace MycoMgmt.Infrastructure.Repositories
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetById(ModelBase model)
-        {
-            var result = await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
-            return JsonConvert.SerializeObject(result);
-        }
+        public async Task<INode> GetById(ModelBase model) => await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
     
         public async Task<string> GetAll(ModelBase model, int skip, int limit)
         {

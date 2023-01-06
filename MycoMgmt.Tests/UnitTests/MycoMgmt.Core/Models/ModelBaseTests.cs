@@ -29,9 +29,9 @@ public class ModelBaseTests
         
         for (var i = 1; i <= entityCount; i++)
         {
-            mushroom.Id = Guid.NewGuid().ToString();
+            mushroom.Id = Guid.NewGuid();
             mushroom.Name = mushroomName + "-" + i.ToString("D2");
-            resultList.Add(mushroom.Id);
+            resultList.Add(mushroom.Id.ToString());
         }
 
         resultList.Distinct().Count().Should().Be(expectedIdCount);

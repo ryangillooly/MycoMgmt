@@ -1,49 +1,101 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.API.Models;
-using MycoMgmt.Core.Helpers;
-using MycoMgmt.Infrastructure.Repositories;
+using MycoMgmt.Domain.Contracts.Mushroom;
 using MycoMgmt.Domain.Models.Mushrooms;
-using static MycoMgmt.Infrastructure.Helpers.IActionRepositoryExtensions;
+using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("culture")]
+[Route("[controller]")]
 [ApiController]
 public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] Culture mushroom, int? count = 1)
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
     {
-        mushroom.Tags.Add(mushroom.IsSuccessful());
-        mushroom.Status = mushroom.IsSuccessful();
-        var result = await Repository.CreateEntities(Logger, mushroom , count);
-        return Created("", result);
+        var culture = new Culture
+        (
+            request.Name,
+            request.Type,
+            request.Strain,
+            request.Recipe,
+            request.Notes,
+            request.Location,
+            request.Parent,
+            request.ParentType,
+            request.Children,
+            request.ChildType,
+            request.Vendor,
+            request.Purchased,
+            request.Successful,
+            request.Finished,
+            request.FinishedOn,
+            request.InoculatedOn,
+            request.InoculatedBy
+        )
+        {
+            CreatedOn = DateTime.Now,
+            CreatedBy = request.CreatedBy
+        };
+        culture.Tags.Add(culture.IsSuccessful());
+        culture.Status = culture.IsSuccessful();
+        
+        var result = await ActionService.Create
+        (
+            culture, 
+            HttpContext.Request.GetDisplayUrl(), 
+            request.Count
+        );
+   
+       return Created("", result);
     }
     
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] Culture mushroom, string id)
+    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
     {
-        mushroom.Id = id;
-        return Ok(await Repository.Update(mushroom));
+        var culture = new Culture
+        (
+            request.Name,
+            request.Type,
+            request.Strain,
+            request.Recipe,
+            request.Notes,
+            request.Location,
+            request.Parent,
+            request.ParentType,
+            request.Children,
+            request.ChildType,
+            request.Vendor,
+            request.Purchased,
+            request.Successful,
+            (bool) request.Finished,
+            request.FinishedOn,
+            request.InoculatedOn,
+            request.InoculatedBy
+        )
+        {
+            Id         = id,
+            ModifiedOn = DateTime.Now,
+            ModifiedBy = request.ModifiedBy
+        };
+        return Ok(await Repository.Update(culture));
     }
     
-    [HttpDelete("{Id}")]
-    public async Task<IActionResult> Delete(string Id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        await Repository.Delete(new Culture { Id = Id });
+        await Repository.Delete(new Culture { Id = id });
         return NoContent();
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
 
-    [HttpGet("id/{Id}")]
-    public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Culture { Id = Id }));
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
 
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));

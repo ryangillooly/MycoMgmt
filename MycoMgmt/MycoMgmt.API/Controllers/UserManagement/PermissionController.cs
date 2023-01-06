@@ -44,17 +44,17 @@ namespace MycoMgmt.API.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(string Id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await Repository.Delete(new Permission { Id = Id});
+            await Repository.Delete(new Permission { Id = id});
             return NoContent();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Permission(), skip, limit));
 
-        [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string Id) => Ok(await Repository.GetById(new Permission { Id = Id }));
+        [HttpGet("id/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Permission { Id = id }));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Permission { Name = name }));

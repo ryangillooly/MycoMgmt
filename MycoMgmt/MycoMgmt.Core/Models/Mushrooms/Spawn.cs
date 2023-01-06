@@ -4,6 +4,51 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Spawn : Mushroom
     {
+        public Spawn()
+        {
+        
+        }
+
+        public Spawn
+        (
+            string    name,
+            string    type,
+            string    strain,
+            string?   recipe,
+            string?   notes,
+            string?   location,
+            string?   parent,
+            string?   parentType,
+            string?   children,
+            string?   childType,
+            string?   vendor,
+            bool?     purchased,
+            bool?     successful,
+            bool      finished,
+            DateTime? finishedOn,
+            DateTime? inoculatedOn,
+            string?   inoculatedBy
+        )
+        {
+            Name         = name;
+            Type         = type;
+            Notes        = notes;
+            Strain       = strain;
+            Location     = location;
+            Parent       = parent;
+            ParentType   = parentType;
+            Children     = children;
+            ChildType    = childType;
+            Successful   = successful;
+            Finished     = finished;
+            FinishedOn   = finishedOn;
+            InoculatedOn = inoculatedOn; 
+            InoculatedBy = inoculatedBy;
+            Recipe       = recipe;
+            Purchased    = purchased;
+            Vendor       = vendor;
+        }
+
         // Create
         public override string CreateNode()
         {

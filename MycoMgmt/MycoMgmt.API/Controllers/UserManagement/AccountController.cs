@@ -29,10 +29,10 @@ namespace MycoMgmt.API.Controllers
             return Created("", result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update
         (
-            string id,
+            Guid   id,
             string name,
             string modifiedOn,
             string modifiedBy   
@@ -49,8 +49,8 @@ namespace MycoMgmt.API.Controllers
             return Ok(await Repository.Update(account));
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             await Repository.Delete(new Account { Id = id });
             return NoContent();
@@ -59,8 +59,8 @@ namespace MycoMgmt.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Account(), skip, limit));
 
-        [HttpGet("id/{Id}")]
-        public async Task<IActionResult> GetById(string id) => Ok(await Repository.GetById(new Account { Id = id}));
+        [HttpGet("id/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Account { Id = id}));
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Account { Name = name}));
