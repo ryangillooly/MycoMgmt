@@ -1,21 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Infrastructure.Helpers;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
     [Route("strain")]
     [ApiController]
-    public class StrainsController : Controller
+    public class StrainsController : BaseController<StrainsController>
     {
-        private readonly IStrainsRepository _strainsRepository;
-        
-        public StrainsController(IStrainsRepository repo)
-        {
-            _strainsRepository = repo;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create
         (
@@ -33,7 +27,9 @@ namespace MycoMgmt.API.Controllers
                 CreatedOn = DateTime.Parse(createdOn)
             };
             
-            return Created("", await _strainsRepository.Create(strain));
+            var result  = await Repository.CreateEntities(Logger, strain);
+
+            return Created("", result);
         }
         
         [HttpPut]
@@ -53,26 +49,26 @@ namespace MycoMgmt.API.Controllers
                 ModifiedOn = DateTime.Parse(modifiedOn)
             };
             
-            return Created("", await _strainsRepository.Update(strain));
+            return Created("", await Repository.Update(strain));
         }
         
-        [HttpDelete("{elementId}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await _strainsRepository.Delete(new Strain { ElementId = elementId });
+            await Repository.Delete(new Strain { Id = id });
             return NoContent();
         }
     
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _strainsRepository.GetAll(new Strain(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Strain(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _strainsRepository.GetById(new Strain { ElementId = elementId }));
+        [HttpGet("id/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Strain { Id = id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _strainsRepository.GetByName(new Strain { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Strain { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _strainsRepository.SearchByName(new Strain { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Strain { Name = name }));
     }
 }

@@ -31,7 +31,7 @@ public class Security : ModelBase
                         MATCH 
                             (x:{EntityType})
                         WHERE
-                            elementId(x) = '{ElementId}'
+                            x.Id = '{Id}'
                         OPTIONAL MATCH
                             (x)-[r:HAS]->(p)
                         DELETE 
@@ -58,7 +58,7 @@ public class Security : ModelBase
                     MATCH 
                         (c:{EntityType})
                     WHERE
-                        elementId(c) = '{ElementId}'
+                        c.Id = '{Id}'
                     OPTIONAL MATCH
                         (c)-[r:HAS_PARENT]->(p)
                     DELETE

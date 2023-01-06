@@ -3,7 +3,7 @@ MATCH (x:Bulk)
                             WITH 
                                 x,
                                 collect(child.Name) as children,
-                                count(elementId(x)) as entityCount
+                                count(x.Id) as entityCount
                             OPTIONAL MATCH (x)-[:INOCULATED_ON]->(iDay:Day)<-[:HAS_DAY]-(iMonth:Month)-[:HAS_MONTH]-(iYear:Year)
                             OPTIONAL MATCH (x)-[:CREATED_ON]   ->(cDay:Day)<-[:HAS_DAY]-(cMonth:Month)-[:HAS_MONTH]-(cYear:Year)
                             OPTIONAL MATCH (x)-[:MODIFIED_ON]  ->(mDay:Day)<-[:HAS_DAY]-(mMonth:Month)-[:HAS_MONTH]-(mYear:Year)
@@ -47,7 +47,7 @@ MATCH (x:Bulk)
                                 entityCount,
                                 apoc.map.mergeList
                                 ([
-                                    {{ElementId:    elementId(x)}},
+                                    {{Id:    x.Id}},
                                     {{Name:         properties(x).Name}},
                                     {{EntityType:   properties(x).EntityType}},
                                     {{Notes:        properties(x).Notes}},

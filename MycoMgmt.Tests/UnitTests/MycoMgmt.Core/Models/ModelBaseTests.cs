@@ -1,19 +1,42 @@
+using System.Runtime.InteropServices;
 using AutoFixture;
 using Xunit;
 using FluentAssertions;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Domain.Models.Mushrooms;
+using Neo4j.Driver;
 
 namespace MycoMgmt.Tests.UnitTests;
 
 public class ModelBaseTests
 {
-    private Domain.Models.Mushrooms.Mushroom mushroom { get; set; }
+    private Mushroom mushroom { get; set; }
 
     public ModelBaseTests()
     {
-        mushroom = new Fixture().Create<Domain.Models.Mushrooms.Mushroom>();
+        mushroom = new Fixture().Create<Mushroom>();
     }
+
+
+    [Fact]
+    public void MultipleEntityCreationsShouldReturnMultipleEntityIds()
+    {
+        const int entityCount     = 5;
+        const int expectedIdCount = 5;
+        var mushroomName    = mushroom.Name;
+        
+        var resultList = new List<string>();
+        
+        for (var i = 1; i <= entityCount; i++)
+        {
+            mushroom.Id = Guid.NewGuid();
+            mushroom.Name = mushroomName + "-" + i.ToString("D2");
+            resultList.Add(mushroom.Id.ToString());
+        }
+
+        resultList.Distinct().Count().Should().Be(expectedIdCount);
+    }
+    
     
     [Fact]
     public void NewEntityShouldReturnEntityType()
@@ -32,7 +55,8 @@ public class ModelBaseTests
                                 CREATE 
                                 (
                                     x:{mushroom.EntityType} {{ 
-                                        Name: '{mushroom.Name}'
+                                        Name: '{mushroom.Name}',
+                                        Id: '{mushroom.Id}'
                                         ,Notes: '{mushroom.Notes}',Type: '{mushroom.Type}'
                                     }}
                                 )
@@ -95,7 +119,7 @@ public class ModelBaseTests
         var expected = $@"
                                 MATCH 
                                     (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                    (d:Day {{ day: {mushroom.CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.CreatedOn.Year} }})
+                                    (d:Day {{ day: {mushroom.CreatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.CreatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.CreatedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:CREATED_ON]->(d)
                                 RETURN r
@@ -154,7 +178,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 RETURN 
                                     x
                             ";
@@ -201,7 +225,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Name = '{mushroom.Name}' 
                                 RETURN 
@@ -223,7 +247,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:MODIFIED_ON]->(d)
                                 DELETE 
@@ -251,7 +275,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType})
                                 WHERE
-                                    elementId(x) = '{mushroom.ElementId}'
+                                    x.Id = '{mushroom.Id}'
                                 OPTIONAL MATCH
                                     (u)-[r:MODIFIED]->(x)
                                 DELETE
@@ -279,7 +303,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Notes = '{mushroom.Notes}' 
                                 RETURN s 
@@ -298,7 +322,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{mushroom.ElementId}' 
+                                    x.Id = '{mushroom.Id}' 
                                 SET 
                                     x.Type = '{mushroom.Type}' 
                                 RETURN s 
@@ -317,7 +341,7 @@ public class ModelBaseTests
                                 MATCH 
                                     (x:{mushroom.EntityType}) 
                                 WHERE 
-                                    elementId(x) = '{ mushroom.ElementId }' 
+                                    x.Id = '{ mushroom.Id }' 
                                 DETACH DELETE 
                                     x
                                 RETURN 

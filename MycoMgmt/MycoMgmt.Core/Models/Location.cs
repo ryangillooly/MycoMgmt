@@ -20,7 +20,8 @@ namespace MycoMgmt.Domain.Models
             var query = $@"CREATE 
                                 (
                                     x:{EntityType} {{ 
-                                                         Name: '{Name}'
+                                                         Name: '{Name}',
+                                                         Id: '{Id}'
                                                          {additionalData} 
                                                       }}
                                 )
@@ -53,7 +54,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType}) 
                     WHERE 
-                        elementId(x) = '{ElementId}' 
+                        x.Id = '{Id}' 
                     SET 
                         x.AgentConfigured = '{AgentConfigured}' 
                     RETURN 

@@ -1,17 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MycoMgmt.Domain.Models.Mushrooms;
 using Newtonsoft.Json;
 
-[IgnoreAntiforgeryToken]
-public class CultureModel : PageModel
+public class CultureModel : Controller
 {
     private readonly IHttpClientFactory _clientFactory;
     private const string url = "http://localhost:6002/culture";
@@ -28,16 +22,19 @@ public class CultureModel : PageModel
         Redirect("/culture/list");
     }
     
-    public async void OnGetAsync()
+    public async void /*Task<List<string>>*/ OnGetAsync()
     {
         // Use the HttpClientFactory to create a new HttpClient
         var client = _clientFactory.CreateClient();
-        
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+        var strainUrl = "http://localhost:6002/strain";
+        var request = new HttpRequestMessage(HttpMethod.Get, strainUrl);
         var response = await client.SendAsync(request);
         var responseResult = response.Content.ReadAsStringAsync().Result;
         var list = JsonConvert.DeserializeObject<List<string>>(responseResult);
         strains = list;
+
+     //   return ViewData();
     }
     
     public async Task OnPostAsync()
@@ -103,7 +100,7 @@ public class CultureModel : PageModel
         
         foreach (var item in nodeObj)
         {
-            outputString += $"\n {item["Name"]} ({item["ElementId"]})"; 
+            outputString += $"\n <b><i><a href='/culture/{item}'{item["Name"]} ({item["Id"]})"; 
         }
 
         responseString = outputString;

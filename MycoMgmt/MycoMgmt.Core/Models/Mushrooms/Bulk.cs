@@ -5,6 +5,49 @@ namespace MycoMgmt.Domain.Models.Mushrooms
 {
     public class Bulk : Mushroom
     {
+        public Bulk()
+        {
+        
+        }
+
+        public Bulk
+        (
+            string     name,
+            string     strain,
+            string?    recipe,
+            string?    notes,
+            string?    location,
+            string?    parent,
+            string?    parentType,
+            string?    children,
+            string?    childType,
+            string?    vendor,
+            bool?      purchased,
+            bool?      successful,
+            bool       finished,
+            DateTime?  finishedOn,
+            DateTime?  inoculatedOn,
+            string?    inoculatedBy
+        )
+        {
+            Name         = name;
+            Notes        = notes;
+            Strain       = strain;
+            Location     = location;
+            Parent       = parent;
+            ParentType   = parentType;
+            Children     = children;
+            ChildType    = childType;
+            Successful   = successful;
+            Finished     = finished;
+            FinishedOn   = finishedOn;
+            InoculatedOn = inoculatedOn; 
+            InoculatedBy = inoculatedBy;
+            Recipe       = recipe;
+            Purchased    = purchased;
+            Vendor       = vendor;
+        }
+
         // Create
         public override string CreateNode()
         {
@@ -17,6 +60,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 (
                                     x:{EntityType} {{ 
                                                          Name:       '{Name}',
+                                                         Id:       '{Id}',
                                                          EntityType: '{EntityType}',
                                                          Status:     '{IsSuccessful()}'
                                                          {notes} 
@@ -109,7 +153,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         properties(strain).Name as strain,
                         properties(location).Name as location,
                         parent,
-                        count(elementId(x)) as entityCount
+                        count(x.Id) as entityCount
                     WITH    
                         x,
                         left(childrenString, size(childrenString)-1) as children,
@@ -128,7 +172,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         entities, 
                         apoc.map.mergeList
                         ([
-                            {{ElementId:    elementId(x)}},
+                            {{Id:    x.Id}},
                             {{Name:         properties(x).Name}},
                             {{EntityType:   properties(x).EntityType}},
                             {{Notes:        properties(x).Notes}},
@@ -205,7 +249,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                                 RETURN
                                     apoc.map.mergeList
                                     ([
-                                        {{ElementId:    elementId(x)}},
+                                        {{Id:    x.Id}},
                                         {{Name:         properties(x).Name}},
                                         {{EntityType:   properties(x).EntityType}},
                                         {{Notes:        properties(x).Notes}},

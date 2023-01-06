@@ -11,17 +11,19 @@ namespace MycoMgmt.Domain.Models
         {
             Tags.Add(GetType().Name);
             EntityType = GetType().Name;
+            Id         = Guid.NewGuid();
         }
         
         // Properties
+        public Guid Id { get; set; }
         public string? ElementId { get; set; }
         public List<string> Tags { get; set; } = new ();
         public string? EntityType { get; set; }
         public string? Name { get; set; }
         public string? Type { get; set; }
         public string? Notes { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public string   CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string?   CreatedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public string?   ModifiedBy { get; set; }
         
@@ -38,7 +40,8 @@ namespace MycoMgmt.Domain.Models
                             CREATE 
                             (
                                 x:{EntityType} {{ 
-                                                 Name: '{Name}'
+                                                 Name: '{Name}',
+                                                 Id: '{Id}'
                                                  {additionalData} 
                                               }}
                             )
@@ -99,10 +102,11 @@ namespace MycoMgmt.Domain.Models
                 $@"
                     MATCH 
                         (x:{EntityType} {{ Name: '{Name}' }}), 
-                        (d:Day                {{ day:   {CreatedOn.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {CreatedOn.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {CreatedOn.Year} }})
+                        (d:Day                {{ day:   {CreatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {CreatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {CreatedOn.Value.Year} }})
                     CREATE
                         (x)-[r:CREATED_ON]->(d)
-                    RETURN r
+                    RETURN 
+                        r
                 ";
         }
        
@@ -142,7 +146,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType}) 
                     WHERE 
-                        elementId(x) = '{ElementId}'
+                        x.Id = '{Id}'
                     RETURN 
                         x
                 ";
@@ -158,8 +162,8 @@ namespace MycoMgmt.Domain.Models
                     WITH 
                         x, y, m, d
                     RETURN 
-                        x as Culture, 
-                        datetime({{year: y.year, month: m.month, day: d.day}}) as InoculationDate
+                        x 
+                        --,datetime({{year: y.year, month: m.month, day: d.day}}) as InoculationDate
                     ORDER BY
                         d.day   DESC,
                         m.month DESC,
@@ -181,7 +185,7 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Name = '{Name}' 
                         RETURN 
@@ -196,7 +200,7 @@ namespace MycoMgmt.Domain.Models
                                 MATCH 
                                     (x:{EntityType})
                                 WHERE
-                                    elementId(x) = '{ElementId}'
+                                    x.Id = '{Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:MODIFIED_ON]->(d)
                                 DELETE 
@@ -220,7 +224,7 @@ namespace MycoMgmt.Domain.Models
                     MATCH 
                         (x:{EntityType})
                     WHERE
-                        elementId(x) = '{ElementId}'
+                        x.Id = '{Id}'
                     OPTIONAL MATCH
                         (u)-[r:MODIFIED]->(x)
                     DELETE
@@ -244,10 +248,11 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Notes = '{Notes}' 
-                        RETURN s 
+                        RETURN 
+                            x
                       ";
         }
         public virtual string? UpdateType()
@@ -259,10 +264,11 @@ namespace MycoMgmt.Domain.Models
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ElementId}' 
+                            x.Id = '{Id}' 
                         SET 
                             x.Type = '{Type}' 
-                        RETURN s 
+                        RETURN 
+                            x
                       ";
         }
 
@@ -270,13 +276,15 @@ namespace MycoMgmt.Domain.Models
         public virtual string? Delete()
         {
             return
-                ElementId is null
+                /*Id is null
                     ? null
-                    : $@"
+                    :
+                */ 
+                    $@"
                         MATCH 
                             (x:{EntityType}) 
                         WHERE 
-                            elementId(x) = '{ ElementId }' 
+                            x.Id = '{ Id }' 
                         DETACH DELETE 
                             x
                         RETURN 

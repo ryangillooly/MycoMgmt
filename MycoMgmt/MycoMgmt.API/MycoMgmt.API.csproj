@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="ErrorOr" Version="1.2.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
         <PackageReference Include="Neo4j.Driver" Version="5.3.0" />
         <PackageReference Include="Neo4j.Driver.Extensions" Version="1.0.14" />

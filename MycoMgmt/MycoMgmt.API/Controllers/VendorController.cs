@@ -1,20 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers
 {
     [Route("accounts")]
     [ApiController]
-    public class VendorController : Controller
+    public class VendorController : BaseController<VendorController>
     {
-        private readonly IVendorRepository _vendorRepository;
-        
-        public VendorController(IVendorRepository repo)
-        {
-            _vendorRepository = repo;
-        }
-        
         [HttpPost]
         public async Task<IActionResult> Create 
         (
@@ -34,14 +28,15 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy  = createdBy
             };
 
-            var results = await _vendorRepository.Create(vendor);
-            return Created("", results);
+            var result  = await Repository.CreateEntities(Logger, vendor);
+
+            return Created("", result);
         } 
         
-        [HttpPut("{elementId}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> Update
         (
-            string  elementId,
+            string  Id,
             string? name, 
             string? url,
             string? notes,
@@ -58,27 +53,27 @@ namespace MycoMgmt.API.Controllers
                 CreatedBy  = modifiedBy
             };
             
-            return Ok(await _vendorRepository.Update(vendor));
+            return Ok(await Repository.Update(vendor));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string elementId)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await _vendorRepository.Delete(new Vendor { ElementId = elementId });
+            await Repository.Delete(new Vendor { Id = id });
             return NoContent();
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _vendorRepository.GetAll(new Vendor(), skip, limit));
+        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Vendor(), skip, limit));
 
-        [HttpGet("id/{elementId}")]
-        public async Task<IActionResult> GetById(string elementId) => Ok(await _vendorRepository.GetById(new Vendor { ElementId = elementId }));
+        [HttpGet("id/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Vendor { Id = id }));
 
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await _vendorRepository.GetByName(new Vendor { Name = name }));
+        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Vendor { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await _vendorRepository.SearchByName(new Vendor { Name = name }));
+        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Vendor { Name = name }));
 
     }
 }

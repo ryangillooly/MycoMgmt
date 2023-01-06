@@ -22,22 +22,24 @@
 
 <table class="table">
     <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Strain</th>
-            <th>Location</th>
-            <th>Parent</th>
-            <th>Innoculated On</th>
-            <th>Innoculated By</th>
-        </tr>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Strain</th>
+        <th>Location</th>
+        <th>Parent</th>
+        <th>Innoculated On</th>
+        <th>Innoculated By</th>
+    </tr>
     </thead>
     <tbody>
         @foreach (var item in FilteredData)
         {
             <tr>
-                <td><b><u><a href="/spawn/{id]">@item.Name (@item.EntityType)</a></u></b></td>
+                <td><b><u><a href="/spawn/@item.Id">@item.Id</a></u></b></td>
+                <td><b><u><a href="/spawn/@item.Id">@item.Name (@item.EntityType)</a></u></b></td>
                 <td>@item.Type</td>
                 <td>@item.Status</td>
                 <td>@item.Strain</td>

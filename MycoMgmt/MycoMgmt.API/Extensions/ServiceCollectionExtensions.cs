@@ -1,5 +1,9 @@
-﻿using MycoMgmt.Infrastructure.DataStores.Neo4J;
+﻿using MycoMgmt.Domain.Models;
+using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.Repositories;
+using MycoMgmt.Infrastructure.Services;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers
@@ -8,28 +12,21 @@ namespace MycoMgmt.API.Helpers
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            
-            services.AddTransient<ICultureRepository,    CultureRepository>();
-            services.AddTransient<ISpawnRepository,      SpawnRepository>();
-            services.AddTransient<IBulkRepository,       BulkRepository>();
-            services.AddTransient<IFruitRepository,      FruitRepository>();
-            services.AddTransient<ILocationsRepository,  LocationsRepository>();
-            services.AddTransient<IStrainsRepository,    StrainsRepository>();
-            services.AddTransient<IAccountRepository,    AccountRepository>();
-            services.AddTransient<IRecipeRepository,     RecipeRepository>();
-            services.AddTransient<IUserRepository,       UserRepository>();
-            services.AddTransient<IPermissionRepository, PermissionRepository>();
-            services.AddTransient<IRoleRepository,       RoleRepository>();
-            
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            services.AddTransient<IActionRepository,  ActionRepository>();
             return services;
         }
         
-        public static IServiceCollection AddNeoDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            services.AddScoped<IActionService,  ActionService>();
+            return services;
+        }
+        
+        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (services == null) throw new ArgumentNullException(nameof(services));
             
             services.Configure<Neo4JSettings>(configuration.GetSection("Neo4JSettings"));
             

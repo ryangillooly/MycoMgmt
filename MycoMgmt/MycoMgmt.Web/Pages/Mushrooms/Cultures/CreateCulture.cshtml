@@ -25,10 +25,10 @@
     <div class="form-group">
         <label for="strain">Strain</label>
         <select class="form-control" id="strain" name="strain">
-            <option value="Golden Teacher">Golden Teacher</option>
-            <option value="Mazapatec">Mazapatec</option>
-            <option value="Cambodian">Cambodian</option>
-            <option value="BPlus">B+</option>
+            @foreach (var strain in Model.strains)
+            {
+                <option value="@strain">@strain</option>
+            }
         </select>
     </div>
     <div class="form-group">

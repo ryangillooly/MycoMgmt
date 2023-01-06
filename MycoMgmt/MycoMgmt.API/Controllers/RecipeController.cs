@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.Core.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Infrastructure.Helpers;
+using ILogger = Neo4j.Driver.ILogger;
 
 namespace MycoMgmt.API.Controllers;
 
 [Route("recipe")]
 [ApiController]
-public class RecipeController : Controller
+public class RecipeController : BaseController<RecipeController>
 {
-    private readonly IRecipeRepository _recipeRepository;
-
-    public RecipeController(IRecipeRepository repo)
-    {
-        _recipeRepository = repo;
-    }
-    
     [HttpPost]
     public async Task<IActionResult> Create
     (
@@ -38,35 +34,18 @@ public class RecipeController : Controller
             CreatedBy   = createdBy
         };
 
-        if (steps != null)
-        {
-            recipe.Steps = steps.Split(",").ToList();
-            
-            for (var i = 0; i < recipe.Steps.Count; i++)
-            {
-                recipe.Steps[i] = recipe.Steps[i].Trim();
-            }
-        }
-
-        if (ingredients != null)
-        {
-            recipe.Ingredients = ingredients.Split(",").ToList();
-
-            for (var i = 0; i < recipe.Ingredients.Count; i++)
-            {
-                recipe.Ingredients[i] = recipe.Ingredients[i].Trim();
-            }
-        }
-
-        var result = await _recipeRepository.Create(recipe);
+        recipe.SplitStepsToList(steps);
+        recipe.SplitIngredientsToList(ingredients);
         
+        var result = await Repository.CreateEntities(Logger, recipe);
+            
         return Created("", result);
     }
 
-    [HttpPut("{elementId}")]
+    [HttpPut("{Id}")]
     public async Task<IActionResult> Update
     (
-        string  elementId,
+        string  Id,
         string? name,
         string? type,
         string? notes,
@@ -107,26 +86,26 @@ public class RecipeController : Controller
             }
         }
         
-        return Ok(await _recipeRepository.Update(recipe));
+        return Ok(await Repository.Update(recipe));
     }
     
-    [HttpDelete("{elementId}")]
-    public async Task<IActionResult> Delete(string elementId)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        await _recipeRepository.Delete(new Recipe { ElementId = elementId});
+        await Repository.Delete(new Recipe { Id = id});
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await _recipeRepository.GetAll(new Recipe(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Recipe(), skip, limit));
 
-    [HttpGet("id/{elementId}")]
-    public async Task<IActionResult> GetById(string elementId) => Ok(await _recipeRepository.GetById(new Recipe { ElementId = elementId }));
+    [HttpGet("id/{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Recipe { Id = id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await _recipeRepository.GetByName(new Recipe { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Recipe { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await _recipeRepository.SearchByName(new Recipe { Name = name }));
+    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Recipe { Name = name }));
 
 }
