@@ -22,7 +22,7 @@ public class CultureModel : Controller
         Redirect("/culture/list");
     }
     
-    public async Task<List<string>> OnGetAsync()
+    public async void /*Task<List<string>>*/ OnGetAsync()
     {
         // Use the HttpClientFactory to create a new HttpClient
         var client = _clientFactory.CreateClient();
@@ -34,7 +34,7 @@ public class CultureModel : Controller
         var list = JsonConvert.DeserializeObject<List<string>>(responseResult);
         strains = list;
 
-        return ViewData();
+     //   return ViewData();
     }
     
     public async Task OnPostAsync()
