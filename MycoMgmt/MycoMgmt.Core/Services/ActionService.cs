@@ -1,21 +1,15 @@
 using MycoMgmt.Domain.Models;
-using ErrorOr;
-using Microsoft.Extensions.Logging;
-using MycoMgmt.Core.Helpers;
 using MycoMgmt.Domain.Models.DTO;
-using MycoMgmt.Infrastructure.Helpers;
-using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
-using Newtonsoft.Json;
 
-namespace MycoMgmt.Infrastructure.Services;
+namespace MycoMgmt.Core.Services;
 
 public class ActionService : IActionService
 {
     private readonly ILogger<ActionService> _logger;
     private readonly IActionRepository _actionRepository;
 
-    public ActionService(ILogger<ActionService> logger,IActionRepository  actionRepository)
+    public ActionService(ILogger<ActionService> logger, IActionRepository  actionRepository)
     {
         _actionRepository = actionRepository;
         _logger = logger;

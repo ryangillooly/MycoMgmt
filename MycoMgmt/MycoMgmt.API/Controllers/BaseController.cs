@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Infrastructure.Repositories;
-using MycoMgmt.Infrastructure.Services;
+using MycoMgmt.Core.Services;
 using ILogger = Neo4j.Driver.ILogger;
 
 namespace MycoMgmt.API.Controllers;

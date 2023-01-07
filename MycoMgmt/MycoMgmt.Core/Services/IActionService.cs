@@ -1,9 +1,8 @@
 using MycoMgmt.Domain.Models;
-using ErrorOr;
 using MycoMgmt.Domain.Models.DTO;
 using Neo4j.Driver;
 
-namespace MycoMgmt.Infrastructure.Services;
+namespace MycoMgmt.Core.Services;
 
 public interface IActionService
 {

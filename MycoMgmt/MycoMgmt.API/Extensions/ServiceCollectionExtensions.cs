@@ -3,7 +3,7 @@ using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.Repositories;
-using MycoMgmt.Infrastructure.Services;
+using MycoMgmt.Core.Services;
 using Neo4j.Driver;
 
 namespace MycoMgmt.API.Helpers
