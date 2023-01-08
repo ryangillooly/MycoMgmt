@@ -20,9 +20,9 @@ public class SpawnController : BaseController<SpawnController>
     {
         var spawn = new Spawn
         (
-            request.Name,
-            request.Type,
-            request.Strain,
+            request.Name!,
+            request.Type!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -46,12 +46,8 @@ public class SpawnController : BaseController<SpawnController>
         spawn.Tags.Add(spawn.IsSuccessful());
         spawn.Status = spawn.IsSuccessful();
         
-        var result = await ActionService.Create
-        (
-            spawn, 
-            HttpContext.Request.GetDisplayUrl(), 
-            request.Count
-        );
+        var url = HttpContext.Request.GetDisplayUrl();
+        var result = await ActionService.Create(spawn, url, request.Count);
         
         return Created("", result);
     }
@@ -62,9 +58,9 @@ public class SpawnController : BaseController<SpawnController>
     {
         var spawn = new Spawn
         (
-            request.Name,
-            request.Type,
-            request.Strain,
+            request.Name!,
+            request.Type!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -75,7 +71,7 @@ public class SpawnController : BaseController<SpawnController>
             request.Vendor,
             request.Purchased,
             request.Successful,
-            (bool) request.Finished,
+            request.Finished,
             request.FinishedOn,
             request.InoculatedOn,
             request.InoculatedBy

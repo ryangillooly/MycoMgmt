@@ -20,8 +20,8 @@ public class FruitController : BaseController<FruitController>
     {
         var fruit = new Fruit
         (
-            request.Name,
-            request.Strain,
+            request.Name!,
+            request.Strain!,
             request.WetWeight,
             request.DryWeight,
             request.Recipe,
@@ -45,13 +45,9 @@ public class FruitController : BaseController<FruitController>
         
         fruit.Tags.Add(fruit.IsSuccessful());
         fruit.Status = fruit.IsSuccessful();
-        
-        var result = await ActionService.Create
-        (
-            fruit, 
-            HttpContext.Request.GetDisplayUrl(), 
-            request.Count
-        );
+
+        var url = HttpContext.Request.GetDisplayUrl();
+        var result = await ActionService.Create(fruit, url, request.Count);
         
         return Created("", result);
     }
@@ -62,8 +58,8 @@ public class FruitController : BaseController<FruitController>
     {
         var fruit = new Fruit
         (
-            request.Name,
-            request.Strain,
+            request.Name!,
+            request.Strain!,
             request.WetWeight,
             request.DryWeight,
             request.Recipe,

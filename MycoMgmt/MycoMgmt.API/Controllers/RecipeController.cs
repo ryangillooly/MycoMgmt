@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Core.Helpers;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Infrastructure.Helpers;
-using ILogger = Neo4j.Driver.ILogger;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("recipe")]
+[Route("[controller]")]
 [ApiController]
 public class RecipeController : BaseController<RecipeController>
 {
@@ -20,7 +18,6 @@ public class RecipeController : BaseController<RecipeController>
         string? description,
         string? steps, 
         string? ingredients,
-        string  createdOn,
         string  createdBy
     )
     {
@@ -30,7 +27,7 @@ public class RecipeController : BaseController<RecipeController>
             Notes       = notes,
             Description = description,
             Type        = type,
-            CreatedOn   = DateTime.Parse(createdOn),
+            CreatedOn   = DateTime.Now,
             CreatedBy   = createdBy
         };
 
@@ -42,17 +39,15 @@ public class RecipeController : BaseController<RecipeController>
         return Created("", result);
     }
 
-    [HttpPut("{Id}")]
+    [HttpPut("{name}")]
     public async Task<IActionResult> Update
     (
-        string  Id,
         string? name,
         string? type,
         string? notes,
         string? description,
         string? steps,
         string? ingredients,
-        string  modifiedOn,
         string  modifiedBy
     )
     {
@@ -62,7 +57,7 @@ public class RecipeController : BaseController<RecipeController>
             Type        = type,
             Notes       = notes,
             Description = description,
-            ModifiedOn  = DateTime.Parse(modifiedOn),
+            ModifiedOn  = DateTime.Now,
             ModifiedBy  = modifiedBy
         };
         

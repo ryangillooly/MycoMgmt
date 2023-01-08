@@ -12,10 +12,10 @@ namespace MycoMgmt.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create 
         (
+            [FromBody]
             string  name, 
             string? url,
             string? notes,
-            string  createdOn, 
             string  createdBy
         )
         {
@@ -24,7 +24,7 @@ namespace MycoMgmt.API.Controllers
                 Name       = name,
                 Notes      = notes,
                 Url        = url,
-                CreatedOn  = DateTime.Parse(createdOn),
+                CreatedOn  = DateTime.Now,
                 CreatedBy  = createdBy
             };
 
@@ -33,14 +33,13 @@ namespace MycoMgmt.API.Controllers
             return Created("", result);
         } 
         
-        [HttpPut("{Id}")]
+        [HttpPut("{name}")]
         public async Task<IActionResult> Update
         (
-            string  Id,
+            [FromBody]
             string? name, 
             string? url,
             string? notes,
-            string  modifiedOn, 
             string  modifiedBy
         )
         {
@@ -49,7 +48,7 @@ namespace MycoMgmt.API.Controllers
                 Name       = name,
                 Url        = url,
                 Notes      = notes, 
-                CreatedOn  = DateTime.Parse(modifiedOn),
+                CreatedOn  = DateTime.Now,
                 CreatedBy  = modifiedBy
             };
             

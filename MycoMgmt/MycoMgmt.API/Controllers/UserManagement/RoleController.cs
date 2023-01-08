@@ -7,26 +7,19 @@ using ILogger = Neo4j.Driver.ILogger;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("role")]
+    [Route("[controller]")]
     [ApiController]
     public class RoleController : BaseController<RoleController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create
-        (
-            string name, 
-            string permissions,
-            string createdBy,
-            string createdOn
-        )
+        public async Task<IActionResult> Create([FromBody] string name, string permissions, string createdBy)
         {
-            var permissionList = permissions.Split(',').ToList();
             var role = new IamRole()
             {
                 Name        = name,
-                Permissions = permissionList,
+                Permissions = permissions.Split(',').ToList(),
                 CreatedBy   = createdBy,
-                CreatedOn   = DateTime.Parse(createdOn)
+                CreatedOn   = DateTime.Now
             };
 
             var result  = await Repository.CreateEntities(Logger, role);
@@ -34,22 +27,15 @@ namespace MycoMgmt.API.Controllers
             return Created("", result);
         }
         
-        [HttpPut]
-        public async Task<IActionResult> Update
-        (
-            string? name, 
-            string? permissions,
-            string  modifiedBy,
-            string  modifiedOn
-            
-        )
+        [HttpPut("{name}")]
+        public async Task<IActionResult> Update ([FromBody] string name, string? permissions, string  modifiedBy)
         {
             var role = new IamRole()
             {
                 Name        = name,
                 Permissions = permissions?.Split(',').ToList(),
                 ModifiedBy  = modifiedBy,
-                ModifiedOn  = DateTime.Parse(modifiedOn)
+                ModifiedOn  = DateTime.Now
             };
 
             return Ok(await Repository.Update(role));

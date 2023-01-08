@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.Infrastructure.Helpers;
-using MycoMgmt.Infrastructure.Repositories;
-using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("user")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : BaseController<UserController>
     {
         [HttpPost]
         public async Task<IActionResult> Create
         (
+            [FromBody]
             string  name,
             string  account,
             string? roles,
             string? permissions,
-            string  createdOn,
             string  createdBy
         )
         {
@@ -27,7 +25,7 @@ namespace MycoMgmt.API.Controllers
                 Account     = account,
                 Permissions = permissions?.Split(',').ToList(),
                 Roles       = roles?.Split(',').ToList(),
-                CreatedOn   = DateTime.Parse(createdOn),
+                CreatedOn   = DateTime.Now,
                 CreatedBy   = createdBy
             };
 
@@ -36,14 +34,14 @@ namespace MycoMgmt.API.Controllers
             return Created("", result);
         }
         
-        [HttpPut("{Id}")]
+        [HttpPut("{name}")]
         public async Task<IActionResult> Update
         (
+            [FromBody]
             string? name,
             string? account,
             string? roles,
             string? permissions,
-            string  modifiedOn,
             string  modifiedBy
         )
         {
@@ -53,7 +51,7 @@ namespace MycoMgmt.API.Controllers
                 Account     = account,
                 Permissions = permissions?.Split(',').ToList(),
                 Roles       = roles?.Split(',').ToList(),
-                ModifiedOn  = DateTime.Parse(modifiedOn),
+                ModifiedOn  = DateTime.Now,
                 ModifiedBy  = modifiedBy
             };
 

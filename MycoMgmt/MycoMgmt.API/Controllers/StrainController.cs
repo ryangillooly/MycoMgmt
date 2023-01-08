@@ -1,52 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Infrastructure.Helpers;
-using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("strain")]
+    [Route("[controller]")]
     [ApiController]
-    public class StrainsController : BaseController<StrainsController>
+    public class StrainController : BaseController<StrainController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create
-        (
-            string name, 
-            string? effects,
-            string  createdOn,
-            string  createdBy
-        )
+        public async Task<IActionResult> Create ([FromBody] string name, string? effects, string createdBy)
         {
             var strain = new Strain
             {
                 Name      = name,
                 Effects   = effects,
                 CreatedBy = createdBy,
-                CreatedOn = DateTime.Parse(createdOn)
+                CreatedOn = DateTime.Now
             };
             
             var result  = await Repository.CreateEntities(Logger, strain);
 
-            return Created("", result);
+            //return Created("", result);
+            return Created("", "");
         }
         
         [HttpPut]
-        public async Task<IActionResult> Update
-        (
-            string? name, 
-            string? effects,
-            string  modifiedOn,
-            string  modifiedBy
-        )
+        public async Task<IActionResult> Update ([FromBody] string? name, string? effects, string modifiedBy)
         {
             var strain = new Strain
             {
                 Name       = name,
                 Effects    = effects,
                 ModifiedBy = modifiedBy,
-                ModifiedOn = DateTime.Parse(modifiedOn)
+                ModifiedOn = DateTime.Now
             };
             
             return Created("", await Repository.Update(strain));

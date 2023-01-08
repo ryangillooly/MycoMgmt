@@ -5,22 +5,17 @@ using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("account")]
+    [Route("[controller]")]
     [ApiController]
     public class AccountController : BaseController<AccountController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create 
-        (
-            string  name, 
-            string  createdOn, 
-            string  createdBy
-        )
+        public async Task<IActionResult> Create ([FromBody] string name, string createdBy)
         {
             var account = new Account()
             {
                 Name      = name,
-                CreatedOn = DateTime.Parse(createdOn),
+                CreatedOn = DateTime.Now,
                 CreatedBy = createdBy
             };
 
@@ -30,19 +25,13 @@ namespace MycoMgmt.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update
-        (
-            Guid   id,
-            string name,
-            string modifiedOn,
-            string modifiedBy   
-        )
+        public async Task<IActionResult> Update([FromBody] string name, string modifiedBy, Guid id)
         {
             var account = new Account
             {
                 Id         = id,
                 Name       = name,
-                ModifiedOn = DateTime.Parse(modifiedOn),
+                ModifiedOn = DateTime.Now,
                 ModifiedBy = modifiedBy
             };
 

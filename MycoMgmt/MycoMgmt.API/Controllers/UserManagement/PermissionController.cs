@@ -6,18 +6,14 @@ using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("permission")]
+    [Route("[controller]")]
     [ApiController]
     public class PermissionController : BaseController<PermissionController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create(string name)
+        public async Task<IActionResult> Create([FromBody] string name)
         {
-            var permission = new Permission()
-            {
-                Name = name
-            };
-            
+            var permission = new Permission { Name = name };
             var result  = await Repository.CreateEntities(Logger, permission);
 
             return Created("", result);
@@ -25,17 +21,12 @@ namespace MycoMgmt.API.Controllers
         
         
         [HttpPut("{name}")]
-        public async Task<IActionResult> Update
-        (
-            string newName,
-            string modifiedBy,
-            string modifiedOn
-        )
+        public async Task<IActionResult> Update ([FromBody] string name, string modifiedBy)
         {
             var permission = new Permission()
             {
-                Name        = newName,
-                ModifiedOn  = DateTime.Parse(modifiedOn),
+                Name        = name,
+                ModifiedOn  = DateTime.Now,
                 ModifiedBy  = modifiedBy
             };
             

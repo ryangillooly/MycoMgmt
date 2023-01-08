@@ -20,8 +20,8 @@ public class BulkController : BaseController<BulkController>
     {
         var bulk = new Bulk
         (
-            request.Name,
-            request.Strain,
+            request.Name!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -44,13 +44,9 @@ public class BulkController : BaseController<BulkController>
         
         bulk.Tags.Add(bulk.IsSuccessful());
         bulk.Status = bulk.IsSuccessful();
-        
-        var result = await ActionService.Create
-        (
-            bulk, 
-            HttpContext.Request.GetDisplayUrl(), 
-            request.Count
-        );
+
+        var url = HttpContext.Request.GetDisplayUrl();
+        var result = await ActionService.Create(bulk, url, request.Count);
         
         return Created("", result);
     }
@@ -61,8 +57,8 @@ public class BulkController : BaseController<BulkController>
     {
         var bulk = new Bulk
         (
-            request.Name,
-            request.Strain,
+            request.Name!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -73,7 +69,7 @@ public class BulkController : BaseController<BulkController>
             request.Vendor,
             request.Purchased,
             request.Successful,
-            (bool) request.Finished,
+            request.Finished,
             request.FinishedOn,
             request.InoculatedOn,
             request.InoculatedBy

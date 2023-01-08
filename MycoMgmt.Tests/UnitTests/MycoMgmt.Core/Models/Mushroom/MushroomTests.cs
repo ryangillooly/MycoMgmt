@@ -3,19 +3,19 @@ using Xunit;
 using FluentAssertions;
 using MycoMgmt.Domain.Models.Mushrooms;
 
-
+// ReSharper disable once CheckNamespace
 namespace MycoMgmt.Tests.UnitTests;
 
 public class MushroomTests
 {
-    private Mushroom mushroom { get; set; }
+    private Mushroom Mushroom { get; set; }
 
     public MushroomTests()
     {
-        mushroom = new Fixture().Create<Mushroom>();
+        Mushroom = new Fixture().Create<Mushroom>();
     }
     
-    [Xunit.Theory]
+    [Theory]
     [InlineData(null,  null,  "InProgress")]
     [InlineData(false, null,  "InProgress")]
     [InlineData(true,  null,  "Failed")]
@@ -23,10 +23,10 @@ public class MushroomTests
     [InlineData(true,  true,  "Successful")]
     private void IsSuccessfulShouldReturnCorrectStatus(bool? finished, bool? successful, string expected)
     {
-        mushroom.Finished  = finished;
-        mushroom.Successful = successful;
+        Mushroom.Finished  = finished;
+        Mushroom.Successful = successful;
         
-        var status = mushroom.IsSuccessful();
+        var status = Mushroom.IsSuccessful();
         
         status.Should().Be(expected);
     }
@@ -34,11 +34,11 @@ public class MushroomTests
     [Fact]
     private void CreateFinishedOnRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateFinishedOnRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateFinishedOnRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                    (d:Day {{ day:   {mushroom.FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.FinishedOn.Value.Year} }})
+                                    (x:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}' }}), 
+                                    (d:Day {{ day:   {Mushroom.FinishedOn!.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {Mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {Mushroom.FinishedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:FINISHED_ON]->(d)
                                 RETURN 
@@ -53,11 +53,11 @@ public class MushroomTests
     [Fact]
     private void CreateRecipeRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateRecipeRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateRecipeRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (c:{mushroom.EntityType} {{ Name: '{mushroom.Name}'   }}),
-                                    (recipe:Recipe {{ Name: '{mushroom.Recipe}' }})
+                                    (c:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}'   }}),
+                                    (recipe:Recipe {{ Name: '{Mushroom.Recipe}' }})
                                 CREATE
                                     (c)-[r:CREATED_USING]->(recipe)
                                 RETURN 
@@ -72,11 +72,11 @@ public class MushroomTests
     [Fact]
     private void CreateStrainRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateStrainRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateStrainRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}'   }}), 
-                                    (s:Strain  {{ Name: '{mushroom.Strain}' }})
+                                    (x:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}'   }}), 
+                                    (s:Strain  {{ Name: '{Mushroom.Strain}' }})
                                 CREATE
                                     (x)-[r:HAS_STRAIN]->(s)
                                 RETURN r
@@ -90,11 +90,11 @@ public class MushroomTests
     [Fact]
     private void CreateParentRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateParentRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateParentRelationship()?.Replace(" ", "");
         var expected = $@"
                                   MATCH 
-                                      (c:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                      (p:{mushroom.ParentType} {{ Name: '{mushroom.Parent}' }})
+                                      (c:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}' }}), 
+                                      (p:{Mushroom.ParentType} {{ Name: '{Mushroom.Parent}' }})
                                   CREATE
                                       (c)-[r:HAS_PARENT]->(p)
                                   RETURN r
@@ -108,11 +108,11 @@ public class MushroomTests
     [Fact]
     private void CreateInoculatedOnRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateInoculatedOnRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateInoculatedOnRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                    (d:Day  {{ day:   {mushroom.InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.InoculatedOn.Value.Year} }})
+                                    (x:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}' }}), 
+                                    (d:Day  {{ day:   {Mushroom.InoculatedOn!.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {Mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {Mushroom.InoculatedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:INOCULATED_ON]->(d)
                                 RETURN r
@@ -126,11 +126,11 @@ public class MushroomTests
     [Fact]
     private void CreateInoculatedRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateInoculatedRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateInoculatedRelationship()?.Replace(" ", "");
         var expected = $@"
                                   MATCH 
-                                      (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}'}}),
-                                      (u:User {{ Name: '{mushroom.InoculatedBy}'}})
+                                      (x:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}'}}),
+                                      (u:User {{ Name: '{Mushroom.InoculatedBy}'}})
                                   CREATE
                                       (u)-[r:INOCULATED]->(x)
                                   RETURN r
@@ -144,11 +144,11 @@ public class MushroomTests
     [Fact]
     private void CreateChildRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateChildRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateChildRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (p:{mushroom.EntityType} {{ Name: '{mushroom.Name}' }}), 
-                                    (c:{mushroom.ChildType} {{ Name: '{mushroom.Children}' }})
+                                    (p:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}' }}), 
+                                    (c:{Mushroom.ChildType} {{ Name: '{Mushroom.Children}' }})
                                 CREATE
                                     (c)-[r:HAS_PARENT]->(p)
                                 RETURN r
@@ -162,11 +162,11 @@ public class MushroomTests
     [Fact]
     private void CreateLocationRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateLocationRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateLocationRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType}  {{ Name: '{mushroom.Name}' }}), 
-                                    (l:Location   {{ Name: '{mushroom.Location}' }})
+                                    (x:{Mushroom.EntityType}  {{ Name: '{Mushroom.Name}' }}), 
+                                    (l:Location   {{ Name: '{Mushroom.Location}' }})
                                 CREATE
                                     (x)-[r:STORED_IN]->(l)
                                 RETURN r
@@ -180,11 +180,11 @@ public class MushroomTests
     [Fact]
     private void CreateVendorRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.CreateVendorRelationship()?.Replace(" ", "");
+        var input   = Mushroom.CreateVendorRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType} {{ Name: '{mushroom.Name}'   }}),
-                                    (v:Vendor            {{ Name: '{mushroom.Vendor}' }})
+                                    (x:{Mushroom.EntityType} {{ Name: '{Mushroom.Name}'   }}),
+                                    (v:Vendor            {{ Name: '{Mushroom.Vendor}' }})
                                 CREATE
                                     (x)-[r:PURCHASED_FROM]->(v)
                                 RETURN 
@@ -199,12 +199,12 @@ public class MushroomTests
     [Fact]
     private void UpdateParentRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.UpdateParentRelationship()?.Replace(" ", "");
+        var input   = Mushroom.UpdateParentRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (c:{mushroom.EntityType})
+                                    (c:{Mushroom.EntityType})
                                 WHERE
-                                    c.Id = '{mushroom.Id}'
+                                    c.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:HAS_PARENT]->(p)
                                 DELETE
@@ -212,7 +212,7 @@ public class MushroomTests
                                 WITH
                                     c
                                 MATCH 
-                                    (p:{mushroom.ParentType} {{Name: '{mushroom.Parent}' }})
+                                    (p:{Mushroom.ParentType} {{Name: '{Mushroom.Parent}' }})
                                 CREATE 
                                     (c)-[r:HAS_PARENT]->(p) 
                                 RETURN 
@@ -227,12 +227,12 @@ public class MushroomTests
     [Fact]
     private void UpdateChildRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.UpdateChildRelationship()?.Replace(" ", "");
+        var input   = Mushroom.UpdateChildRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (p:{mushroom.EntityType})
+                                    (p:{Mushroom.EntityType})
                                 WHERE
-                                    p.Id = '{mushroom.Id}'
+                                    p.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:HAS_PARENT]->(p)
                                 DELETE
@@ -240,7 +240,7 @@ public class MushroomTests
                                 WITH
                                     p
                                 MATCH 
-                                    (c:{mushroom.ChildType} {{Name: '{mushroom.Children}' }})
+                                    (c:{Mushroom.ChildType} {{Name: '{Mushroom.Children}' }})
                                 CREATE 
                                     (c)-[r:HAS_PARENT]->(p) 
                                 RETURN 
@@ -255,12 +255,12 @@ public class MushroomTests
     [Fact]
     private void UpdateStrainRelationshipShouldReturnQuery()
     {
-        var input   = mushroom.UpdateStrainRelationship()?.Replace(" ", "");
+        var input   = Mushroom.UpdateStrainRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:HAS_STRAIN]->(:Strain)
                                 DELETE 
@@ -268,7 +268,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (s:Strain {{ Name: '{mushroom.Strain}' }})
+                                    (s:Strain {{ Name: '{Mushroom.Strain}' }})
                                 CREATE
                                     (x)-[r:HAS_STRAIN]->(s)
                                 RETURN 
@@ -283,12 +283,12 @@ public class MushroomTests
     [Fact]
     private void UpdateLocationRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateLocationRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateLocationRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:STORED_IN]->(:Location)
                                 DELETE 
@@ -296,7 +296,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (l:Location {{ Name: '{mushroom.Location}' }})
+                                    (l:Location {{ Name: '{Mushroom.Location}' }})
                                 CREATE
                                     (x)-[r:STORED_IN]->(l) 
                                 RETURN 
@@ -311,12 +311,12 @@ public class MushroomTests
     [Fact]
     private void UpdateRecipeRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateRecipeRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateRecipeRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (c:{mushroom.EntityType})
+                                    (c:{Mushroom.EntityType})
                                 WHERE
-                                    c.Id = '{mushroom.Id}'
+                                    c.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (c)-[r:CREATED_USING]->(:Recipe)
                                 DELETE 
@@ -324,7 +324,7 @@ public class MushroomTests
                                 WITH
                                     c
                                 MATCH
-                                    (recipe:Recipe {{ Name: '{mushroom.Recipe}' }})
+                                    (recipe:Recipe {{ Name: '{Mushroom.Recipe}' }})
                                 CREATE
                                     (c)-[r:CREATED_USING]->(recipe)
                                 RETURN 
@@ -339,18 +339,18 @@ public class MushroomTests
     [Fact]
     private void UpdateStatusLabelShouldReturnQuery()
     {
-        var input = mushroom.UpdateStatusLabel()?.Replace(" ", "");
+        var input = Mushroom.UpdateStatusLabel()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE 
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 REMOVE 
                                     x :InProgress:Successful:Failed
                                 WITH 
                                     x                    
                                 SET 
-                                    x:{mushroom.IsSuccessful()}
+                                    x:{Mushroom.IsSuccessful()}
                                 RETURN 
                                     x
                             ";
@@ -363,14 +363,14 @@ public class MushroomTests
     [Fact]
     private void UpdateStatusShouldReturnQuery()
     {
-        var input = mushroom.UpdateStatus()?.Replace(" ", "");
+        var input = Mushroom.UpdateStatus()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE 
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 SET 
-                                    x {{ Status: '{mushroom.IsSuccessful()}' }}
+                                    x {{ Status: '{Mushroom.IsSuccessful()}' }}
                                 RETURN 
                                     x
                             ";
@@ -383,12 +383,12 @@ public class MushroomTests
     [Fact]
     private void UpdateInoculatedRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateInoculatedRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateInoculatedRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (u:User)-[r:INOCULATED]->(x)
                                 DELETE 
@@ -396,7 +396,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (u:User {{ Name: '{mushroom.InoculatedBy}' }})
+                                    (u:User {{ Name: '{Mushroom.InoculatedBy}' }})
                                 CREATE
                                     (u)-[r:INOCULATED]->(x)
                                 RETURN 
@@ -411,12 +411,12 @@ public class MushroomTests
     [Fact]
     private void UpdateInoculatedOnRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateInoculatedOnRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateInoculatedOnRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:INOCULATED_ON]->(d)
                                 DELETE 
@@ -424,7 +424,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (d:Day {{ day: {mushroom.InoculatedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.InoculatedOn.Value.Year} }})
+                                    (d:Day {{ day: {Mushroom.InoculatedOn!.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {Mushroom.InoculatedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {Mushroom.InoculatedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:INOCULATED_ON]->(d)
                                 RETURN 
@@ -439,12 +439,12 @@ public class MushroomTests
     [Fact]
     private void UpdateFinishedOnRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateFinishedOnRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateFinishedOnRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:FINISHED_ON]->(d)
                                 DELETE 
@@ -452,7 +452,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (d:Day {{ day: {mushroom.FinishedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {mushroom.FinishedOn.Value.Year} }})
+                                    (d:Day {{ day: {Mushroom.FinishedOn!.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {Mushroom.FinishedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {Mushroom.FinishedOn.Value.Year} }})
                                 CREATE
                                     (x)-[r:FINISHED_ON]->(d)
                                 RETURN 
@@ -467,12 +467,12 @@ public class MushroomTests
     [Fact]
     private void UpdateVendorRelationshipShouldReturnQuery()
     {
-        var input = mushroom.UpdateVendorRelationship()?.Replace(" ", "");
+        var input = Mushroom.UpdateVendorRelationship()?.Replace(" ", "");
         var expected = $@"
                                 MATCH 
-                                    (x:{mushroom.EntityType})
+                                    (x:{Mushroom.EntityType})
                                 WHERE
-                                    x.Id = '{mushroom.Id}'
+                                    x.Id = '{Mushroom.Id}'
                                 OPTIONAL MATCH
                                     (x)-[r:PURCHASED_FROM]->(v)
                                 DELETE 
@@ -480,7 +480,7 @@ public class MushroomTests
                                 WITH
                                     x
                                 MATCH
-                                    (v:Vendor  {{ Name: '{mushroom.Vendor}' }})
+                                    (v:Vendor  {{ Name: '{Mushroom.Vendor}' }})
                                 CREATE
                                     (x)-[r:PURCHASED_FROM]->(v)
                                 RETURN 

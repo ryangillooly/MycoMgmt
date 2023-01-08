@@ -1,34 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.Infrastructure.Repositories;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using MycoMgmt.API.Filters;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Infrastructure.Helpers;
-using Neo4j.Driver;
 
 namespace MycoMgmt.API.Controllers
 {
-    [Route("location")]
+    [Route("[controller]")]
     [ApiController]
     public class LocationController : BaseController<LocationController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create
-        (
-            string name,
-            bool?  agentConfigured,
-            string createdOn,
-            string createdBy
-        )
+        public async Task<IActionResult> Create (string name, bool? agentConfigured, string createdBy)
         {
             var location = new Location()
             {
                 Name            = name,
                 AgentConfigured = agentConfigured,
-                CreatedOn       = DateTime.Parse(createdOn),
+                CreatedOn       = DateTime.Now,
                 CreatedBy       = createdBy
             };
             
-            var result = await Repository.CreateEntities(Logger, location);
-            
+            var url = HttpContext.Request.GetDisplayUrl();
+            var result = await ActionService.Create(location, url);
+
             return Created($"", result);
         }
         
@@ -38,7 +33,6 @@ namespace MycoMgmt.API.Controllers
             Guid    id,
             string? name,
             bool?   agentConfigured,
-            string  modifiedOn,
             string  modifiedBy
         )
         {
@@ -47,7 +41,7 @@ namespace MycoMgmt.API.Controllers
                 Id              = id,
                 Name            = name,
                 AgentConfigured = agentConfigured,
-                ModifiedOn      = DateTime.Parse(modifiedOn),
+                ModifiedOn      = DateTime.Now,
                 ModifiedBy      = modifiedBy
             };
             

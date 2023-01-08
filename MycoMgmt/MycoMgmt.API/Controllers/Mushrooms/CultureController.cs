@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
 using MycoMgmt.Domain.Contracts.Mushroom;
 using MycoMgmt.Domain.Models.Mushrooms;
-using Newtonsoft.Json;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -17,9 +16,9 @@ public class CultureController : BaseController<CultureController>
     {
         var culture = new Culture
         (
-            request.Name,
-            request.Type,
-            request.Strain,
+            request.Name!,
+            request.Type!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -41,13 +40,9 @@ public class CultureController : BaseController<CultureController>
         };
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status = culture.IsSuccessful();
-        
-        var result = await ActionService.Create
-        (
-            culture, 
-            HttpContext.Request.GetDisplayUrl(), 
-            request.Count
-        );
+
+        var url = HttpContext.Request.GetDisplayUrl();
+        var result = await ActionService.Create(culture, url, request.Count);
    
        return Created("", result);
     }
@@ -58,9 +53,9 @@ public class CultureController : BaseController<CultureController>
     {
         var culture = new Culture
         (
-            request.Name,
-            request.Type,
-            request.Strain,
+            request.Name!,
+            request.Type!,
+            request.Strain!,
             request.Recipe,
             request.Notes,
             request.Location,
@@ -71,7 +66,7 @@ public class CultureController : BaseController<CultureController>
             request.Vendor,
             request.Purchased,
             request.Successful,
-            (bool) request.Finished,
+            request.Finished,
             request.FinishedOn,
             request.InoculatedOn,
             request.InoculatedBy
@@ -81,6 +76,7 @@ public class CultureController : BaseController<CultureController>
             ModifiedOn = DateTime.Now,
             ModifiedBy = request.ModifiedBy
         };
+        
         return Ok(await Repository.Update(culture));
     }
     
