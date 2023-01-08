@@ -14,9 +14,8 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         (
             string    name,
             string    strain,
-            decimal?      wetWeight,
-            decimal?      dryWeight,
-            string?   recipe,
+            decimal?  wetWeight,
+            decimal?  dryWeight,
             string?   notes,
             string?   location,
             string?   parent,
@@ -41,11 +40,14 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             ChildType   = childType;
             Successful  = successful;
             Finished    = finished;
-            Recipe      = recipe;
             Purchased   = purchased;
             Vendor      = vendor;
         }
         
+        public DateTime? HarvestedOn { get; set; }
+        public string? HarvestedBy { get; set; }
+        public decimal? WetWeight { get; set; }
+        public decimal? DryWeight { get; set; }
         
         // Create
         public override string CreateNode()
@@ -95,65 +97,62 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         {
             return
                 HarvestedOn is null
-                    ? null
-                    : $@"
-                            MATCH 
-                                (x:{EntityType} {{ Name: '{Name}' }}), 
-                                (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
-                            CREATE
-                                (x)-[r:HARVESTED_ON]->(d)
-                            RETURN r
-                      ";
+                ? null
+                : $@"
+                    MATCH 
+                        (x:{EntityType} {{ Name: '{Name}' }}), 
+                        (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
+                    CREATE
+                        (x)-[r:HARVESTED_ON]->(d)
+                    RETURN r
+                 ";
         }
         
         public virtual string? UpdateHarvestedRelationship()
         {
-            return
-                HarvestedBy is null
-                    ? null
-                    : $@"
-                            MATCH 
-                                (x:{EntityType})
-                            WHERE
-                                x.Id = '{Id}'
-                            OPTIONAL MATCH
-                                (u:User)-[r:HARVESTED]->(x)
-                            DELETE 
-                                r
-                            WITH
-                                x
-                            MATCH
-                                (u:User {{ Name: '{InoculatedBy}' }})
-                            CREATE
-                                (u)-[r:HARVESTED]->(x)
-                            RETURN 
-                                r
-                        ";
+            return $@"
+                        MATCH 
+                            (x:{EntityType})
+                        WHERE
+                            x.Id = '{Id}'
+                        OPTIONAL MATCH
+                            (u:User)-[r:HARVESTED]->(x)
+                        DELETE 
+                            r
+                        WITH
+                            x
+                        MATCH
+                            (u:User {{ Name: '{InoculatedBy}' }})
+                        CREATE
+                            (u)-[r:HARVESTED]->(x)
+                        RETURN 
+                            r
+                    ";
         }
         
         public virtual string? UpdateHarvestedOnRelationship()
         {
-            return
+            return 
                 HarvestedOn is null
                     ? null
                     : $@"
-                            MATCH 
-                                (x:{EntityType})
-                            WHERE
-                                x.Id = '{Id}'
-                            OPTIONAL MATCH
-                                (x)-[r:HARVESTED_ON]->(d)
-                            DELETE 
-                                r
-                            WITH
-                                x
-                            MATCH
-                                (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
-                            CREATE
-                                (x)-[r:HARVESTED_ON]->(d)
-                            RETURN 
-                                r
-                        ";
+                        MATCH 
+                            (x:{EntityType})
+                        WHERE
+                            x.Id = '{Id}'
+                        OPTIONAL MATCH
+                            (x)-[r:HARVESTED_ON]->(d)
+                        DELETE 
+                            r
+                        WITH
+                            x
+                        MATCH
+                            (d:Day {{ day: {HarvestedOn.Value.Day} }})<-[:HAS_DAY]-(m:Month {{ month: {HarvestedOn.Value.Month} }})<-[:HAS_MONTH]-(y:Year {{ year: {HarvestedOn.Value.Year} }})
+                        CREATE
+                            (x)-[r:HARVESTED_ON]->(d)
+                        RETURN 
+                            r
+                    ";
         }
         
         public override List<string> CreateQueryList()

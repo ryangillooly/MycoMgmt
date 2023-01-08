@@ -20,11 +20,10 @@ public class FruitController : BaseController<FruitController>
     {
         var fruit = new Fruit
         (
-            request.Name!,
-            request.Strain!,
+            request.Name,
+            request.Strain,
             request.WetWeight,
             request.DryWeight,
-            request.Recipe,
             request.Notes,
             request.Location,
             request.Parent,
@@ -54,15 +53,14 @@ public class FruitController : BaseController<FruitController>
 
     [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
+    public async Task<IActionResult> Update ([FromBody] CreateFruitRequest request, Guid id)
     {
         var fruit = new Fruit
         (
-            request.Name!,
-            request.Strain!,
+            request.Name,
+            request.Strain,
             request.WetWeight,
             request.DryWeight,
-            request.Recipe,
             request.Notes,
             request.Location,
             request.Parent,

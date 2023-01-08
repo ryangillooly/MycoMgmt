@@ -20,10 +20,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         public string? Recipe { get; set; }
         public bool? Purchased { get; set; }
         public string? Vendor { get; set; }
-        public DateTime? HarvestedOn { get; set; }
-        public string? HarvestedBy { get; set; }
-        public decimal? WetWeight { get; set; }
-        public decimal? DryWeight { get; set; }
+
      
         
         // Create

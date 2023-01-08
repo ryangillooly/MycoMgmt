@@ -6,22 +6,14 @@ using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("[controller]jhioj")]
+[Route("entity")]
 [ApiController]
-public class CultureController : BaseController<CultureController>
+public class EntityController<T> : BaseController<EntityController<T>> where T : Mushroom
 {
-    [HttpPost]
+    [HttpPost("{entityType}")]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request, string entityType)
     {
-        
-        /*
-         *  SHOULD TAKE ALL OF THIS OUR, EXCEPT THE SERVICE CALL + RETURN.
-         *
-         *  THE INPUT SHOULD BE A DTO, THEN THE SERVICE SHOULD PERFORM THE CONVERSION
-         *  
-         *  MAYBE HAVE A LOOK INTO HOW I COULD CHANGE THE MODELLING FOR ALL THIS
-         */
         var culture = new Culture
         (
             request.Name!,
@@ -57,7 +49,7 @@ public class CultureController : BaseController<CultureController>
     
     [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
+    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id, string entityType)
     {
         var culture = new Culture
         (
@@ -89,21 +81,21 @@ public class CultureController : BaseController<CultureController>
     }
     
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, string entityType)
     {
         await Repository.Delete(new Culture { Id = id });
         return NoContent();
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit, string entityType) => Ok(await Repository.GetAll(new Culture(), skip, limit));
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
+    public async Task<IActionResult> GetById(Guid id, string entityType) => Ok(await ActionService.GetById(new Culture { Id = id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
+    public async Task<IActionResult> GetByName(string name, string entityType) => Ok(await Repository.GetByName(new Culture { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
+    public async Task<IActionResult> SearchByName(string name, string entityType) => Ok(await Repository.SearchByName(new Culture { Name = name }));
 }

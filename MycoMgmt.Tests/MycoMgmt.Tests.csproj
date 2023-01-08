@@ -10,6 +10,8 @@
 
     <ItemGroup>
         <PackageReference Include="AutoFixture" Version="4.17.0" />
+        <PackageReference Include="AutoMapper" Version="12.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
         <PackageReference Include="Neo4j.Driver" Version="5.3.0" />
         <PackageReference Include="NUnit" Version="3.13.3" />

@@ -37,11 +37,7 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
             InoculatedBy = request.InoculatedBy,
             Recipe = request.Recipe,
             Purchased = request.Purchased,
-            Vendor = request.Vendor,
-            WetWeight = request.WetWeight,
-            DryWeight = request.DryWeight,
-            HarvestedBy = request.HarvestedBy,
-            HarvestedOn = request.HarvestedOn
+            Vendor = request.Vendor
         };
         
         var action     = context.RouteData.Values["action"];
@@ -67,11 +63,13 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
                     if (mushroom.InoculatedBy is null) errors.Add(nameof(mushroom.InoculatedBy), SingleFieldMessage(nameof(mushroom.InoculatedBy)));
                 }
                 
+                /*
                 if (controller is "Fruit" && mushroom.Finished is true)
                 {
                     if (mushroom.HarvestedOn is null) errors.Add(nameof(mushroom.HarvestedOn), SingleFieldMessage(nameof(mushroom.HarvestedOn)));
                     if (mushroom.HarvestedBy is null) errors.Add(nameof(mushroom.HarvestedBy), SingleFieldMessage(nameof(mushroom.HarvestedBy)));
                 }
+                */
 
                 break;
             }
@@ -114,11 +112,13 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
                     errors.Add("Validation", $"The minimum required fields are ModifiedOn, ModifiedBy, and at least 1 other field");
                 }
                 
+                /*
                 if (controller is "Fruit" && mushroom.Finished is true)
                 {
                     if (mushroom.HarvestedOn is null) errors.Add(nameof(mushroom.HarvestedOn), SingleFieldMessage(nameof(mushroom.HarvestedOn)));
                     if (mushroom.HarvestedBy is null) errors.Add(nameof(mushroom.HarvestedBy), SingleFieldMessage(nameof(mushroom.HarvestedBy)));
                 }
+                */
                 
                 break;
             }

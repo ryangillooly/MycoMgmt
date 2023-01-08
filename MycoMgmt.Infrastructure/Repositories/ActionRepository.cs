@@ -21,8 +21,8 @@ namespace MycoMgmt.Infrastructure.Repositories
             _neo4JDataAccess = dataAccess;
             _logger = logger;
         }
-        
-        public async Task<List<IEntity>> Create(ModelBase model)
+
+        public async Task<List<IEntity>> Create<T>(T model) where T : ModelBase
         {
             var queryList = model.CreateQueryList();
             return await _neo4JDataAccess.RunTransaction(queryList);

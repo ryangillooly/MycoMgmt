@@ -1,10 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MycoMgmt.API.Helpers;
+﻿using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API
 {
@@ -23,6 +17,7 @@ namespace MycoMgmt.API
         {
             services.AddRazorPages();
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             
             services
                 .AddDatabase(Configuration)
