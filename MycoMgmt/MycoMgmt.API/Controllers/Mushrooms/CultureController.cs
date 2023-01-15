@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
 using MycoMgmt.Domain.Contracts.Mushroom;
@@ -6,46 +7,25 @@ using MycoMgmt.Domain.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
-[Route("[controller]jhioj")]
+[Route("[controller]")]
 [ApiController]
 public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
     public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
-    {
-        
+    { 
         /*
-         *  SHOULD TAKE ALL OF THIS OUR, EXCEPT THE SERVICE CALL + RETURN.
-         *
-         *  THE INPUT SHOULD BE A DTO, THEN THE SERVICE SHOULD PERFORM THE CONVERSION
-         *  
-         *  MAYBE HAVE A LOOK INTO HOW I COULD CHANGE THE MODELLING FOR ALL THIS
-         */
-        var culture = new Culture
-        (
-            request.Name!,
-            request.Type!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            CreatedOn = DateTime.Now,
-            CreatedBy = request.CreatedBy
-        };
+        *  SHOULD TAKE ALL OF THIS OUR, EXCEPT THE SERVICE CALL + RETURN.
+        *  THE INPUT SHOULD BE A DTO, THEN THE SERVICE SHOULD PERFORM THE CONVERSION
+        *  MAYBE HAVE A LOOK INTO HOW I COULD CHANGE THE MODELLING FOR ALL THIS
+        */
+
+        var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateMushroomRequest, Culture>()); 
+        var mapper = new Mapper(config);
+        var culture = mapper.Map<Culture>(request);
+        
+        // culture.CreatedOn = DateTime.Now;
         culture.Tags.Add(culture.IsSuccessful());
         culture.Status = culture.IsSuccessful();
 

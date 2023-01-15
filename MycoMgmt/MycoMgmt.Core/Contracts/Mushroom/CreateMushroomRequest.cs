@@ -21,7 +21,7 @@ public class CreateMushroomRequest
     public string?       InoculatedBy { get; set; }
     public string?       HarvestedBy { get; set; }
     public DateTime?    HarvestedOn { get; set; }
-    public DateTime     CreatedOn { get; set; }
+    public DateTime     CreatedOn { get; set; } = DateTime.Now;
     public string       CreatedBy { get; set; }
     public DateTime?     ModifiedOn { get; set; }
     public string?       ModifiedBy { get; set; }

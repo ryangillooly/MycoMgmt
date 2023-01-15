@@ -8,7 +8,6 @@ namespace MycoMgmt.Domain.Models.Mushrooms
     {
         public Culture()
         {
-            
         }
         public Culture
         (
@@ -48,6 +47,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             Recipe       = recipe;
             Purchased    = purchased;
             Vendor       = vendor;
+            Tags         = new List<string> { IsSuccessful() };
         }
         
         public override string CreateNode()
