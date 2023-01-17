@@ -4,7 +4,7 @@
 
 namespace MycoMgmt.Domain.Models.Mushrooms
 {
-    public class Culture : Mushroom
+    public sealed class Culture : Mushroom
     {
         public Culture()
         {
@@ -45,6 +45,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
             InoculatedOn = inoculatedOn; 
             InoculatedBy = inoculatedBy;
             Recipe       = recipe;
+            Status       = IsSuccessful();
             Purchased    = purchased;
             Vendor       = vendor;
             Tags         = new List<string> { IsSuccessful() };
@@ -56,20 +57,20 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         
             if (Notes != null)
                 additionalData += $",Notes: '{Notes}'";
-
-            var status = IsSuccessful();
+            
+            // var status = IsSuccessful();
             var query = $@"CREATE 
                                 (
                                     x
                                         :`{EntityType}`
                                         :`{Type}`
-                                        :`{status}`
+                                        :`{Status}`
                                     {{ 
                                         Name:       '{Name}',
-                                        Id:       '{Id}',
+                                        Id:         '{Id}',
                                         EntityType: '{EntityType}',
                                         Type:       '{Type}',
-                                        Status:     '{status}'
+                                        Status:     '{Status}'
                                         {additionalData} 
                                      }}
                                 )

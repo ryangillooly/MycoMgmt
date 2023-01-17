@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using MycoMgmt.Domain.Contracts.Mushroom;
@@ -12,10 +13,9 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var request          = (CreateMushroomRequest) context.ActionArguments["request"]!;
         var httpMethod = context.HttpContext.Request.Method;
         var errors           = new Dictionary<string, string>();
-        var mushroom = new Mushroom
+        /*var mushroom = new Mushroom
         {
             Name = request.Name,
             Type = request.Type,
@@ -39,14 +39,21 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
             Purchased = request.Purchased,
             Vendor = request.Vendor
         };
+        */
         
         var action     = context.RouteData.Values["action"];
         var controller = context.RouteData.Values["controller"];
+        var mushroom = new Mushroom();
         
         switch (httpMethod)
         {
             case "POST":
             {
+                var request  = (CreateMushroomRequest) context.ActionArguments["request"]!;
+                var config   = new MapperConfiguration(cfg => cfg.CreateMap<CreateMushroomRequest, Mushroom>()); 
+                var mapper   = new Mapper(config);
+                mushroom = mapper.Map<Mushroom>(request);
+                
                 if (string.IsNullOrEmpty(mushroom.Name))   errors.Add(nameof(mushroom.Name),   SingleFieldMessage(nameof(mushroom.Name)));
                 if (string.IsNullOrEmpty(mushroom.Strain)) errors.Add(nameof(mushroom.Strain), SingleFieldMessage(nameof(mushroom.Strain)));
                 //if (mushroom.CreatedOn is null) errors.Add(nameof(mushroom.CreatedOn), SingleFieldMessage(nameof(mushroom.CreatedOn)));
@@ -75,6 +82,11 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
             }
             case "PUT":
             {
+                var request  = (UpdateMushroomRequest) context.ActionArguments["request"]!;
+                var config   = new MapperConfiguration(cfg => cfg.CreateMap<UpdateMushroomRequest, Mushroom>()); 
+                var mapper   = new Mapper(config);
+                mushroom = mapper.Map<Mushroom>(request);
+                
                 var type = mushroom.GetType();
                 var fields = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy);
                 var fieldsProvided = new List<string>();
@@ -109,7 +121,7 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
                 }
                 else
                 {
-                    errors.Add("Validation", $"The minimum required fields are ModifiedOn, ModifiedBy, and at least 1 other field");
+                    errors.Add("Validation", $"The minimum required fields are ModifiedBy, and at least 1 other field");
                 }
                 
                 /*

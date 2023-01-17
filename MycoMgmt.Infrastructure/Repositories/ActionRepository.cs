@@ -25,13 +25,15 @@ namespace MycoMgmt.Infrastructure.Repositories
         public async Task<List<IEntity>> Create<T>(T model) where T : ModelBase
         {
             var queryList = model.CreateQueryList();
-            return await _neo4JDataAccess.RunTransaction(queryList);
+            var result =  await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
         }
         
-        public async Task<List<IEntity>> Update (ModelBase model)
+        public async Task<List<IEntity>> Update<T>(T model) where T : ModelBase
         {
             var queryList = model.UpdateQueryList();
-            return await _neo4JDataAccess.RunTransaction(queryList);
+            var result = await _neo4JDataAccess.RunTransaction(queryList);
+            return result;
         }
         
         public async Task Delete(ModelBase model)

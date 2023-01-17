@@ -11,5 +11,5 @@ public interface IActionRepository
     public Task<string> GetAll(ModelBase model, int skip, int limit);
     public Task<List<IEntity>> Create<T>(T model) where T : ModelBase;
     public Task Delete(ModelBase model);
-    public Task<List<IEntity>> Update(ModelBase model);
+    public Task<List<IEntity>> Update<T>(T model) where T : ModelBase;
 }

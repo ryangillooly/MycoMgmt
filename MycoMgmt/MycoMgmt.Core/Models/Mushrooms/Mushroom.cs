@@ -291,7 +291,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         WITH 
                             x                    
                         SET 
-                            x:{IsSuccessful()}
+                            x:{Status}
                         RETURN 
                             x
                     ";
@@ -307,7 +307,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
                         WHERE 
                             x.Id = '{Id}'
                         SET 
-                            x.Status = '{IsSuccessful()}'
+                            x.Status = '{Status}'
                         RETURN 
                             x
                     ";
@@ -413,7 +413,7 @@ namespace MycoMgmt.Domain.Models.Mushrooms
         // Read
         public virtual string IsSuccessful()
         {
-            if (Finished is null || (bool)!Finished) 
+            if (Finished is null or false) 
                 return "InProgress";
 
             return 

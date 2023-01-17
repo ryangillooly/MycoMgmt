@@ -20,14 +20,13 @@ public class CultureController : BaseController<CultureController>
         *  THE INPUT SHOULD BE A DTO, THEN THE SERVICE SHOULD PERFORM THE CONVERSION
         *  MAYBE HAVE A LOOK INTO HOW I COULD CHANGE THE MODELLING FOR ALL THIS
         */
-
         var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateMushroomRequest, Culture>()); 
         var mapper = new Mapper(config);
         var culture = mapper.Map<Culture>(request);
         
-        // culture.CreatedOn = DateTime.Now;
-        culture.Tags.Add(culture.IsSuccessful());
-        culture.Status = culture.IsSuccessful();
+        //culture.CreatedOn = DateTime.Now;
+        //culture.Tags.Add(culture.IsSuccessful());
+        //culture.Status = culture.IsSuccessful();
 
         var url = HttpContext.Request.GetDisplayUrl();
         var result = await ActionService.Create(culture, url, request.Count);
@@ -36,36 +35,21 @@ public class CultureController : BaseController<CultureController>
     }
     
     [HttpPut("{id:guid}")]
-    [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
+    // Need to change this validation, as the Validation for CREATE is not the same as the validation for UPDATE
+    [MushroomValidation] 
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id)
     {
-        var culture = new Culture
-        (
-            request.Name!,
-            request.Type!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            Id         = id,
-            ModifiedOn = DateTime.Now,
-            ModifiedBy = request.ModifiedBy
-        };
+        var config = new MapperConfiguration(cfg => cfg.CreateMap<UpdateMushroomRequest, Culture>()); 
+        var mapper = new Mapper(config);
+        var culture = mapper.Map<Culture>(request);
+        culture.Id = id;
+        var url = HttpContext.Request.GetDisplayUrl();
+        // culture.CreatedOn = DateTime.Now;
+        //culture.Tags.Add(culture.IsSuccessful());
+        //culture.Status = culture.IsSuccessful();
+        var result = await ActionService.Update(culture, url);
         
-        return Ok(await Repository.Update(culture));
+        return Ok(result);
     }
     
     [HttpDelete("{id:guid}")]

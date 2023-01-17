@@ -18,19 +18,19 @@ public class CultureTests
         };
         var createNodeQuery = culture.CreateNode();
 
-        var status = culture.IsSuccessful();
+       // var status = culture.IsSuccessful();
         var expected = $@"CREATE 
                                 (
                                     x
                                         :`{culture.EntityType}`
                                         :`{culture.Type}`
-                                        :`{status}`
+                                        :`{culture.Status}`
                                     {{ 
                                         Name:       '{culture.Name}',
                                         Id:       '{culture.Id}',
                                         EntityType: '{culture.EntityType}',
                                         Type:       '{culture.Type}',
-                                        Status:     '{status}'
+                                        Status:     '{culture.Status}'
 
                                      }}
                                 )
