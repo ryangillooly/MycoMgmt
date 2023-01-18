@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.Domain.Models;
 using MycoMgmt.Domain.Models.UserManagement;
@@ -15,11 +16,13 @@ namespace MycoMgmt.Infrastructure.Repositories
     {
         private readonly INeo4JDataAccess _neo4JDataAccess;
         private readonly ILogger<ActionRepository> _logger;
+        private readonly IMapper _mapper;
 
-        public ActionRepository(INeo4JDataAccess dataAccess, ILogger<ActionRepository> logger)
+        public ActionRepository(INeo4JDataAccess dataAccess, ILogger<ActionRepository> logger, IMapper mapper)
         {
             _neo4JDataAccess = dataAccess;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<List<IEntity>> Create<T>(T model) where T : ModelBase
@@ -36,7 +39,7 @@ namespace MycoMgmt.Infrastructure.Repositories
             return result;
         }
         
-        public async Task Delete(ModelBase model)
+        public async Task Delete<T>(T model) where T : ModelBase
         {
             var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(model.Delete());
         
@@ -47,21 +50,23 @@ namespace MycoMgmt.Infrastructure.Repositories
                 _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", model.Id);
         }
         
-        public async Task<string> SearchByName(ModelBase model)
+        public async Task<string> SearchByName<T>(T model) where T : ModelBase
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(model.SearchByNameQuery(), "x");
             return JsonConvert.SerializeObject(result);
+            
         }
 
-        public async Task<string> GetByName(ModelBase model)
+        public async Task<string> GetByName<T>(T model) where T : ModelBase
         {
             var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(model.GetByNameQuery(), "x");
+
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<INode> GetById(ModelBase model) => await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
+        public async Task<INode> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
     
-        public async Task<string> GetAll(ModelBase model, int skip, int limit)
+        public async Task<string> GetAll<T>(T model, int skip, int limit) where T : ModelBase
         {
             var result = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
             return JsonConvert.SerializeObject(result);
