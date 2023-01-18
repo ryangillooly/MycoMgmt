@@ -30,7 +30,7 @@ public class ActionService : IActionService
     {
         var results = await _actionRepository.Update(model);
         var resultList = results.ToNodeList();
-        resultList.ForEach(i => i.Url = $"{url}/{i.Id}");
+        resultList.ForEach(i => i.Url = $"{url}");
         return resultList;
     }
 

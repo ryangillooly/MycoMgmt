@@ -23,11 +23,6 @@ public class CultureController : BaseController<CultureController>
         var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateMushroomRequest, Culture>()); 
         var mapper = new Mapper(config);
         var culture = mapper.Map<Culture>(request);
-        
-        //culture.CreatedOn = DateTime.Now;
-        //culture.Tags.Add(culture.IsSuccessful());
-        //culture.Status = culture.IsSuccessful();
-
         var url = HttpContext.Request.GetDisplayUrl();
         var result = await ActionService.Create(culture, url, request.Count);
    
@@ -44,9 +39,6 @@ public class CultureController : BaseController<CultureController>
         var culture = mapper.Map<Culture>(request);
         culture.Id = id;
         var url = HttpContext.Request.GetDisplayUrl();
-        // culture.CreatedOn = DateTime.Now;
-        //culture.Tags.Add(culture.IsSuccessful());
-        //culture.Status = culture.IsSuccessful();
         var result = await ActionService.Update(culture, url);
         
         return Ok(result);
