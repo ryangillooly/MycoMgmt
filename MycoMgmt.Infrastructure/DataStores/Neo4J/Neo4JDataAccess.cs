@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Text.RegularExpressions;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Neo4j.Driver;
@@ -12,25 +13,22 @@ public class Neo4JDataAccess : INeo4JDataAccess
     private readonly IDriver _driver;
     private readonly ILogger<Neo4JDataAccess> _logger;
     private readonly string _database;
+    private readonly IMapper _mapper;
 
-    public Neo4JDataAccess(IDriver driver, ILogger<Neo4JDataAccess> logger, IOptions<Neo4JSettings> appSettingsOptions)
+    public Neo4JDataAccess(IDriver driver, ILogger<Neo4JDataAccess> logger, IOptions<Neo4JSettings> appSettingsOptions, IMapper mapper)
     {
         _logger = logger;
         _database = appSettingsOptions.Value.Neo4JDatabase ?? "neo4j";
         _driver = driver;
         _session = driver.AsyncSession(o => o.WithDatabase(_database));
+        _mapper = mapper;
     }
         
-    public async Task<List<object>> ExecuteReadListAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
+    public async Task<IEnumerable<object>> ExecuteReadListAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
     {
         return await ExecuteReadTransactionAsync(query, returnObjectKey, parameters);
     }
-        
-    public async Task<List<object>> ExecuteReadDictionaryAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
-    {
-        return await ExecuteReadTransactionAsync(query, returnObjectKey, parameters);
-    }
-        
+    
     public async Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null)
     {
         try
@@ -41,7 +39,9 @@ public class Neo4JDataAccess : INeo4JDataAccess
             {
                 var res = await tx.RunAsync(query, parameters);
 
-                var scalar = (await res.SingleAsync())[0].As<T>();
+                var scalarA = await res.SingleAsync();
+                var scalarB = scalarA.Values.Values;
+                var scalar = scalarB.As<T>();
 
                 return scalar;
             });
@@ -193,7 +193,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
     }
     */
         
-    private async Task<List<object>> ExecuteReadTransactionAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters)
+    private async Task<IEnumerable<object>> ExecuteReadTransactionAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters)
     {
         try
         {                
@@ -203,7 +203,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
                 var records = await res.ToListAsync();
                 var data = records.Select(x => x.Values[returnObjectKey]);
 
-                return data.ToList();
+                return data;
             });
 
             return result;

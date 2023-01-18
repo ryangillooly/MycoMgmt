@@ -39,5 +39,5 @@ public class ActionService : IActionService
         throw new NotImplementedException();
     }
 
-    public async Task<INode> GetById(ModelBase model) => await _actionRepository.GetById(model);
+    public async Task<ModelBase> GetById(ModelBase model) => await _actionRepository.GetById(model);
 }

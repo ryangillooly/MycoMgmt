@@ -1,4 +1,5 @@
-﻿using MycoMgmt.API.Helpers;
+﻿using AutoMapper;
+using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API;
 
@@ -18,7 +19,13 @@ public class Startup
         services.AddRazorPages();
         services.AddControllers();
         services.AddAutoMapper(typeof(Startup));
-            
+        /*
+        services.AddSingleton(provider => new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile(new UserProfile(provider.GetService<IUserManager>()));
+        }).CreateMapper());
+        */
+        
         services
             .AddDatabase(Configuration)
             .AddRepositories()

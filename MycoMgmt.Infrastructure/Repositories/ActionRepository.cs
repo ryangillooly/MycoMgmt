@@ -1,8 +1,10 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.Domain.Models;
+using MycoMgmt.Domain.Models.Mushrooms;
 using MycoMgmt.Domain.Models.UserManagement;
 using MycoMgmt.Infrastructure.DataStores.Neo4J;
+using MycoMgmt.Infrastructure.ServiceErrors;
 using Neo4j.Driver;
 using Newtonsoft.Json;
 using ILogger = Neo4j.Driver.ILogger;
@@ -39,37 +41,22 @@ namespace MycoMgmt.Infrastructure.Repositories
             return result;
         }
         
-        public async Task Delete<T>(T model) where T : ModelBase
+        public async Task<List<IEntity>> SearchByName<T>(T model) where T : ModelBase
         {
-            var delete = await _neo4JDataAccess.ExecuteWriteTransactionAsync<INode>(model.Delete());
-        
-            // Need to check this logic is still valid after moving away from ElementId
-            if(delete.Id.ToString() == model.Id.ToString())
-                _logger.LogInformation("Node with Id {Id} was deleted successfully", model.Id);
-            else
-                _logger.LogWarning("Node with Id {Id} was not deleted, or was not found for deletion", model.Id);
-        }
-        
-        public async Task<string> SearchByName<T>(T model) where T : ModelBase
-        {
-            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(model.SearchByNameQuery(), "x");
-            return JsonConvert.SerializeObject(result);
-            
+            var nodeList = await _neo4JDataAccess.ExecuteReadListAsync(model.SearchByNameQuery(), "x");
+            var result = _mapper.Map<List<IEntity>>(nodeList);
+            return result;
         }
 
-        public async Task<string> GetByName<T>(T model) where T : ModelBase
-        {
-            var result = await _neo4JDataAccess.ExecuteReadDictionaryAsync(model.GetByNameQuery(), "x");
-
-            return JsonConvert.SerializeObject(result);
-        }
-
-        public async Task<INode> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<INode>(model.GetByIdQuery());
+        public async Task Delete<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteWriteTransactionAsync<IEntity>(model.Delete());
+        public async Task<IEntity> GetByName<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByNameQuery());
+        public async Task<ModelBase> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<Culture>(model.GetByIdQuery());
     
-        public async Task<string> GetAll<T>(T model, int skip, int limit) where T : ModelBase
+        public async Task<IEnumerable<object>> GetAll<T>(T model, int skip, int limit) where T : ModelBase
         {
-            var result = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
-            return JsonConvert.SerializeObject(result);
+            var nodeList = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
+           // var result = _mapper.Map<List<IEntity>>(nodeList);
+            return nodeList;
         }
     }
 }
