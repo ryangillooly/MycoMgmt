@@ -27,6 +27,7 @@ public class Startup
         */
         
         services
+            .AddSwaggerGen()
             .AddDatabase(Configuration)
             .AddRepositories()
             .AddServices();
@@ -47,6 +48,8 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
     }
 }

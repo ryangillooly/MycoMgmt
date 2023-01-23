@@ -1,7 +1,4 @@
-﻿using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Domain.Models.UserManagement;
-using MycoMgmt.Infrastructure.DataStores.Neo4J;
+﻿using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Core.Services;
 using Neo4j.Driver;
