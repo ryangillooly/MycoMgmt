@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Domain.Contracts.Mushroom;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Contracts.Mushroom;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -53,13 +53,19 @@ public class CultureController : BaseController<CultureController>
     
     [HttpGet]
     public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
-
+    
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
-
+    
+    /*
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
+    */
 
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
+
+    
     [HttpGet("search/name/{name}")]
     public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
 }

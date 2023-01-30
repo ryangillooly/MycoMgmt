@@ -1,6 +1,6 @@
 using MycoMgmt.Core.Helpers;
-using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.DTO;
+using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.DTO;
 using MycoMgmt.Infrastructure.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
@@ -40,4 +40,6 @@ public class ActionService : IActionService
     }
 
     public async Task<ModelBase> GetById(ModelBase model) => await _actionRepository.GetById(model);
+    
+    public async Task<ModelBase> GetByName(ModelBase model) => await _actionRepository.GetByName(model);
 }

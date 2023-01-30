@@ -1,7 +1,7 @@
 using AutoFixture;
 using Xunit;
 using FluentAssertions;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.Mushrooms;
 
 // ReSharper disable once CheckNamespace
 namespace MycoMgmt.Tests.UnitTests;

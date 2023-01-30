@@ -2,7 +2,7 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 
-namespace MycoMgmt.Domain.Models.Mushrooms
+namespace MycoMgmt.Core.Models.Mushrooms
 {
     public sealed class Culture : Mushroom
     {

@@ -1,8 +1,8 @@
 using AutoMapper;
-using MycoMgmt.Domain.Models.DTO;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.DTO;
+using MycoMgmt.Core.Models.Mushrooms;
 
-namespace MycoMgmt.Domain.Profiles;
+namespace MycoMgmt.Core.Profiles;
 
 public class CultureProfile : Profile
 {

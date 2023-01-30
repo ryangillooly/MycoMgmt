@@ -1,4 +1,4 @@
-﻿namespace MycoMgmt.Domain.Models
+﻿namespace MycoMgmt.Core.Models
 {
     public enum EntityTypes
     {

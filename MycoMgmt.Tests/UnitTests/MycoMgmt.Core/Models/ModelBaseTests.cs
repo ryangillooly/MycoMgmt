@@ -2,8 +2,8 @@ using System.Runtime.InteropServices;
 using AutoFixture;
 using Xunit;
 using FluentAssertions;
-using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.Tests.UnitTests;

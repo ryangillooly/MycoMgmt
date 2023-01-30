@@ -1,7 +1,7 @@
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.Mushrooms;
 using Neo4j.Driver;
 
-namespace MycoMgmt.Domain.Profiles;
+namespace MycoMgmt.Core.Profiles;
 
 public class GetCultureProfile
 {

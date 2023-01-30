@@ -1,4 +1,4 @@
-namespace MycoMgmt.Domain.Contracts.Mushroom;
+namespace MycoMgmt.Core.Contracts.Mushroom;
 
 public class CreateFruitRequest 
 {

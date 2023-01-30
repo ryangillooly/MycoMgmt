@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Domain.Contracts.Mushroom;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Contracts.Mushroom;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.API.Controllers;
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MycoMgmt.Domain.Models;
+using MycoMgmt.Core.Models;
 
 namespace MycoMgmt.Web.Model;
 

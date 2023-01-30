@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
-using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.Mushrooms;
-using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.Mushrooms;
+using MycoMgmt.Core.Models.UserManagement;
 using MycoMgmt.Infrastructure.DataStores.Neo4J;
 using MycoMgmt.Infrastructure.ServiceErrors;
 using Neo4j.Driver;
@@ -50,7 +50,7 @@ namespace MycoMgmt.Infrastructure.Repositories
 
         public async Task Delete<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteWriteTransactionAsync<IEntity>(model.Delete());
         public async Task<IEntity> GetByName<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByNameQuery());
-        public async Task<ModelBase> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<Culture>(model.GetByIdQuery());
+        public async Task<IEntity> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByIdQuery());
     
         public async Task<IEnumerable<object>> GetAll<T>(T model, int skip, int limit) where T : ModelBase
         {

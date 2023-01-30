@@ -4,8 +4,8 @@ using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MycoMgmt.Domain.Contracts.Mushroom;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Contracts.Mushroom;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.API.Filters;
 

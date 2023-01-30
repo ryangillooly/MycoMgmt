@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MycoMgmt.Domain.Models.Mushrooms
+namespace MycoMgmt.Core.Models.Mushrooms
 {
     public class Mushroom : ModelBase
     {

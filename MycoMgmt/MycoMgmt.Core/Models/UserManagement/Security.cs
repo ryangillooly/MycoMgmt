@@ -1,4 +1,4 @@
-namespace MycoMgmt.Domain.Models.UserManagement;
+namespace MycoMgmt.Core.Models.UserManagement;
 
 public class Security : ModelBase
 {

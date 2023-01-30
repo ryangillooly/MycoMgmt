@@ -1,5 +1,5 @@
 ﻿
-namespace MycoMgmt.Domain.Models
+namespace MycoMgmt.Core.Models
 {
     public class Strain : ModelBase
     {

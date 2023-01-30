@@ -1,4 +1,4 @@
-using MycoMgmt.Domain.Models;
+using MycoMgmt.Core.Models;
 
 namespace MycoMgmt.Core.Helpers;
 

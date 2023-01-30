@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MycoMgmt.Domain.Models.UserManagement
+namespace MycoMgmt.Core.Models.UserManagement
 {
     public class Account : ModelBase
     {

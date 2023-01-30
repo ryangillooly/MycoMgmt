@@ -1,5 +1,5 @@
-using MycoMgmt.Domain.Models;
-using MycoMgmt.Domain.Models.DTO;
+using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.DTO;
 using Neo4j.Driver;
 
 namespace MycoMgmt.Core.Services;

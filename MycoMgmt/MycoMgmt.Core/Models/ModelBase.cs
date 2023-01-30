@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 #pragma warning disable CS8618
 
-namespace MycoMgmt.Domain.Models
+namespace MycoMgmt.Core.Models
 {
     public class ModelBase
     {

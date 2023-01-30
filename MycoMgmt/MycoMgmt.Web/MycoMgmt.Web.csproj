@@ -7,7 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\MycoMgmt.Infrastructure\MycoMgmt.Infrastructure.csproj" />
+      <ProjectReference Include="..\MycoMgmt.Infrastructure\MycoMgmt.Infrastructure.csproj" />
+      <ProjectReference Include="..\MycoMgmt.API\MycoMgmt.API.csproj" />
       <ProjectReference Include="..\MycoMgmt.Core\MycoMgmt.Core.csproj" />
     </ItemGroup>
 

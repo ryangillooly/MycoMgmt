@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.Core.Helpers;
 

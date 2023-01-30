@@ -1,6 +1,6 @@
 using Xunit;
 using FluentAssertions;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.Tests.UnitTests;
 

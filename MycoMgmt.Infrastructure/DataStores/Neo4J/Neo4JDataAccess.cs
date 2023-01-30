@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MycoMgmt.Domain.Models.Mushrooms;
+using MycoMgmt.Core.Models.Mushrooms;
 using Neo4j.Driver;
 
 namespace MycoMgmt.Infrastructure.DataStores.Neo4J;

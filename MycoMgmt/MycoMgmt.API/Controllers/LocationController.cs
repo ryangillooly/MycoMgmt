@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Domain.Models;
+using MycoMgmt.Core.Models;
 using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers

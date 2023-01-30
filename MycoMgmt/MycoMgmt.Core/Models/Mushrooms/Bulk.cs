@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using MycoMgmt.Domain.Models.UserManagement;
+using MycoMgmt.Core.Models.UserManagement;
 
-namespace MycoMgmt.Domain.Models.Mushrooms
+namespace MycoMgmt.Core.Models.Mushrooms
 {
     public class Bulk : Mushroom
     {

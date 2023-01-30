@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace MycoMgmt.Domain.Models.Mushrooms
+namespace MycoMgmt.Core.Models.Mushrooms
 {
     public class Fruit : Mushroom
     {

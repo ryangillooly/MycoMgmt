@@ -1,5 +1,4 @@
 ﻿@page "/culture/list"
-@using MycoMgmt.Domain.Models.Mushrooms
 @using Newtonsoft.Json
 
 <h2>Cultures</h2>
@@ -63,10 +62,10 @@
     private static string Filter { get; set; }
     private static int skip = 0;
     private static int limit = 10;
-    public int pageNumber = 1;
-    public static int resultCount;
-    public string previousButton = "disabled";
-    public static string nextButton;
+    private int pageNumber = 1;
+    private static int resultCount;
+    private string previousButton = "disabled";
+    private static string nextButton;
 
     private static List<Culture> Data { get; set; } = new ();
     

@@ -1,4 +1,4 @@
-namespace MycoMgmt.Domain.Models.DTO;
+namespace MycoMgmt.Core.Models.DTO;
 
 public class NewNodeResult
 {

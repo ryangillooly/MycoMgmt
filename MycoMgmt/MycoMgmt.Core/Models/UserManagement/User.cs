@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 #pragma warning disable CS8618
 
-namespace MycoMgmt.Domain.Models.UserManagement
+namespace MycoMgmt.Core.Models.UserManagement
 {
     public class User : Security
     {
