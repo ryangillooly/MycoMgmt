@@ -1,4 +1,4 @@
-using MycoMgmt.Core.Helpers;
+using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Models;
 using MycoMgmt.Core.Models.DTO;
 using MycoMgmt.Infrastructure.Helpers;
@@ -38,8 +38,9 @@ public class ActionService : IActionService
     {
         throw new NotImplementedException();
     }
-
-    public async Task<ModelBase> GetById(ModelBase model) => await _actionRepository.GetById(model);
     
-    public async Task<ModelBase> GetByName(ModelBase model) => await _actionRepository.GetByName(model);
+
+     public async Task<GetNodeByIdDto> GetById(ModelBase model) => await _actionRepository.GetById(model);
+    
+    // public async Task<ModelBase> GetByName(ModelBase model) => await _actionRepository.GetByName(model);
 }

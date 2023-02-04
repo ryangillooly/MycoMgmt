@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MycoMgmt.Core.Models;
+using MycoMgmt.Core.Models.DTO;
 using MycoMgmt.Core.Models.Mushrooms;
 using MycoMgmt.Core.Models.UserManagement;
 using MycoMgmt.Infrastructure.DataStores.Neo4J;
@@ -50,13 +51,7 @@ namespace MycoMgmt.Infrastructure.Repositories
 
         public async Task Delete<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteWriteTransactionAsync<IEntity>(model.Delete());
         public async Task<IEntity> GetByName<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByNameQuery());
-        public async Task<IEntity> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByIdQuery());
-    
-        public async Task<IEnumerable<object>> GetAll<T>(T model, int skip, int limit) where T : ModelBase
-        {
-            var nodeList = await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
-           // var result = _mapper.Map<List<IEntity>>(nodeList);
-            return nodeList;
-        }
+        public async Task<GetNodeByIdDto> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<GetNodeByIdDto>(model.GetByIdQuery());
+        public async Task<IEnumerable<object>> GetAll<T>(T model, int skip, int limit) where T : ModelBase => await _neo4JDataAccess.ExecuteReadListAsync(model.GetAllQuery(skip, limit), "result");
     }
 }

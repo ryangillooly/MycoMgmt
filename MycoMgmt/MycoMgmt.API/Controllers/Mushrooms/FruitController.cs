@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Core.Helpers;
+using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Contracts.Mushroom;
 using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Core.Models.Mushrooms;

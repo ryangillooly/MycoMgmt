@@ -62,10 +62,13 @@ public class CultureController : BaseController<CultureController>
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
     */
 
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
+    // NEED TO CHANGE THE QUERY WHICH IS RUN IN THE REPOSITORY, TO ENSURE IT OUTPUTS ALL RELEVANT COLUMNS / RELATIONSHIPS
+    // AS THEN WE CAN USE THE MODELBASE AS THE INPUT, RATHER THAN IENTITY
+    // [HttpGet("name/{name}")]
+    // public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
 
-    
-    [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
+    // NEED TO CHANGE THE QUERY WHICH IS RUN IN THE REPOSITORY, TO ENSURE IT OUTPUTS ALL RELEVANT COLUMNS / RELATIONSHIPS
+    // AS THEN WE CAN USE THE MODELBASE AS THE INPUT, RATHER THAN IENTITY
+    // [HttpGet("search/name/{name}")]
+    // public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
 }

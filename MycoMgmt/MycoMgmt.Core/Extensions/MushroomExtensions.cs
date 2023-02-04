@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using MycoMgmt.Core.Models.Mushrooms;
 
-namespace MycoMgmt.Core.Helpers;
+namespace MycoMgmt.Core.Extensions;
 
 public static class MushroomExtensions
 {

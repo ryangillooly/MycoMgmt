@@ -1,7 +1,7 @@
 using MycoMgmt.Core.Models.DTO;
 using Neo4j.Driver;
 
-namespace MycoMgmt.Core.Helpers;
+namespace MycoMgmt.Core.Extensions;
 
 public static class EntityListExtensions
 {

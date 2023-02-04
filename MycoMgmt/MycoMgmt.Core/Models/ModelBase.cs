@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using MycoMgmt.Core.Extensions;
 
 #pragma warning disable CS8618
 
@@ -139,41 +140,9 @@ namespace MycoMgmt.Core.Models
                         x
                 ";
         }
-        public virtual string GetByIdQuery()
-        {
-            return
-                $@"
-                    MATCH 
-                        (x:{EntityType}) 
-                    WHERE 
-                        x.Id = '{Id}'
-                    RETURN 
-                        x
-                ";
-        }
-        public virtual string GetAllQuery(int skip = 0, int limit = 20)
-        {
-            return
-                $@"
-                    MATCH 
-                        (x:{EntityType})
-                    OPTIONAL MATCH 
-                        (x)-[r:INOCULATED_ON]->(d:Day)<-[rd:HAS_DAY]-(m:Month)-[:HAS_MONTH]-(y:Year)
-                    WITH 
-                        x, y, m, d
-                    RETURN 
-                        x 
-                        --,datetime({{year: y.year, month: m.month, day: d.day}}) as InoculationDate
-                    ORDER BY
-                        d.day   DESC,
-                        m.month DESC,
-                        y.year  DESC
-                    SKIP 
-                        {skip}
-                    LIMIT
-                        {limit}
-                ";
-        }
+
+        public virtual string GetByIdQuery() => this.ToGetQuery(Id);
+        public virtual string GetAllQuery(int skip = 0, int limit = 20) => this.ToGetQuery(null, skip, limit);
         
         // Update
         public virtual string? UpdateName()

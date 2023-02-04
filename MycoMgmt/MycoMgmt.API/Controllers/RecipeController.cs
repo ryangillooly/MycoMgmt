@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.Core.Helpers;
+using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Models;
 using MycoMgmt.Infrastructure.Helpers;
 

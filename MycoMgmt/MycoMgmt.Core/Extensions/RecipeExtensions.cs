@@ -1,6 +1,6 @@
 using MycoMgmt.Core.Models;
 
-namespace MycoMgmt.Core.Helpers;
+namespace MycoMgmt.Core.Extensions;
 
 public static class RecipeExtensions
 {

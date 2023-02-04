@@ -126,6 +126,7 @@ namespace MycoMgmt.Core.Models.Mushrooms
             return queryList;
         }
         
+        /*
         public override string GetByIdQuery()
         {
             return
@@ -147,6 +148,7 @@ namespace MycoMgmt.Core.Models.Mushrooms
                         OPTIONAL MATCH (x)-[:STORED_IN]->(location:Location)
                         OPTIONAL MATCH (x)-[:HAS_PARENT]->(parent)
                         OPTIONAL MATCH (x)-[:CREATED_USING]->(recipe:Recipe)
+                        OPTIONAL MATCH (x)-[:PURCHASED_FROM]->(vendor:Vendor)
                     WITH
                         x, 
                         reduce(x = '', i IN children | x + i + ',') as childrenString,
@@ -159,7 +161,9 @@ namespace MycoMgmt.Core.Models.Mushrooms
                         properties(iUser) as inoculatedBy,
                         properties(strain).Name as strain,
                         properties(location).Name as location,
-                        parent
+                        parent,
+                        vendor,
+                        recipe
                     WITH    
                         x,
                         left(childrenString, size(childrenString)-1) as children,
@@ -172,7 +176,9 @@ namespace MycoMgmt.Core.Models.Mushrooms
                         inoculatedBy,
                         strain,
                         location,
-                        parent
+                        parent,
+                        vendor,
+                        recipe
                     RETURN
                         apoc.map.mergeList
                         ([
@@ -184,6 +190,8 @@ namespace MycoMgmt.Core.Models.Mushrooms
                             {{Strain:       strain}},
                             {{Status:       properties(x).Status}},
                             {{Location:     location}},
+                            {{Recipe:       properties(recipe).Name}},
+                            {{Vendor:       properties(vendor).Name}},
                             {{Parent:       properties(parent).Name}},
                             {{ParentType:   properties(parent).EntityType}},
                             {{Children:     children}},
@@ -287,5 +295,6 @@ namespace MycoMgmt.Core.Models.Mushrooms
                         {limit}
                 ";
         }
+        */
     }
 }

@@ -3,7 +3,7 @@ using MycoMgmt.Core.Models;
 using MycoMgmt.Infrastructure.Repositories;
 using Neo4j.Driver;
 using Newtonsoft.Json;
-using MycoMgmt.Core.Helpers;
+using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Models.DTO;
 using MycoMgmt.Core.Models.Mushrooms;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
