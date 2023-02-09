@@ -1,6 +1,6 @@
 namespace MycoMgmt.Core.Models.DTO;
 
-public class GetNodeByIdDto
+public class GetNodeDto
 {
     public string    Id { get; set; }
     public string    EntityType { get; set; }

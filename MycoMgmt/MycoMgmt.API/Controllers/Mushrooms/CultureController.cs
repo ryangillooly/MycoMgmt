@@ -52,10 +52,12 @@ public class CultureController : BaseController<CultureController>
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => Ok(await Repository.GetAll(new Culture(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => 
+        Ok(await ActionService.GetAll(new Culture(), skip, limit));
     
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
+    public async Task<IActionResult> GetById(Guid id) => 
+        Ok(await ActionService.GetById(new Culture { Id = id }));
     
     /*
     [HttpGet("name/{name}")]

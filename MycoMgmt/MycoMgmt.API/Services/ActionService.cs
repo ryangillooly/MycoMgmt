@@ -40,7 +40,8 @@ public class ActionService : IActionService
     }
     
 
-     public async Task<GetNodeByIdDto> GetById(ModelBase model) => await _actionRepository.GetById(model);
+     public async Task<GetNodeDto> GetById(ModelBase model) => await _actionRepository.GetById(model);
+     public async Task<IEnumerable<GetNodeDto>> GetAll(ModelBase model, int skip, int limit) => await _actionRepository.GetAll(model, skip, limit);
     
     // public async Task<ModelBase> GetByName(ModelBase model) => await _actionRepository.GetByName(model);
 }

@@ -25,9 +25,9 @@ public class Neo4JDataAccess : INeo4JDataAccess
         _mapper = mapper;
     }
         
-    public async Task<IEnumerable<object>> ExecuteReadListAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
+    public async Task<IEnumerable<T>> ExecuteReadListAsync<T>(string query, string returnObjectKey, IDictionary<string, object>? parameters = null)
     {
-        return await ExecuteReadTransactionAsync(query, returnObjectKey, parameters);
+        return await ExecuteReadTransactionAsync<T>(query, returnObjectKey, parameters);
     }
     
     public async Task<T> ExecuteReadScalarAsync<T>(string query, IDictionary<string, object>? parameters = null)
@@ -191,7 +191,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
     }
     */
         
-    private async Task<IEnumerable<object>> ExecuteReadTransactionAsync(string query, string returnObjectKey, IDictionary<string, object>? parameters)
+    private async Task<IEnumerable<T>> ExecuteReadTransactionAsync<T>(string query, string returnObjectKey, IDictionary<string, object>? parameters)
     {
         try
         {                
@@ -199,7 +199,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
             {
                 var res = await tx.RunAsync(query, parameters);
                 var records = await res.ToListAsync();
-                var data = records.Select(x => x.Values[returnObjectKey]);
+                var data = records.Select(x => _mapper.Map<T>(x.Values[returnObjectKey]));
 
                 return data;
             });
