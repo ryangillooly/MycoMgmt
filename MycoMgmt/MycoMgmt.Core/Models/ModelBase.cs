@@ -112,37 +112,10 @@ namespace MycoMgmt.Core.Models
         }
        
         // Read
-        public virtual string SearchByNameQuery()
-        {
-            return
-                $@"
-                    MATCH 
-                        (x:{EntityType}) 
-                    WHERE 
-                        toUpper(x.Name) CONTAINS toUpper('{Name}') 
-                    RETURN 
-                        x 
-                    ORDER BY 
-                        x.Name ASC
-                    LIMIT 
-                        100
-                ";
-        }
-        public virtual string GetByNameQuery()
-        {
-            return
-                $@"
-                    MATCH 
-                        (x:{EntityType}) 
-                    WHERE 
-                        toUpper(x.Name) = toUpper('{Name}') 
-                    RETURN 
-                        x
-                ";
-        }
-
-        public virtual string GetByIdQuery() => this.ToGetQuery(Id);
-        public virtual string GetAllQuery(int skip = 0, int limit = 20) => this.ToGetQuery(null, skip, limit);
+        public virtual string GetByNameQuery() => this.ToGetQuery(name: Name);
+        public virtual string GetByIdQuery() => this.ToGetQuery(id: Id);
+        public virtual string GetAllQuery(int skip = 0, int limit = 20) => this.ToGetQuery(skip: skip, limit:limit);
+        public virtual string SearchByNameQuery(int skip = 0, int limit = 20) => this.ToGetQuery(searchName: Name, skip: skip, limit: limit);
         
         // Update
         public virtual string? UpdateName()

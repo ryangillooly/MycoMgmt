@@ -3,7 +3,6 @@ using MycoMgmt.Core.Models;
 using MycoMgmt.Core.Models.DTO;
 using MycoMgmt.Infrastructure.Helpers;
 using MycoMgmt.Infrastructure.Repositories;
-using Neo4j.Driver;
 
 namespace MycoMgmt.Core.Services;
 
@@ -34,14 +33,9 @@ public class ActionService : IActionService
         return resultList;
     }
 
-    public void Delete(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-    
-
-     public async Task<GetNodeDto> GetById(ModelBase model) => await _actionRepository.GetById(model);
-     public async Task<IEnumerable<GetNodeDto>> GetAll(ModelBase model, int skip, int limit) => await _actionRepository.GetAll(model, skip, limit);
-    
-    // public async Task<ModelBase> GetByName(ModelBase model) => await _actionRepository.GetByName(model);
+    public async void Delete(ModelBase model) => await _actionRepository.Delete(model);
+    public async Task<GetNodeDto> GetById(ModelBase model) => await _actionRepository.GetById(model);
+    public async Task<IEnumerable<GetNodeDto>> GetAll(ModelBase model, int skip, int limit) => await _actionRepository.GetAll(model, skip, limit); 
+    public async Task<GetNodeDto> GetByName(ModelBase model) => await _actionRepository.GetByName(model); 
+    public async Task<IEnumerable<GetNodeDto>> SearchByName(ModelBase model, int skip, int limit)  => await _actionRepository.SearchByName(model, skip, limit);
 }

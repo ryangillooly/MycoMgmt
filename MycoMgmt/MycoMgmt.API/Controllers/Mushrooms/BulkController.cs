@@ -100,5 +100,5 @@ public class BulkController : BaseController<BulkController>
     public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Bulk { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Bulk { Name = name }));
+    public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => Ok(await Repository.SearchByName(new Bulk { Name = name }, skip, limit));
 }

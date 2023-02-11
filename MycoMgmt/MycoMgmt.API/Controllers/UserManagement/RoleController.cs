@@ -57,6 +57,6 @@ namespace MycoMgmt.API.Controllers
         public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new IamRole { Name = name }));
 
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new IamRole { Name = name }));
+        public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => Ok(await Repository.SearchByName(new IamRole { Name = name }, skip, limit));
     }
 }

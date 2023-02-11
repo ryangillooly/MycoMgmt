@@ -88,14 +88,14 @@ public class EntityController<T> : BaseController<EntityController<T>> where T :
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit, string entityType) => Ok(await Repository.GetAll(new Culture(), skip, limit));
+    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Culture(), skip, limit));
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, string entityType) => Ok(await ActionService.GetById(new Culture { Id = id }));
+    public async Task<IActionResult> GetById(Guid id) => Ok(await ActionService.GetById(new Culture { Id = id }));
 
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name, string entityType) => Ok(await Repository.GetByName(new Culture { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
 
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name, string entityType) => Ok(await Repository.SearchByName(new Culture { Name = name }));
+    public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => Ok(await Repository.SearchByName(new Culture { Name = name }, skip, limit));
 }

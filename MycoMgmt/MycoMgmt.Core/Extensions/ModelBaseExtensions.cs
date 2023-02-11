@@ -4,15 +4,17 @@ namespace MycoMgmt.Core.Extensions;
 
 public static class ModelBaseExtensions
 {
-    public static string ToGetQuery(this ModelBase input, Guid? id = null, int? skip = null, int? limit = null)
+    public static string ToGetQuery(this ModelBase input, Guid? id = null, int? skip = null, int? limit = null, string? name = null, string? searchName = null)
     {
-        var filterString = "";
+        var filterString = "WHERE 1=1";
         var skipString   = "";
         var limitString  = "";
         
-        if (id    is not null) filterString = $"WHERE x.Id = \"{id}\"";
-        if (skip  is not null) skipString   = $"SKIP {skip}";
-        if (limit is not null) limitString  = $"LIMIT {limit}";  
+        if (id         is not null) filterString += $" AND x.Id = \"{id}\"";
+        if (name       is not null) filterString += $" AND toUpper(x.Name) = toUpper('{name}')";
+        if (searchName is not null) filterString += $" AND toUpper(x.Name) CONTAINS toUpper('{name}')";
+        if (skip       is not null) skipString    = $"SKIP {skip}";
+        if (limit      is not null) limitString   = $"LIMIT {limit}";  
 
         return 
             $@"

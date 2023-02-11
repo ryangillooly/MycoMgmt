@@ -48,10 +48,7 @@ public class Neo4JDataAccess : INeo4JDataAccess
         }
         catch (InvalidOperationException ex)
         {
-            if (ex.Message != "The result is empty.") 
-                throw;
-            
-            _logger.LogError(ex, "No results were found for node");
+            if (ex.Message == "The result is empty.") _logger.LogError(ex, "No results were found for node");
             throw;
         }
         catch (Exception ex)

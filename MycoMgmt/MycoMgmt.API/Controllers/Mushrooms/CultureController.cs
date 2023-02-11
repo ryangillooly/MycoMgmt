@@ -34,6 +34,7 @@ public class CultureController : BaseController<CultureController>
     [MushroomValidation] 
     public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id)
     {
+        // Change auto mapper to use DI here, and configure the profiles seperately
         var config = new MapperConfiguration(cfg => cfg.CreateMap<UpdateMushroomRequest, Culture>()); 
         var mapper = new Mapper(config);
         var culture = mapper.Map<Culture>(request);
@@ -47,30 +48,22 @@ public class CultureController : BaseController<CultureController>
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await Repository.Delete(new Culture { Id = id });
+        ActionService.Delete(new Culture { Id = id });
         return NoContent();
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => 
-        Ok(await ActionService.GetAll(new Culture(), skip, limit));
     
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id) => 
         Ok(await ActionService.GetById(new Culture { Id = id }));
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => 
+        Ok(await ActionService.GetAll(new Culture(), skip, limit));
     
-    /*
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Culture { Name = name }));
-    */
-
-    // NEED TO CHANGE THE QUERY WHICH IS RUN IN THE REPOSITORY, TO ENSURE IT OUTPUTS ALL RELEVANT COLUMNS / RELATIONSHIPS
-    // AS THEN WE CAN USE THE MODELBASE AS THE INPUT, RATHER THAN IENTITY
-    // [HttpGet("name/{name}")]
-    // public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
-
-    // NEED TO CHANGE THE QUERY WHICH IS RUN IN THE REPOSITORY, TO ENSURE IT OUTPUTS ALL RELEVANT COLUMNS / RELATIONSHIPS
-    // AS THEN WE CAN USE THE MODELBASE AS THE INPUT, RATHER THAN IENTITY
-    // [HttpGet("search/name/{name}")]
-    // public async Task<IActionResult> SearchByName(string name) => Ok(await Repository.SearchByName(new Culture { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
+   
+    [HttpGet("search/name/{name}")]
+    public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => 
+        Ok(await ActionService.SearchByName(new Culture { Name = name }, skip, limit));
 }

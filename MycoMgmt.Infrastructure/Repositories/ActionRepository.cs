@@ -32,14 +32,9 @@ public class ActionRepository : IActionRepository
         var result = await _neo4JDataAccess.RunTransaction(queryList);
         return result;
     }
-    public async Task<List<IEntity>> SearchByName<T>(T model) where T : ModelBase
-    {
-        var nodeList = await _neo4JDataAccess.ExecuteReadListAsync<IEntity>(model.SearchByNameQuery(), "x");
-        var result = _mapper.Map<List<IEntity>>(nodeList);
-        return result;
-    }
     public async Task Delete<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteWriteTransactionAsync<IEntity>(model.Delete());
-    public async Task<IEntity> GetByName<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<IEntity>(model.GetByNameQuery());
+    public async Task<GetNodeDto> GetByName<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<GetNodeDto>(model.GetByNameQuery());
     public async Task<GetNodeDto> GetById<T>(T model) where T : ModelBase => await _neo4JDataAccess.ExecuteReadScalarAsync<GetNodeDto>(model.GetByIdQuery());
     public async Task<IEnumerable<GetNodeDto>> GetAll<T>(T model, int skip, int limit) where T : ModelBase => await _neo4JDataAccess.ExecuteReadListAsync<GetNodeDto>(model.GetAllQuery(skip, limit), "result");
+    public async Task<IEnumerable<GetNodeDto>> SearchByName<T>(T model, int skip, int limit) where T : ModelBase => await _neo4JDataAccess.ExecuteReadListAsync<GetNodeDto>(model.SearchByNameQuery(skip, limit), "result");
 }
