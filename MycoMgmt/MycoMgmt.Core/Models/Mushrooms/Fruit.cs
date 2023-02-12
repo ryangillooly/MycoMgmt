@@ -25,7 +25,7 @@ namespace MycoMgmt.Core.Models.Mushrooms
             string?   vendor,
             bool?     purchased,
             bool?     successful,
-            bool      finished
+            bool?     finished
         )
         {
             Name        = name;

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MycoMgmt.API.Helpers;
+using MycoMgmt.Core.Contracts.Mushroom;
+using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.API;
 
@@ -18,13 +20,19 @@ public class Startup
     {
         services.AddRazorPages();
         services.AddControllers();
-        services.AddAutoMapper(typeof(Startup));
-        /*
-        services.AddSingleton(provider => new MapperConfiguration(cfg =>
+        services.AddAutoMapper(cfg =>
         {
-            cfg.AddProfile(new UserProfile(provider.GetService<IUserManager>()));
-        }).CreateMapper());
-        */
+            cfg.CreateMap<CreateMushroomRequest, Culture>();
+            cfg.CreateMap<UpdateMushroomRequest, Culture>();
+            cfg.CreateMap<CreateMushroomRequest, Bulk>();
+            cfg.CreateMap<UpdateMushroomRequest, Bulk>();
+            cfg.CreateMap<CreateMushroomRequest, Spawn>();
+            cfg.CreateMap<UpdateMushroomRequest, Spawn>();
+            cfg.CreateMap<CreateMushroomRequest, Fruit>();
+            cfg.CreateMap<UpdateMushroomRequest, Fruit>();
+        }, 
+        typeof(Startup)
+        );
         
         services
             .AddSwaggerGen()

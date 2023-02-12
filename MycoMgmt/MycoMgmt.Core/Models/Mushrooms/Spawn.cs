@@ -24,7 +24,7 @@ namespace MycoMgmt.Core.Models.Mushrooms
             string?   vendor,
             bool?     purchased,
             bool?     successful,
-            bool      finished,
+            bool?     finished,
             DateTime? finishedOn,
             DateTime? inoculatedOn,
             string?   inoculatedBy

@@ -1,12 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Contracts.Mushroom;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Core.Models.Mushrooms;
-using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 

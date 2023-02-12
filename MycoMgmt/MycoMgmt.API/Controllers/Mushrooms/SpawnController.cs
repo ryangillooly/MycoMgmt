@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Core.Extensions;
 using MycoMgmt.Core.Contracts.Mushroom;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Core.Models.Mushrooms;
-using MycoMgmt.Infrastructure.Helpers;
+using MycoMgmt.API.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -16,73 +13,18 @@ public class SpawnController : BaseController<SpawnController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
-    {
-        var spawn = new Spawn
-        (
-            request.Name!,
-            request.Type!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            CreatedOn = DateTime.Now,
-            CreatedBy = request.CreatedBy
-        };
-        
-        spawn.Tags.Add(spawn.IsSuccessful());
-        spawn.Status = spawn.IsSuccessful();
-        
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Create(spawn, url, request.Count);
-        
-        return Created("", result);
-    }
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Spawn>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
 
-    [HttpPut("{id:guid}")]
+        [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id)
     {
-        var spawn = new Spawn
-        (
-            request.Name!,
-            request.Type!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            Id         = id,
-            ModifiedOn = DateTime.Now,
-            ModifiedBy = request.ModifiedBy
-        };
-
-        return Ok(await Repository.Update(spawn));
+        request.Id = id;
+        var spawn = Mapper.Map<Spawn>(request);
+        var url = HttpContext.Request.GetDisplayUrl();
+        var result = await ActionService.Update(spawn, url);
+        
+        return Ok(result);
     }
     
     

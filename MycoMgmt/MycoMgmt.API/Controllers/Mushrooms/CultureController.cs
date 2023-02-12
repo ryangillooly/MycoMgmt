@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Core.Contracts.Mushroom;
 using MycoMgmt.Core.Models.Mushrooms;
 
@@ -13,37 +14,12 @@ public class CultureController : BaseController<CultureController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
-    { 
-        /*
-        *  SHOULD TAKE ALL OF THIS OUR, EXCEPT THE SERVICE CALL + RETURN.
-        *  THE INPUT SHOULD BE A DTO, THEN THE SERVICE SHOULD PERFORM THE CONVERSION
-        *  MAYBE HAVE A LOOK INTO HOW I COULD CHANGE THE MODELLING FOR ALL THIS
-        */
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateMushroomRequest, Culture>()); 
-        var mapper = new Mapper(config);
-        var culture = mapper.Map<Culture>(request);
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Create(culture, url, request.Count);
-   
-       return Created("", result);
-    }
-    
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Culture>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
+
     [HttpPut("{id:guid}")]
     // Need to change this validation, as the Validation for CREATE is not the same as the validation for UPDATE
     [MushroomValidation] 
-    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id)
-    {
-        // Change auto mapper to use DI here, and configure the profiles seperately
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<UpdateMushroomRequest, Culture>()); 
-        var mapper = new Mapper(config);
-        var culture = mapper.Map<Culture>(request);
-        culture.Id = id;
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Update(culture, url);
-        
-        return Ok(result);
-    }
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id) => Ok(await request.Update<Culture>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
     
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -61,7 +37,8 @@ public class CultureController : BaseController<CultureController>
         Ok(await ActionService.GetAll(new Culture(), skip, limit));
     
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await ActionService.GetByName(new Culture { Name = name }));
+    public async Task<IActionResult> GetByName(string name) => 
+        Ok(await ActionService.GetByName(new Culture { Name = name }));
    
     [HttpGet("search/name/{name}")]
     public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => 
