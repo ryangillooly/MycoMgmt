@@ -15,19 +15,10 @@ public class SpawnController : BaseController<SpawnController>
     [MushroomValidation]
     public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Spawn>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
 
-        [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}")]
     [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id)
-    {
-        request.Id = id;
-        var spawn = Mapper.Map<Spawn>(request);
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Update(spawn, url);
-        
-        return Ok(result);
-    }
-    
-    
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id) => Ok(await request.Update<Spawn>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

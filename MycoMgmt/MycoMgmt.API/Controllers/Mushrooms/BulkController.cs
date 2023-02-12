@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Core.Contracts.Mushroom;
 using MycoMgmt.Core.Models.Mushrooms;
 
@@ -12,73 +13,13 @@ public class BulkController : BaseController<BulkController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
-    {
-        var bulk = new Bulk
-        (
-            request.Name!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            CreatedOn = DateTime.Now,
-            CreatedBy = request.CreatedBy
-        };
-        
-        bulk.Tags.Add(bulk.IsSuccessful());
-        bulk.Status = bulk.IsSuccessful();
-
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Create(bulk, url, request.Count);
-        
-        return Created("", result);
-    }
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Bulk>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
 
     [HttpPut("{id:guid}")]
-    [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateMushroomRequest request, Guid id)
-    {
-        var bulk = new Bulk
-        (
-            request.Name!,
-            request.Strain!,
-            request.Recipe,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished,
-            request.FinishedOn,
-            request.InoculatedOn,
-            request.InoculatedBy
-        )
-        {
-            Id         = id,
-            ModifiedOn = DateTime.Now,
-            ModifiedBy = request.ModifiedBy
-        };
+    // Need to change this validation, as the Validation for CREATE is not the same as the validation for UPDATE
+    [MushroomValidation] 
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id) => Ok(await request.Update<Bulk>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
 
-        return Ok(await Repository.Update(bulk));
-    }
-    
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

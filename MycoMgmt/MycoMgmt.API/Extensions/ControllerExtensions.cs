@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http.Extensions;
 using MycoMgmt.Core.Contracts.Mushroom;
 using MycoMgmt.Core.Models;
 using MycoMgmt.Core.Models.DTO;
