@@ -18,13 +18,13 @@ namespace MycoMgmt.Core.Models
                 additionalData += $",AgentConfigured: '{AgentConfigured}'";
 
             var query = $@"CREATE 
-                                (
+                              (
                                     x:{EntityType} {{ 
                                                          Name: '{Name}',
                                                          Id: '{Id}'
                                                          {additionalData} 
                                                       }}
-                                )
+                             )
                             RETURN x";
 
             return query;

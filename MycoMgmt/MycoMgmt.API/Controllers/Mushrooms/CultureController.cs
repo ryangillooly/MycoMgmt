@@ -17,7 +17,6 @@ public class CultureController : BaseController<CultureController>
     public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Culture>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
 
     [HttpPut("{id:guid}")]
-    // Need to change this validation, as the Validation for CREATE is not the same as the validation for UPDATE
     [MushroomValidation] 
     public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id) => Ok(await request.Update<Culture>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
     

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using MycoMgmt.API.Filters;
+using MycoMgmt.API.Helpers;
+using MycoMgmt.Core.Contracts;
 using MycoMgmt.Core.Models;
-using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers
 {
@@ -11,61 +11,35 @@ namespace MycoMgmt.API.Controllers
     public class LocationController : BaseController<LocationController>
     {
         [HttpPost]
-        public async Task<IActionResult> Create (string name, bool? agentConfigured, string createdBy)
-        {
-            var location = new Location()
-            {
-                Name            = name,
-                AgentConfigured = agentConfigured,
-                CreatedOn       = DateTime.Now,
-                CreatedBy       = createdBy
-            };
-            
-            var url = HttpContext.Request.GetDisplayUrl();
-            var result = await ActionService.Create(location, url);
-
-            return Created($"", result);
-        }
+        public async Task<IActionResult> Create ([FromBody] CreateLocationRequest request) =>
+            Created($"", await request.Create<Location>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
         
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update
-        (
-            Guid    id,
-            string? name,
-            bool?   agentConfigured,
-            string  modifiedBy
-        )
-        {
-            var location = new Location
-            {
-                Id              = id,
-                Name            = name,
-                AgentConfigured = agentConfigured,
-                ModifiedOn      = DateTime.Now,
-                ModifiedBy      = modifiedBy
-            };
-            
-            return Ok(await Repository.Update(location));
-        }
+        public async Task<IActionResult> Update ([FromBody] UpdateLocationRequest request, Guid id) =>
+            Ok(await request.Update<Location>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await Repository.Delete(new Location { Id = id });
+            ActionService.Delete(new Location { Id = id });
             return NoContent();
         }
-        
+    
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id) => 
+            Ok(await ActionService.GetById(new Location { Id = id }));
+
         [HttpGet]
-        public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Location(), skip, limit));
-        
-        [HttpGet("id/{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Location { Id = id }));
-
+        public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => 
+            Ok(await ActionService.GetAll(new Location(), skip, limit));
+    
         [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Location { Name = name }));
-
+        public async Task<IActionResult> GetByName(string name) => 
+            Ok(await ActionService.GetByName(new Location { Name = name }));
+   
         [HttpGet("search/name/{name}")]
-        public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => Ok(await Repository.SearchByName(new Location { Name = name }, skip, limit));
+        public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => 
+            Ok(await ActionService.SearchByName(new Location { Name = name }, skip, limit));
 
     }
 }

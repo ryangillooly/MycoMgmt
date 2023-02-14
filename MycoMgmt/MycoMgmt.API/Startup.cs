@@ -1,6 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Reflection;
+using AutoMapper;
 using MycoMgmt.API.Helpers;
+using MycoMgmt.Core.Contracts;
 using MycoMgmt.Core.Contracts.Mushroom;
+using MycoMgmt.Core.Models;
 using MycoMgmt.Core.Models.Mushrooms;
 
 namespace MycoMgmt.API;
@@ -20,6 +23,7 @@ public class Startup
     {
         services.AddRazorPages();
         services.AddControllers();
+        
         services.AddAutoMapper(cfg =>
         {
             cfg.CreateMap<CreateMushroomRequest, Culture>();
@@ -30,10 +34,12 @@ public class Startup
             cfg.CreateMap<UpdateMushroomRequest, Spawn>();
             cfg.CreateMap<CreateMushroomRequest, Fruit>();
             cfg.CreateMap<UpdateMushroomRequest, Fruit>();
+            cfg.CreateMap<CreateLocationRequest, Location>();
+            cfg.CreateMap<UpdateLocationRequest, Location>();
         }, 
         typeof(Startup)
         );
-        
+
         services
             .AddSwaggerGen()
             .AddDatabase(Configuration)

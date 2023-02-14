@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MycoMgmt.API.Filters;
-using MycoMgmt.Core.Extensions;
+using MycoMgmt.API.Helpers;
 using MycoMgmt.Core.Contracts.Mushroom;
-using MycoMgmt.Infrastructure.Repositories;
 using MycoMgmt.Core.Models.Mushrooms;
-using MycoMgmt.Infrastructure.Helpers;
 
 namespace MycoMgmt.API.Controllers;
 
@@ -16,90 +14,32 @@ public class FruitController : BaseController<FruitController>
 {
     [HttpPost]
     [MushroomValidation]
-    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request)
-    {
-        var fruit = new Fruit
-        (
-            request.Name,
-            request.Strain,
-            request.WetWeight,
-            request.DryWeight,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished
-        )
-        {
-            CreatedOn   = DateTime.Now,
-            CreatedBy   = request.CreatedBy,
-            HarvestedOn = request.HarvestedOn,
-            HarvestedBy = request.HarvestedBy
-        };
-        
-        fruit.Tags.Add(fruit.IsSuccessful());
-        fruit.Status = fruit.IsSuccessful();
-
-        var url = HttpContext.Request.GetDisplayUrl();
-        var result = await ActionService.Create(fruit, url, request.Count);
-        
-        return Created("", result);
-    }
+    public async Task<IActionResult> Create ([FromBody] CreateMushroomRequest request) => Created("", await request.Create<Fruit>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl()));
 
     [HttpPut("{id:guid}")]
-    [MushroomValidation]
-    public async Task<IActionResult> Update ([FromBody] CreateFruitRequest request, Guid id)
-    {
-        var fruit = new Fruit
-        (
-            request.Name,
-            request.Strain,
-            request.WetWeight,
-            request.DryWeight,
-            request.Notes,
-            request.Location,
-            request.Parent,
-            request.ParentType,
-            request.Children,
-            request.ChildType,
-            request.Vendor,
-            request.Purchased,
-            request.Successful,
-            request.Finished
-        )
-        {
-            Id         = id,
-            ModifiedOn = DateTime.Now,
-            ModifiedBy = request.ModifiedBy,
-            HarvestedOn = request.HarvestedOn,
-            HarvestedBy = request.HarvestedBy
-        };
-
-        return Ok(await Repository.Update(fruit));
-    }
-    
+    [MushroomValidation] 
+    public async Task<IActionResult> Update ([FromBody] UpdateMushroomRequest request, Guid id) => Ok(await request.Update<Fruit>(Mapper, ActionService, HttpContext.Request.GetDisplayUrl(), id));
     
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await Repository.Delete(new Fruit { Id = id });
+        ActionService.Delete(new Fruit { Id = id });
         return NoContent();
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll(int skip, int limit) => Ok(await Repository.GetAll(new Fruit(), skip, limit));
-
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id) => Ok(await Repository.GetById(new Fruit { Id = id }));
+    public async Task<IActionResult> GetById(Guid id) => 
+        Ok(await ActionService.GetById(new Fruit { Id = id }));
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll(int skip = 0, int limit = 20) => 
+        Ok(await ActionService.GetAll(new Fruit(), skip, limit));
+    
     [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name) => Ok(await Repository.GetByName(new Fruit { Name = name }));
-
+    public async Task<IActionResult> GetByName(string name) => 
+        Ok(await ActionService.GetByName(new Fruit { Name = name }));
+   
     [HttpGet("search/name/{name}")]
-    public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => Ok(await Repository.SearchByName(new Fruit { Name = name }, skip, limit));
+    public async Task<IActionResult> SearchByName(string name, int skip = 0, int limit = 20) => 
+        Ok(await ActionService.SearchByName(new Fruit { Name = name }, skip, limit));
 }

@@ -1,6 +1,6 @@
 namespace MycoMgmt.Core.Contracts.Mushroom;
 
-public class CreateMushroomRequest 
+public class CreateMushroomRequest : CreateRequest
 {
     public string       Name { get; set; }
     public string       Strain { get; set; }
@@ -27,5 +27,4 @@ public class CreateMushroomRequest
     public string?       ModifiedBy { get; set; }
     public string?      Recipe { get; set; }
     public string?      Vendor { get; set; }
-    public int?         Count     { get; set; } = 1;
 }

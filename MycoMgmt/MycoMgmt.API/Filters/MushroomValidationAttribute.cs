@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;
 using AutoMapper;
@@ -13,37 +12,11 @@ public class MushroomValidationAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var httpMethod = context.HttpContext.Request.Method;
-        var errors           = new Dictionary<string, string>();
-        /*var mushroom = new Mushroom
-        {
-            Name = request.Name,
-            Type = request.Type,
-            Notes = request.Notes,
-            CreatedBy = request.CreatedBy,
-            CreatedOn = request.CreatedOn,
-            ModifiedBy = request.ModifiedBy,
-            ModifiedOn = request.ModifiedOn,
-            Strain = request.Strain,
-            Location = request.Location,
-            Parent = request.Parent,
-            ParentType = request.ParentType,
-            Children = request.Children,
-            ChildType = request.ChildType,
-            Successful = request.Successful,
-            Finished = request.Finished,
-            FinishedOn = request.FinishedOn,
-            InoculatedOn = request.InoculatedOn,
-            InoculatedBy = request.InoculatedBy,
-            Recipe = request.Recipe,
-            Purchased = request.Purchased,
-            Vendor = request.Vendor
-        };
-        */
-        
+        var httpMethod  = context.HttpContext.Request.Method;
+        var errors            = new Dictionary<string, string>();
         var action     = context.RouteData.Values["action"];
         var controller = context.RouteData.Values["controller"];
-        var mushroom = new Mushroom();
+        var mushroom          = new Mushroom();
         
         switch (httpMethod)
         {
